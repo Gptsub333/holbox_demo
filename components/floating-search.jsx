@@ -29,29 +29,13 @@ import { motion, AnimatePresence } from "framer-motion"
 
 // Feature data with icons
 const features = [
-  { name: "NL2SQL", href: "/nl2sql", icon: Database, description: "SQL queries using AI with instant results" },
+
   {
     name: "Health Scribe",
     href: "/health-scribe",
     icon: Stethoscope,
     description: "Transcribe medical audio and get answers",
   },
-  {
-    name: "Face Recognition",
-    href: "/face-recognition",
-    icon: User,
-    description: "Real-time detection and identification",
-  },
-  {
-    name: "Video Compliance",
-    href: "/video-compliance",
-    icon: Video,
-    description: "Analyze videos for safety and compliance",
-  },
-  { name: "PDF Extractor", href: "/pdf-extractor", icon: FileText, description: "Upload PDFs and chat for insights" },
-  { name: "Virtual Try-On", href: "/virtual-try-on", icon: Shirt, description: "Try garments on models using images" },
-  { name: "Traffic Chatbot", href: "/traffic-chatbot", icon: Car, description: "AI assistant for traffic conditions" },
-  { name: "Voice-Agent", href: "/voice-agent", icon: Mic, description: "Voice-enabled booking and health assistant" },
   {
     name: "DDx Assistant",
     href: "/ddx-assistant",
@@ -69,6 +53,23 @@ const features = [
 
 // Upcoming features data
 const upcomingFeatures = [
+    { name: "NL2SQL", href: "/nl2sql", icon: Database, description: "SQL queries using AI with instant results" },
+  {
+    name: "Face Recognition",
+    href: "/face-recognition",
+    icon: User,
+    description: "Real-time detection and identification",
+  },
+  {
+    name: "Video Compliance",
+    href: "/video-compliance",
+    icon: Video,
+    description: "Analyze videos for safety and compliance",
+  },
+  { name: "PDF Extractor", href: "/pdf-extractor", icon: FileText, description: "Upload PDFs and chat for insights" },
+  { name: "Virtual Try-On", href: "/virtual-try-on", icon: Shirt, description: "Try garments on models using images" },
+  { name: "Traffic Chatbot", href: "/traffic-chatbot", icon: Car, description: "AI assistant for traffic conditions" },
+  { name: "Voice-Agent", href: "/voice-agent", icon: Mic, description: "Voice-enabled booking and health assistant" },
   { name: "Summarization", icon: FileDigit, description: "Automatically summarize long documents and content" },
   { name: "Enterprise Search", icon: FileSearch, description: "Advanced search across all enterprise data" },
   { name: "Structured Extraction", icon: Layers, description: "Extract structured data from unstructured content" },
