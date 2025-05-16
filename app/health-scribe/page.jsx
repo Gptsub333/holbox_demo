@@ -12,7 +12,6 @@ const predefinedAudios = [
     title: "Sample_data1.mp3",
     url: "https://dax-health-transcribe.s3.amazonaws.com/predefined/Sample_data1.mp3",
     s3: "s3://dax-health-transcribe/predefined/Sample_data1.mp3",
-    duration: "10:26",
     transcript:
       "This is a sample transcript for the first audio recording. The actual transcript will be generated when you click 'Transcribe Audio'.",
   },
@@ -20,8 +19,7 @@ const predefinedAudios = [
     id: "2",
     title: "Sample_data2.mp3",
     url: "https://dax-health-transcribe.s3.amazonaws.com/predefined/Sample_data2.mp3",
-    s3: "s3://dax-health-transcribe/predefined/Sample_data2.mp3",
-    duration: "10:45",                 
+    s3: "s3://dax-health-transcribe/predefined/Sample_data2.mp3",              
     transcript:
       "This is a sample transcript for the second audio recording. The actual transcript will be generated when you click 'Transcribe Audio'.",
   },
@@ -30,7 +28,6 @@ const predefinedAudios = [
     title: "Sample_data3.mp3",
     url: "https://dax-health-transcribe.s3.amazonaws.com/predefined/Sample_data3.mp3",
     s3: "s3://dax-health-transcribe/predefined/Sample_data3.mp3",
-    duration: "10:46",
     transcript:
       "This is a sample transcript for the third audio recording. The actual transcript will be generated when you click 'Transcribe Audio'.",
   },
@@ -529,7 +526,7 @@ useEffect(() => {
                       </div>
                       <div>
                         <h3 className="font-medium text-sm">{audio.title}</h3>
-                        <p className="text-xs text-muted-foreground">{audio.duration}</p>
+                        {/* <p className="text-xs text-muted-foreground">{audio.duration}</p> */}
                       </div>
                     </div>
                     {activeAudio?.id === audio.id && <div className="w-2 h-2 rounded-full bg-blue-500"></div>}
@@ -991,74 +988,59 @@ useEffect(() => {
               </div>
             </motion.div>
           ) : (
-         // Main JSX rendering part
-<div className="space-y-4">
-  {chatMessages.map((message, index) => (
-    <motion.div
-      key={index}
-      className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"}`}
-      initial={{ opacity: 0, y: 10, scale: 0.95 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ duration: 0.3, delay: index * 0.1 }}
-    >
-      <div className="space-y-4">
-  {chatMessages.map((message, index) => (
-    <motion.div
-      key={index}
-      className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"}`}
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.3, delay: index * 0.1 }}
-    >
-      <motion.div
-        className={`max-w-[80%] rounded-lg p-3 ${
-          message.sender === "user" ? "bg-blue-600 text-white" : "bg-gray-50 border border-gray-200"
-        }`}
-        initial={{ scale: 0.9 }}
-        animate={{ scale: 1 }}
-        transition={{ type: "spring", stiffness: 500, damping: 30 }}
-      >
-        <div className="text-sm">
-          {/* Display the AI response using formatResponseText but no line-by-line animation */}
-          {message.sender === "ai" ? (
-            formatResponseText(message.text) // format the entire message at once
-          ) : (
-            message.text
+            <div className="space-y-4">
+              {chatMessages.map((message, index) => (
+                <motion.div
+                  key={index}
+                  className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"}`}
+                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ duration: 0.3, delay: index * 0.1 }}
+                >
+                  <motion.div
+                    className={`max-w-[80%] rounded-lg p-3 ${
+                      message.sender === "user" ? "bg-blue-600 text-white" : "bg-gray-50 border border-gray-200"
+                    }`}
+                    initial={{ scale: 0.9 }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                  >
+                    <div className="text-sm">
+                      {/* Display the AI response */}
+                      {message.sender === "ai" ? (
+                        formatResponseText(message.text) // format the entire message at once
+                      ) : (
+                        message.text
+                      )}
+                    </div>
+                  </motion.div>
+                </motion.div>
+              ))}
+            </div>
           )}
-        </div>
-      </motion.div>
-    </motion.div>
-  ))}
-</div>
 
-    </motion.div>
-  ))}
-
-  {isLoadingAnswer && (
-    <motion.div
-      className="flex justify-start"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.2 }}
-    >
-      <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 flex items-center max-w-[80%]">
-        <div className="flex items-center space-x-1 mr-2">
-          <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"></div>
-          <div
-            className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"
-            style={{ animationDelay: "0.2s" }}
-          ></div>
-          <div
-            className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"
-            style={{ animationDelay: "0.4s" }}
-          ></div>
-        </div>
-        <span className="text-sm text-gray-500">Thinking...</span>
-      </div>
-    </motion.div>
-  )}
-</div>
-
+          {isLoadingAnswer && (
+            <motion.div
+              className="flex justify-start"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.2 }}
+            >
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 flex items-center max-w-[80%]">
+                <div className="flex items-center space-x-1 mr-2">
+                  <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"></div>
+                  <div
+                    className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"
+                    style={{ animationDelay: "0.2s" }}
+                  ></div>
+                  <div
+                    className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"
+                    style={{ animationDelay: "0.4s" }}
+                  ></div>
+                </div>
+                <span className="text-sm text-gray-500">Thinking...</span>
+              </div>
+            </motion.div>
           )}
         </div>
 
@@ -1091,6 +1073,7 @@ useEffect(() => {
         </form>
       </motion.div>
     </motion.div>
+
   )}
 </AnimatePresence>
     </motion.div>
