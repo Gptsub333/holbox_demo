@@ -55,7 +55,7 @@ export default function HealthScribePage() {
   const [chatMessages, setChatMessages] = useState([]);
   const [currentQuestion, setCurrentQuestion] = useState("");
   const [isLoadingAnswer, setIsLoadingAnswer] = useState(false);
-  const [sampleAudios, setSampleAudios] = useState([]);
+  const [sampleAudios, setSampleAudios] = useState(predefinedAudios);
   const [formattedTranscript, setFormattedTranscript] = useState({});
   const [displayedText, setDisplayedText] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
@@ -67,9 +67,6 @@ export default function HealthScribePage() {
   const chatContainerRef = useRef(null);
 
   // === Effects ===
-  useEffect(() => {
-    setSampleAudios(predefinedAudios);
-  }, []);
 
   useEffect(() => {
     if (transcript) {
