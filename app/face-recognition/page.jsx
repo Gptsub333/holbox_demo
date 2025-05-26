@@ -18,6 +18,8 @@ export default function FaceRecognitionPage() {
   const [showScrollHint, setShowScrollHint] = useState(false)
   const resultsRef = useRef(null)
 
+  const BACKEND_URL = "http://3.148.149.70:8000"
+
   const handleVideoSelect = (video) => {
     setSelectedVideo(video)
     setResults(null)
@@ -31,48 +33,57 @@ export default function FaceRecognitionPage() {
   }
 
   const handleAnalyze = async (timestamp) => {
-    setIsLoading(true)
-    setShowResults(false)
-    setShowScrollHint(false)
+  if (!selectedVideo) return
 
-    try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000))
+  setIsLoading(true)
+  setShowResults(false)
+  setShowScrollHint(false)
 
-      // Mock API response
-      const mockResults = {
-        video: selectedVideo.name.toLowerCase().replace(/\s+/g, "_") + ".mp4",
-        detected_faces: [
-          {
-            timestamp: timestamp,
-            external_image_id: "doctor_Thomas",
-          },
-          {
-            timestamp: timestamp + 0.5,
-            external_image_id: "nurse_Sarah",
-          },
-        ],
-      }
+  try {
+    // Fetch video from S3 URL as blob
+    const videoBlob = await fetch(selectedVideo.url).then(res => res.blob())
 
-      setResults(mockResults)
-      setShowResults(true)
+    // Create a File object to send
+    const videoFile = new File([videoBlob], `${selectedVideo.name.replace(/\s+/g, "_")}.mp4`, {
+      type: "video/mp4",
+    })
 
-      // Check if results table is visible
-      setTimeout(() => {
-        if (resultsRef.current) {
-          const rect = resultsRef.current.getBoundingClientRect()
-          const isVisible = rect.top < window.innerHeight && rect.bottom > 0
-          if (!isVisible) {
-            setShowScrollHint(true)
-          }
-        }
-      }, 500)
-    } catch (error) {
-      console.error("Analysis failed:", error)
-    } finally {
-      setIsLoading(false)
+    // Prepare form data for upload
+    const formData = new FormData()
+    formData.append("video", videoFile)
+
+    // Send to your FastAPI backend - replace with your EC2 public IP
+    const response = await fetch(`${BACKEND_URL}/detect_faces`, {
+      method: "POST",
+      body: formData,
+    })
+
+    if (!response.ok) {
+      throw new Error(`API error: ${response.statusText}`)
     }
+
+    const data = await response.json()
+
+    setResults(data)
+    setShowResults(true)
+
+    // Scroll hint logic same as before
+    setTimeout(() => {
+      if (resultsRef.current) {
+        const rect = resultsRef.current.getBoundingClientRect()
+        const isVisible = rect.top < window.innerHeight && rect.bottom > 0
+        if (!isVisible) {
+          setShowScrollHint(true)
+        }
+      }
+    }, 500)
+  } catch (error) {
+    console.error("Analysis failed:", error)
+  } finally {
+    setIsLoading(false)
   }
+}
+
 
   const handleHintDismiss = () => {
     setShowScrollHint(false)
