@@ -36,6 +36,12 @@ const features = [
     icon: Stethoscope,
     description: "Transcribe medical audio and get answers",
   },
+    {
+    name: "Face Recognition",
+    href: "/face-recognition",
+    icon: User,
+    description: "Real-time detection and identification",
+  },
   {
     name: "DDx Assistant",
     href: "/ddx-assistant",
@@ -49,17 +55,13 @@ const features = [
     description: "Detect and extract personal information",
   },
   { name: "PII Redactor", href: "/pii-redactor", icon: FileX, description: "Remove PII from input text securely" },
+
 ]
 
 // Upcoming features data
 const upcomingFeatures = [
     { name: "NL2SQL", href: "/nl2sql", icon: Database, description: "SQL queries using AI with instant results" },
-  {
-    name: "Face Recognition",
-    href: "/face-recognition",
-    icon: User,
-    description: "Real-time detection and identification",
-  },
+
   {
     name: "Video Compliance",
     href: "/video-compliance",
@@ -180,7 +182,7 @@ export function FloatingSearch({ isOpen, onClose }) {
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
