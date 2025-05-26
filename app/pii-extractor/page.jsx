@@ -8,6 +8,9 @@ import TextAreaInput from "./_components/TextAreaInput"
 import ExtractButton from "./_components/ExtractButton"
 import FloatingPopup from "./_components/FloatingPopup"
 
+const BACKEND_URL = "http://3.148.149.70:8000"
+const EXTRACT_ENDPOINT = "/extract"
+
 export default function PIIExtractorPage() {
   const [text, setText] = useState("")
   const [selectedSampleId, setSelectedSampleId] = useState(null)
@@ -35,30 +38,51 @@ export default function PIIExtractorPage() {
     setApiResponse(null)
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2500))
+      const response = await fetch(`${BACKEND_URL}/extract`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ text }),
+    })
 
-      // Mock API response with clean formatting
-      const mockResponse = {
-        extracted: {
-          names: ["Rebecca Johnson", "Jonathan Blake", "Sanjay Patel", "Dr. Michael Turner"],
-          addresses: [
-            "482 Elm Street, Springfield, IL 62704",
-            "245 Wellness Blvd, Suite 301, New York, NY",
-            "56 Riverbend Drive, Austin, TX 78701",
-          ],
-          phoneNumbers: ["(217) 555-0198", "212-555-0345", "(512) 555-0284"],
-          emailAddresses: ["rebecca.johnson@gmail.com", "sanjay.patel@outlook.com"],
-          datesOfBirth: ["March 22, 1985"],
-          socialSecurityNumbers: ["123-45-6789"],
-          appointmentDetails: ["April 20, 2025, at 3:00 PM"],
-          riskLevel: "HIGH",
-          summary:
-            "This text contains significant personally identifiable information including full names, complete residential addresses, phone numbers, email addresses, date of birth, and social security number. The data includes sensitive medical appointment information and financial application details.",
-        },
+    if (!response.ok) {
+      throw new Error(`API error: ${response.statusText}`)
+    }
+
+    const data = await response.json()
+
+    let parsed = {}
+
+    if (typeof data.extracted === "string") {
+      const match = data.extracted.match(/{[\s\S]*}/)
+      if (match) {
+        try {
+          parsed = JSON.parse(match[0])
+        } catch (err) {
+          console.error("Failed to parse extracted JSON:", err)
+        }
       }
+    } else if (typeof data.extracted === "object") {
+      parsed = data.extracted
+    }
 
-      setApiResponse(mockResponse)
+    const normalized = {
+      extracted: {
+        phoneNumbers: parsed.PhoneNumber ? [parsed.PhoneNumber] : [],
+        emailAddresses: parsed.Email ? [parsed.Email] : [],
+        names: parsed.Name ? [parsed.Name] : [],
+        addresses: parsed.Address ? [parsed.Address] : [],
+        datesOfBirth: parsed.DOB ? [parsed.DOB] : [],
+        riskLevel: parsed.RiskLevel || "LOW", 
+        socialSecurityNumbers: parsed.SSN ? [parsed.SSN] : [],
+        summary: parsed.Summary || "Some PII elements were extracted.",
+      },
+    }
+
+    console.log(normalized)
+    setApiResponse(normalized)
+      
     } catch (error) {
       console.error("Error extracting PII:", error)
     } finally {

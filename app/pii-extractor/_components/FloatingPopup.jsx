@@ -183,6 +183,11 @@ export default function FloatingPopup({ isOpen, onClose, response, isLoading }) 
                       response.extracted.phoneNumbers,
                       <Phone className="h-4 w-4" style={{ color: "#2564eb" }} />,
                     )}
+                    {renderDataSection(
+                      "Social Security Numbers",
+                      response.extracted.socialSecurityNumbers,
+                      <CreditCard className="h-4 w-4 text-red-700" />
+                    )}
 
                     {renderDataSection(
                       "Email Addresses",
