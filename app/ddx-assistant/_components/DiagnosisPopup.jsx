@@ -16,6 +16,7 @@ export default function DiagnosisPopup({ isOpen, onClose, diagnosis, parsedDiagn
       if (popupRef.current && !popupRef.current.contains(event.target)) {
         onClose()
       }
+      // Reset tab label visibility when clicking outside
     }
 
     if (isOpen) {

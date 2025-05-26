@@ -4,7 +4,7 @@ import { motion } from "framer-motion"
 import { Brain, ArrowRight } from "lucide-react"
 import { cn } from "@/lib/utils"
 
-// Clinical case samples with more detailed information
+// Clinical case samples with more detailed information information
 const clinicalSamples = [
   {
     id: 1,
@@ -22,7 +22,7 @@ const clinicalSamples = [
     id: 3,
     title: "Acute Abdominal Case",
     content:
-      "A 45-year-old man presents with severe right lower quadrant pain, fever, and nausea that began near the umbilicus and migrated. He reports loss of appetite and has a white blood cell count of 14,000. The condition typically resolves with appropriate intervention, though complications can occur if treatment is delayed.",
+      "A 55-year-old man  presents with severe right lower quadrant pain, fever, and nausea that began near the umbilicus and migrated. He reports loss of appetite and has a white blood cell count of 14,000. The condition typically resolves with appropriate intervention, though complications can occur if treatment is delayed.",
   },
 ]
 
