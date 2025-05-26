@@ -3,7 +3,8 @@
 import { useState, useRef } from "react"
 import { motion } from "framer-motion"
 import Header from "./_components/Header"
-import ClinicalSamples from "./_components/ClinicalSamples"
+import ClinicalSamples from './_components/ClinicalSamples';
+
 import SymptomForm from "./_components/SymptomForm"
 import InfoCard from "./_components/InfoCard"
 import DiagnosisPopup from "./_components/DiagnosisPopup"
