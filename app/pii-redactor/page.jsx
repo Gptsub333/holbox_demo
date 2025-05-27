@@ -8,6 +8,7 @@ import TextInput from "./_components/TextInput"
 import RedactButton from "./_components/RedactButton"
 import ResultsPopup from "./_components/ResultsPopup"
 
+const BACKEND_URL = "http://3.148.149.70:8000/redact"
 export default function PIIRedactorPage() {
   const [inputText, setInputText] = useState("")
   const [selectedSample, setSelectedSample] = useState(null)
@@ -20,61 +21,42 @@ export default function PIIRedactorPage() {
     setSelectedSample(sample)
     setInputText(sample.fullText)
   }
+  
 
-  // PII redaction simulation directly in the component
-  const redactPII = (text) => {
-    let redactedText = text
-
-    // Email addresses
-    redactedText = redactedText.replace(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g, "[REDACTED EMAIL]")
-
-    // Social Security Numbers
-    redactedText = redactedText.replace(/\b\d{3}-\d{2}-\d{4}\b/g, "[REDACTED SSN]")
-
-    // Names (simple pattern - capitalized words)
-    redactedText = redactedText.replace(/\b[A-Z][a-z]+ [A-Z][a-z]+\b/g, "[REDACTED NAME]")
-
-    // Addresses (simple pattern)
-    redactedText = redactedText.replace(
-      /\b\d+\s+[A-Z][a-z]+\s+(Street|St|Avenue|Ave|Road|Rd|Drive|Dr|Lane|Ln|Boulevard|Blvd)\b/g,
-      "[REDACTED ADDRESS]",
-    )
-
-    // Account numbers
-    redactedText = redactedText.replace(/\b(Account|ID|Number|#)\s*:?\s*[A-Z0-9]+/gi, "[REDACTED ACCOUNT]")
-
-    // Credit card numbers (ending in pattern)
-    redactedText = redactedText.replace(/ending in \d{4}/gi, "ending in [REDACTED]")
-
-    // Dates of birth
-    redactedText = redactedText.replace(/\b\d{1,2}\/\d{1,2}\/\d{4}\b/g, "[REDACTED DATE]")
-
-    // Driver's license
-    redactedText = redactedText.replace(/\b[A-Z]{2}\d+\b/g, "[REDACTED ID]")
-
-    return redactedText
-  }
-
-  const handleRedact = async () => {
+   const handleRedact = async () => {
     if (!inputText.trim()) return
 
     setIsLoading(true)
     setOriginalText(inputText)
 
     try {
-      // Simulate a brief processing delay
-      await new Promise((resolve) => setTimeout(resolve, 500))
+      const response = await fetch(BACKEND_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ text: inputText }),
+      })
 
-      const result = redactPII(inputText)
-      setRedactedText(result)
+      if (!response.ok) {
+        throw new Error(`Server error: ${response.status}`)
+      }
+
+      const data = await response.json()
+      const fullText = data.redacted
+      const redactedContent = fullText.split('\n').slice(2).join('\n').trim() // this is for removing first line from api response
+
+      setRedactedText(redactedContent)
+      // setRedactedText(data.redacted)
       setShowResults(true)
     } catch (error) {
       console.error("Error redacting PII:", error)
+      setRedactedText("[Error redacting PII]")
+      setShowResults(true)
     } finally {
       setIsLoading(false)
     }
   }
-
   const handleCloseResults = () => {
     setShowResults(false)
     setOriginalText("")
