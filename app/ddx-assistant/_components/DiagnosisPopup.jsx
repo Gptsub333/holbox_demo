@@ -82,7 +82,7 @@ export default function DiagnosisPopup({
       >
         <motion.div
           ref={popupRef}
-          className="bg-white rounded-[12px] shadow-xl max-w-3xl w-[95%] flex flex-col overflow-hidden" // Updated rounded corners
+          className="bg-white rounded-[12px] shadow-xl max-w-3xl w-[95%] flex flex-col overflow-hidden"
           style={{ maxHeight: "90vh" }}
           initial={{ scale: 0.9, y: 30 }}
           animate={{ scale: 1, y: 0 }}
