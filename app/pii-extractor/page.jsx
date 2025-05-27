@@ -80,7 +80,6 @@ export default function PIIExtractorPage() {
       },
     }
 
-    console.log(normalized)
     setApiResponse(normalized)
       
     } catch (error) {
