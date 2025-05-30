@@ -1,98 +1,97 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { motion } from "framer-motion"
-import { Shield, AlertTriangle, Lock } from "lucide-react"
-import SampleTextSelector from "./_components/SampleTextSelector"
-import TextAreaInput from "./_components/TextAreaInput"
-import ExtractButton from "./_components/ExtractButton"
-import FloatingPopup from "./_components/FloatingPopup"
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { Shield, AlertTriangle, Lock } from "lucide-react";
+import SampleTextSelector from "./_components/SampleTextSelector";
+import TextAreaInput from "./_components/TextAreaInput";
+import ExtractButton from "./_components/ExtractButton";
+import FloatingPopup from "./_components/FloatingPopup";
 
-const BACKEND_URL = "http://3.148.149.70:8000"
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 const EXTRACT_ENDPOINT = "/extract"
 
 export default function PIIExtractorPage() {
-  const [text, setText] = useState("")
-  const [selectedSampleId, setSelectedSampleId] = useState(null)
-  const [isPopupOpen, setIsPopupOpen] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const [apiResponse, setApiResponse] = useState(null)
+  const [text, setText] = useState("");
+  const [selectedSampleId, setSelectedSampleId] = useState(null);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [apiResponse, setApiResponse] = useState(null);
 
   const handleSelectText = (sampleText, id) => {
-    setText(sampleText)
-    setSelectedSampleId(id)
-  }
+    setText(sampleText);
+    setSelectedSampleId(id);
+  };
 
   const handleTextChange = (newText) => {
-    setText(newText)
+    setText(newText);
     if (newText !== text) {
-      setSelectedSampleId(null)
+      setSelectedSampleId(null);
     }
-  }
+  };
 
   const handleExtract = async () => {
-    if (!text.trim()) return
+    if (!text.trim()) return;
 
-    setIsLoading(true)
-    setIsPopupOpen(true)
-    setApiResponse(null)
+    setIsLoading(true);
+    setIsPopupOpen(true);
+    setApiResponse(null);
 
     try {
       const response = await fetch(`${BACKEND_URL}/extract`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ text }),
-    })
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ text }),
+      });
 
-    if (!response.ok) {
-      throw new Error(`API error: ${response.statusText}`)
-    }
-
-    const data = await response.json()
-
-    let parsed = {}
-
-    if (typeof data.extracted === "string") {
-      const match = data.extracted.match(/{[\s\S]*}/)
-      if (match) {
-        try {
-          parsed = JSON.parse(match[0])
-        } catch (err) {
-          console.error("Failed to parse extracted JSON:", err)
-        }
+      if (!response.ok) {
+        throw new Error(`API error: ${response.statusText}`);
       }
-    } else if (typeof data.extracted === "object") {
-      parsed = data.extracted
-    }
 
-    const normalized = {
-      extracted: {
-        phoneNumbers: parsed.PhoneNumber ? [parsed.PhoneNumber] : [],
-        emailAddresses: parsed.Email ? [parsed.Email] : [],
-        names: parsed.Name ? [parsed.Name] : [],
-        addresses: parsed.Address ? [parsed.Address] : [],
-        datesOfBirth: parsed.DOB ? [parsed.DOB] : [],
-        riskLevel: parsed.RiskLevel || "LOW", 
-        socialSecurityNumbers: parsed.SSN ? [parsed.SSN] : [],
-        summary: parsed.Summary || "Some PII elements were extracted.",
-      },
-    }
+      const data = await response.json();
 
-    setApiResponse(normalized)
-      
+      let parsed = {};
+
+      if (typeof data.extracted === "string") {
+        const match = data.extracted.match(/{[\s\S]*}/);
+        if (match) {
+          try {
+            parsed = JSON.parse(match[0]);
+          } catch (err) {
+            console.error("Failed to parse extracted JSON:", err);
+          }
+        }
+      } else if (typeof data.extracted === "object") {
+        parsed = data.extracted;
+      }
+
+      const normalized = {
+        extracted: {
+          phoneNumbers: parsed.PhoneNumber ? [parsed.PhoneNumber] : [],
+          emailAddresses: parsed.Email ? [parsed.Email] : [],
+          names: parsed.Name ? [parsed.Name] : [],
+          addresses: parsed.Address ? [parsed.Address] : [],
+          datesOfBirth: parsed.DOB ? [parsed.DOB] : [],
+          riskLevel: parsed.RiskLevel || "LOW",
+          socialSecurityNumbers: parsed.SSN ? [parsed.SSN] : [],
+          summary: parsed.Summary || "Some PII elements were extracted.",
+        },
+      };
+
+      setApiResponse(normalized);
     } catch (error) {
-      console.error("Error extracting PII:", error)
+      console.error("Error extracting PII:", error);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleClosePopup = () => {
-    setIsPopupOpen(false)
-    setApiResponse(null)
-  }
+    setIsPopupOpen(false);
+    setApiResponse(null);
+  };
 
   return (
     <div className="min-h-screen bg-white py-4 sm:py-6">
@@ -113,8 +112,12 @@ export default function PIIExtractorPage() {
             <Shield className="h-5 w-5" style={{ color: "#2564eb" }} />
           </div>
           <div>
-            <h1 className="text-lg sm:text-xl font-semibold text-gray-900">PII Extractor AI Assistant</h1>
-            <p className="text-xs text-gray-600">Analyze text to identify personally identifiable information</p>
+            <h1 className="text-lg sm:text-xl font-semibold text-gray-900">
+              PII Extractor AI Assistant
+            </h1>
+            <p className="text-xs text-gray-600">
+              Analyze text to identify personally identifiable information
+            </p>
           </div>
         </motion.div>
 
@@ -128,7 +131,10 @@ export default function PIIExtractorPage() {
             transition={{ duration: 0.3, delay: 0.2 }}
           >
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 h-full">
-              <SampleTextSelector onSelectText={handleSelectText} selectedId={selectedSampleId} />
+              <SampleTextSelector
+                onSelectText={handleSelectText}
+                selectedId={selectedSampleId}
+              />
             </div>
           </motion.div>
 
@@ -145,11 +151,17 @@ export default function PIIExtractorPage() {
               </div>
 
               <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
-                <ExtractButton onClick={handleExtract} disabled={!text.trim()} isLoading={isLoading} />
+                <ExtractButton
+                  onClick={handleExtract}
+                  disabled={!text.trim()}
+                  isLoading={isLoading}
+                />
 
                 <div className="flex items-center space-x-2 text-xs">
                   <Lock className="h-3 w-3 text-gray-400" />
-                  <span className="text-gray-500">{text.trim() ? "Ready for analysis" : "Enter text to begin"}</span>
+                  <span className="text-gray-500">
+                    {text.trim() ? "Ready for analysis" : "Enter text to begin"}
+                  </span>
                 </div>
               </div>
             </div>
@@ -168,10 +180,13 @@ export default function PIIExtractorPage() {
               <div className="p-1.5 bg-gray-200 rounded-md">
                 <Shield className="h-3 w-3 text-gray-700" />
               </div>
-              <h3 className="text-xs font-semibold text-gray-900">Smart Detection</h3>
+              <h3 className="text-xs font-semibold text-gray-900">
+                Smart Detection
+              </h3>
             </div>
             <p className="text-xs text-gray-600">
-              AI algorithms identify names, addresses, phones, emails, and sensitive data.
+              AI algorithms identify names, addresses, phones, emails, and
+              sensitive data.
             </p>
           </div>
 
@@ -180,9 +195,13 @@ export default function PIIExtractorPage() {
               <div className="p-1.5 bg-gray-200 rounded-md">
                 <Lock className="h-3 w-3 text-gray-700" />
               </div>
-              <h3 className="text-xs font-semibold text-gray-900">Secure Processing</h3>
+              <h3 className="text-xs font-semibold text-gray-900">
+                Secure Processing
+              </h3>
             </div>
-            <p className="text-xs text-gray-600">Privacy-focused analysis with enterprise-grade security measures.</p>
+            <p className="text-xs text-gray-600">
+              Privacy-focused analysis with enterprise-grade security measures.
+            </p>
           </div>
 
           <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
@@ -190,9 +209,13 @@ export default function PIIExtractorPage() {
               <div className="p-1.5 bg-gray-200 rounded-md">
                 <Shield className="h-3 w-3 text-gray-700" />
               </div>
-              <h3 className="text-xs font-semibold text-gray-900">Compliance Ready</h3>
+              <h3 className="text-xs font-semibold text-gray-900">
+                Compliance Ready
+              </h3>
             </div>
-            <p className="text-xs text-gray-600">Built with GDPR, HIPAA, and CCPA compliance in mind.</p>
+            <p className="text-xs text-gray-600">
+              Built with GDPR, HIPAA, and CCPA compliance in mind.
+            </p>
           </div>
         </motion.div>
 
@@ -208,10 +231,13 @@ export default function PIIExtractorPage() {
               <AlertTriangle className="h-4 w-4 text-gray-700" />
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-gray-900 mb-1">Privacy Notice</h3>
+              <h3 className="text-sm font-semibold text-gray-900 mb-1">
+                Privacy Notice
+              </h3>
               <p className="text-xs text-gray-600 leading-relaxed">
-                This tool is for demonstration purposes. Always ensure proper authorization before analyzing personal
-                information and handle extracted PII according to applicable privacy regulations.
+                This tool is for demonstration purposes. Always ensure proper
+                authorization before analyzing personal information and handle
+                extracted PII according to applicable privacy regulations.
               </p>
             </div>
           </div>
@@ -219,7 +245,12 @@ export default function PIIExtractorPage() {
       </motion.div>
 
       {/* Enhanced Floating Popup */}
-      <FloatingPopup isOpen={isPopupOpen} onClose={handleClosePopup} response={apiResponse} isLoading={isLoading} />
+      <FloatingPopup
+        isOpen={isPopupOpen}
+        onClose={handleClosePopup}
+        response={apiResponse}
+        isLoading={isLoading}
+      />
     </div>
-  )
+  );
 }

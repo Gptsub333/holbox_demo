@@ -13,7 +13,7 @@ import {
 } from "./_components/utils";
 
 //Put this is in a .env file when deploying
-const BACKEND_URL = "http://3.148.149.70:8000";
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 export default function DDxAssistantPage() {
   const [symptoms, setSymptoms] = useState("");
