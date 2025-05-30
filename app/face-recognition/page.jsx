@@ -18,7 +18,7 @@ export default function FaceRecognitionPage() {
   const [showScrollHint, setShowScrollHint] = useState(false);
   const resultsRef = useRef(null);
 
-  const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
   const handleVideoSelect = (video) => {
     setSelectedVideo(video);

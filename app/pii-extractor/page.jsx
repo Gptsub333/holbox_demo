@@ -9,7 +9,7 @@ import ExtractButton from "./_components/ExtractButton";
 import FloatingPopup from "./_components/FloatingPopup";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
-const EXTRACT_ENDPOINT = "/extract";
+const EXTRACT_ENDPOINT = "/extract"
 
 export default function PIIExtractorPage() {
   const [text, setText] = useState("");
