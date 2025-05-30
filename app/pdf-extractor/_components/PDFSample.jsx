@@ -12,7 +12,7 @@ const samplePDFs = [
     bgColor: "bg-blue-100",
     borderColor: "border-blue-300",
     color: "text-blue-700",
-    description: "Description for Sample PDF 1",
+    description: "Resume Sample PDF",
   },
   {
     id: 2,
@@ -23,7 +23,7 @@ const samplePDFs = [
     bgColor: "bg-green-100",
     borderColor: "border-green-300",
     color: "text-green-700",
-    description: "Description for Sample PDF 2",
+    description: "Research Paper Sample PDF",
   },
   {
     id: 3,
@@ -34,7 +34,7 @@ const samplePDFs = [
     bgColor: "bg-purple-100",
     borderColor: "border-purple-300",
     color: "text-purple-700",
-    description: "Description for Sample PDF 3",
+    description: "Invoice Sample PDF",
   },
 ]
 
