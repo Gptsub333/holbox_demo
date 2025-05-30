@@ -42,6 +42,7 @@ const features = [
     icon: User,
     description: "Real-time detection and identification",
   },
+   { name: "PDF Extractor", href: "/pdf-extractor", icon: FileText, description: "Upload PDFs and chat for insights" },
   {
     name: "DDx Assistant",
     href: "/ddx-assistant",
@@ -68,7 +69,6 @@ const upcomingFeatures = [
     icon: Video,
     description: "Analyze videos for safety and compliance",
   },
-  { name: "PDF Extractor", href: "/pdf-extractor", icon: FileText, description: "Upload PDFs and chat for insights" },
   { name: "Virtual Try-On", href: "/virtual-try-on", icon: Shirt, description: "Try garments on models using images" },
   { name: "Traffic Chatbot", href: "/traffic-chatbot", icon: Car, description: "AI assistant for traffic conditions" },
   { name: "Voice-Agent", href: "/voice-agent", icon: Mic, description: "Voice-enabled booking and health assistant" },

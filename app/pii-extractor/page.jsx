@@ -8,7 +8,7 @@ import TextAreaInput from "./_components/TextAreaInput"
 import ExtractButton from "./_components/ExtractButton"
 import FloatingPopup from "./_components/FloatingPopup"
 
-const BACKEND_URL = "https://3.148.149.70:8000"
+const BACKEND_URL = "http://3.148.149.70:8000"
 const EXTRACT_ENDPOINT = "/extract"
 
 export default function PIIExtractorPage() {

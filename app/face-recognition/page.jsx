@@ -18,7 +18,7 @@ export default function FaceRecognitionPage() {
   const [showScrollHint, setShowScrollHint] = useState(false)
   const resultsRef = useRef(null)
 
-  const BACKEND_URL = "http://3.148.149.70:8000"
+  const BACKEND_URL = "https://5a85-3-148-149-70.ngrok-free.app"
 
   const handleVideoSelect = (video) => {
     setSelectedVideo(video)
