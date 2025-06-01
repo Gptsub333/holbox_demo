@@ -31,7 +31,7 @@ const SAMPLE_DATA = [
     id: 4,
     name: "Polo Shirt",
     model: "/models/model2.webp",
-    garment: "/garments/poloshirt.avif",
+    garment: "/garments/poloshirt.jpg",
     category: "Polo",
     description: "Classic collar polo shirt for smart casual look"
   }
