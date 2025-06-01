@@ -27,8 +27,12 @@ export default function VirtualTryOnPage() {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = (error) => reject(error);
+      reader.onload = () => {
+        resolve(reader.result);
+      };
+      reader.onerror = (error) => {
+        reject(error);
+      };
     });
   };
 
@@ -67,52 +71,113 @@ export default function VirtualTryOnPage() {
   };
 
   const handleSampleSelect = (sample) => {
-    // Convert sample URLs to File objects if needed
-    // For now, we'll use the URLs directly
     setModelImagePreview(sample.model);
     setGarmentImagePreview(sample.garment);
     
-    // You might need to fetch these images and convert to File objects
-    // depending on your backend requirements
     fetchImageAsFile(sample.model).then(file => setModelImage(file));
     fetchImageAsFile(sample.garment).then(file => setGarmentImage(file));
   };
 
   const fetchImageAsFile = async (url) => {
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      headers: {
+        "ngrok-skip-browser-warning": "true",
+      }
+    });
     const blob = await response.blob();
     return new File([blob], 'sample.jpg', { type: blob.type });
   };
 
   const pollJobStatus = async (jobId) => {
     try {
-      const response = await fetch(`${BACKEND_URL}/virtual-tryon/status/${jobId}`);
-      const data = await response.json();
+      const response = await fetch(`${BACKEND_URL}/virtual-tryon/status/${jobId}`, {
+        headers: {
+          "ngrok-skip-browser-warning": "true",
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Status check failed: ${response.status} ${response.statusText}`);
+      }
+      
+      const text = await response.text();
+      
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (parseError) {
+        setIsProcessing(false);
+        setStatus("failed");
+        return;
+      }
       
       setStatus(data.status);
-      
+
       if (data.status === "completed") {
-        setResult(data.output[0]);
+        if (data.output && data.output.length > 0) {
+          setResult(data.output[0]);
+          setProgress(100);
+          setShowResultModal(true);
+        } else {
+          setStatus("failed");
+        }
         setIsProcessing(false);
-        setProgress(100);
-        setShowResultModal(true);
+        
       } else if (data.status === "failed") {
         setIsProcessing(false);
         setStatus("failed");
-      } else if (data.status === "processing") {
-        setProgress(prev => Math.min(prev + 10, 90));
+        
+        alert("Virtual try-on failed. This could be due to:\n" +
+          "• Image format/size issues\n" + 
+          "• Backend processing error\n" +
+          "• AI model limitations\n" +
+          "Check console for details.");
+        
+      } else if (data.status === "processing" || data.status === "pending") {
+        setProgress((prev) => {
+          const newProgress = Math.min(prev + 5, 90);
+          return newProgress;
+        });
+        
+        setTimeout(() => pollJobStatus(jobId), 3000);
+        
+      } else {
         setTimeout(() => pollJobStatus(jobId), 3000);
       }
+      
     } catch (error) {
-      console.error("Error polling status:", error);
       setIsProcessing(false);
       setStatus("failed");
     }
   };
 
   const handleProcess = async () => {
-    if (!modelImage || !garmentImage) return;
+    if (!modelImage || !garmentImage) {
+      return;
+    }
 
+    // Validate image types
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    if (!validTypes.includes(modelImage.type)) {
+      alert(`Invalid model image type: ${modelImage.type}. Please use JPG, PNG, or WebP.`);
+      return;
+    }
+    if (!validTypes.includes(garmentImage.type)) {
+      alert(`Invalid garment image type: ${garmentImage.type}. Please use JPG, PNG, or WebP.`);
+      return;
+    }
+
+    // Check file sizes (limit to 10MB each)
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    if (modelImage.size > maxSize) {
+      alert(`Model image too large: ${(modelImage.size / 1024 / 1024).toFixed(1)}MB. Please use images under 10MB.`);
+      return;
+    }
+    if (garmentImage.size > maxSize) {
+      alert(`Garment image too large: ${(garmentImage.size / 1024 / 1024).toFixed(1)}MB. Please use images under 10MB.`);
+      return;
+    }
+    
     setIsProcessing(true);
     setProgress(10);
     setResult(null);
@@ -122,31 +187,42 @@ export default function VirtualTryOnPage() {
       const modelBase64 = await convertToBase64(modelImage);
       const garmentBase64 = await convertToBase64(garmentImage);
 
+      const requestBody = {
+        model_image: modelBase64,
+        garment_image: garmentBase64,
+        category: "tops"
+      };
+
       const response = await fetch(`${BACKEND_URL}/virtual-tryon/run`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "ngrok-skip-browser-warning": "true",
         },
-        body: JSON.stringify({
-          model_image: modelBase64,
-          garment_image: garmentBase64,
-          category: "tops"
-        }),
+        body: JSON.stringify(requestBody),
       });
 
       if (!response.ok) {
-        throw new Error(`API error: ${response.statusText}`);
+        const errorText = await response.text();
+        throw new Error(`API error: ${response.status} ${response.statusText}`);
       }
 
-      const data = await response.json();
+      const responseText = await response.text();
+      const data = JSON.parse(responseText);
+
+      if (!data.id) {
+        throw new Error("No job ID returned from API");
+      }
+
       setJobId(data.id);
       setProgress(30);
       
       pollJobStatus(data.id);
+      
     } catch (error) {
-      console.error("Error processing try-on:", error);
       setIsProcessing(false);
       setStatus("failed");
+      alert(`Processing failed: ${error.message}`);
     }
   };
 
