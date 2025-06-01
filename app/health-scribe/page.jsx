@@ -15,8 +15,8 @@ const predefinedAudios = [
   {
     id: "1",
     title: "Sample_data1.mp3",
-    url: "https://jd-health-scribe.s3.ap-south-1.amazonaws.com/Sample_data1/Sample_data1.mp3",
-    s3: "s3://dax-health-transcribe/predefined/Sample_data1.mp3",
+    url: "https://dax-healthscribe-v2.s3.us-east-1.amazonaws.com/predefinedAudios/predefinedAudios1.mp3",
+    s3: "s3://dax-healthscribe-v2/predefinedAudios/predefinedAudios1.mp3",
     duration: "10:26",
     transcript:
       "This is a sample transcript for the first audio recording. The actual transcript will be generated when you click 'Transcribe Audio'.",
@@ -24,8 +24,8 @@ const predefinedAudios = [
   {
     id: "2",
     title: "Sample_data2.mp3",
-    url: "https://jd-health-scribe.s3.ap-south-1.amazonaws.com/Sample_data2/Sample_data2.mp3",
-    s3: "s3://dax-health-transcribe/predefined/Sample_data2.mp3",
+    url: "https://dax-healthscribe-v2.s3.us-east-1.amazonaws.com/predefinedAudios/predefinedAudios2.mp3",
+    s3: "s3://dax-healthscribe-v2/predefinedAudios/predefinedAudios2.mp3",
     duration: "10:45",
     transcript:
       "This is a sample transcript for the second audio recording. The actual transcript will be generated when you click 'Transcribe Audio'.",
@@ -33,13 +33,15 @@ const predefinedAudios = [
   {
     id: "3",
     title: "Sample_data3.mp3",
-    url: "https://jd-health-scribe.s3.ap-south-1.amazonaws.com/Sample_data3/Sample_data3.mp3",
-    s3: "s3://dax-health-transcribe/predefined/Sample_data3.mp3",
+    url: "https://dax-healthscribe-v2.s3.us-east-1.amazonaws.com/predefinedAudios/predefinedAudios3.mp3",
+    s3: "s3://dax-healthscribe-v2/predefinedAudios/predefinedAudios3.mp3",
     duration: "10:46",
     transcript:
       "This is a sample transcript for the third audio recording. The actual transcript will be generated when you click 'Transcribe Audio'.",
   },
 ];
+
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 export default function HealthScribePage() {
   // === States ===
@@ -149,20 +151,26 @@ const onPlayPauseClick = (audio) => {
 };
 
 // Play/Pause toggle handler for audios
-const togglePlay = (audio) => {
+const togglePlay = async (audio) => {
   const audioEl = audioRef.current;
 
-  // If clicking the currently playing audio, pause it
-  if (playingAudioId === audio.id) {
-    audioEl.pause();
-    setPlayingAudioId(null);
-  } else {
-    // If playing another audio, switch source and play
-    audioEl.src = audio.url;
-    audioEl.play();
-    setPlayingAudioId(audio.id);
+  try {
+    if (playingAudioId === audio.id) {
+      audioEl.pause();
+      setPlayingAudioId(null);
+    } else {
+      audioEl.src = audio.url;
+      await audioEl.play();  // wait for play() promise to resolve
+      setPlayingAudioId(audio.id);
+    }
+  } catch (error) {
+    if (error.name !== 'AbortError') {
+      console.error("Audio play error:", error);
+    }
+    // Ignore AbortError since it's expected during rapid source changes
   }
 };
+
 
 function formatTranscript(transcript) {
   return {
@@ -224,10 +232,9 @@ const handleUpload = async () => {
     const formData = new FormData();
     formData.append("file", selectedFile);
 
-    const uploadResponse = await fetch("https://demo.holbox.ai/api/healthbox/transcription/upload-audio", {
-      method: "POST",
-      body: formData,
-    });
+  const uploadResponse = await fetch(`${BACKEND_URL}/healthscribe/upload-audio`,
+    { method: "POST", body: formData });
+
 
     if (!uploadResponse.ok) throw new Error("File upload failed");
 
@@ -237,7 +244,7 @@ const handleUpload = async () => {
 
     setUploadStatus("processing");
 
-    const transcriptionResponse = await fetch("https://demo.holbox.ai/api/healthbox/transcription/start", {
+    const transcriptionResponse = await fetch(`${BACKEND_URL}/healthscribe/start-transcription`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ audioUrl: fileUrl }),
@@ -339,7 +346,7 @@ const handleChatSubmit = async (e) => {
   setIsLoadingAnswer(true);
 
   try {
-    const response = await fetch("https://demo.holbox.ai/api/healthbox/qa/query", {
+    const response = await fetch(`https://demo.holbox.ai/api/healthbox/qa/query`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ question: currentQuestion, transcript }),
