@@ -30,7 +30,7 @@ export default function RedactButton({ onClick, isLoading, disabled }) {
       >
         <div className="flex items-center space-x-1.5">
           {isLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Shield className="w-3.5 h-3.5" />}
-          <span>{isLoading ? "Redacting..." : "Redact PII"}</span>
+          <span>{isLoading ? "Masking..." : "Mask PII"}</span>
         </div>
       </motion.button>
     </motion.div>

@@ -55,7 +55,7 @@ const features = [
     icon: UserX,
     description: "Detect and extract personal information",
   },
-  { name: "PII Redactor", href: "/pii-redactor", icon: FileX, description: "Remove PII from input text securely" },
+  { name: "PII Masker", href: "/pii-redactor", icon: FileX, description: "Remove PII from input text securely" },
 
 ]
 
@@ -72,7 +72,7 @@ const upcomingFeatures = [
   { name: "Virtual Try-On", href: "/virtual-try-on", icon: Shirt, description: "Try garments on models using images" },
   { name: "Traffic Chatbot", href: "/traffic-chatbot", icon: Car, description: "AI assistant for traffic conditions" },
   { name: "Voice-Agent", href: "/voice-agent", icon: Mic, description: "Voice-enabled booking and health assistant" },
-  { name: "Summarization", icon: FileDigit, description: "Automatically summarize long documents and content" },
+  { name: "Summarizer", icon: FileDigit, description: "Automatically summarize long documents and content" },
   { name: "Enterprise Search", icon: FileSearch, description: "Advanced search across all enterprise data" },
   { name: "Structured Extraction", icon: Layers, description: "Extract structured data from unstructured content" },
   {
