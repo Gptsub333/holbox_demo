@@ -4,9 +4,9 @@ import { Send, Sparkles, MessageSquare, Loader2, CornerDownLeft } from "lucide-r
 import { motion, AnimatePresence } from "framer-motion"
 
 const exampleQueries = [
-  "Show me the product ID and name for the first 2 products.",
-  "List all customers from New York.",
-  "What is the average order value?",
+  "Show me the product table ",
+  "Display the joint table of product and sales.",
+  "Average of total sales.",
   "Count the number of orders placed last month.",
 ]
 

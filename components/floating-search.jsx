@@ -23,6 +23,7 @@ import {
   Eye,
   StethoscopeIcon,
   CalendarClock,
+  Wand2,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { motion, AnimatePresence } from "framer-motion"
@@ -56,14 +57,18 @@ const features = [
     icon: UserX,
     description: "Detect and extract personal information",
   },
+   { name: "NL2SQL", href: "/nl2sql", icon: Database, description: "SQL queries using AI with instant results" },
+   { name: "Summarizer",href: "/summarizer", icon: FileDigit, description: "Automatically summarize long documents and content" },
+
   { name: "PII Masker", href: "/pii-redactor", icon: FileX, description: "Remove PII from input text securely" },
+  { name: "Text to Image", href: "/text-to-image", icon: Wand2, description: "Generate images from text descriptions" },
+  { name: "Text to Video", href: "/text-to-video", icon: Video, description: "Generate video from text descriptions" },
 
 ]
 
 // Upcoming features data
 const upcomingFeatures = [
-    { name: "NL2SQL", href: "/nl2sql", icon: Database, description: "SQL queries using AI with instant results" },
-
+   
   {
     name: "Video Compliance",
     href: "/video-compliance",
@@ -72,7 +77,7 @@ const upcomingFeatures = [
   },
   { name: "Traffic Chatbot", href: "/traffic-chatbot", icon: Car, description: "AI assistant for traffic conditions" },
   { name: "Voice-Agent", href: "/voice-agent", icon: Mic, description: "Voice-enabled booking and health assistant" },
-  { name: "Summarization", icon: FileDigit, description: "Automatically summarize long documents and content" },
+  
   { name: "Enterprise Search", icon: FileSearch, description: "Advanced search across all enterprise data" },
   { name: "Structured Extraction", icon: Layers, description: "Extract structured data from unstructured content" },
   {

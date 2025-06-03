@@ -42,7 +42,6 @@ const predefinedAudios = [
 ];
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
-console.log("Backend URL:", BACKEND_URL);
 
 export default function HealthScribePage() {
   // === States ===
@@ -62,6 +61,7 @@ export default function HealthScribePage() {
   const [formattedTranscript, setFormattedTranscript] = useState({});
   const [playingAudioId, setPlayingAudioId] = useState(null);
   const [audioProgress, setAudioProgress] = useState({}); // { audioId: secondsPlayed }
+  const [uploadedAudios, setUploadedAudios] = useState([]);
     const [displayedText, setDisplayedText] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
 
@@ -230,21 +230,25 @@ const handleUpload = async () => {
   setUploadProgress(0);
 
   try {
+    // 1. Upload the file, get S3 URL
     const formData = new FormData();
     formData.append("file", selectedFile);
 
-  const uploadResponse = await fetch(`${BACKEND_URL}/healthscribe/upload-audio`,
-    { method: "POST", body: formData });
-
+    const uploadResponse = await fetch(`${BACKEND_URL}/healthscribe/upload-audio`, {
+      method: "POST",
+      body: formData,
+    });
 
     if (!uploadResponse.ok) throw new Error("File upload failed");
 
     const uploadData = await uploadResponse.json();
+    console.log("Upload response data:", uploadData);
 
-    const fileUrl = uploadData.fileUrl;
+    const fileUrl = uploadData.fileUrl; // S3 URL of uploaded audio
 
     setUploadStatus("processing");
 
+    // 2. Start transcription with S3 URL
     const transcriptionResponse = await fetch(`${BACKEND_URL}/healthscribe/start-transcription`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -254,20 +258,28 @@ const handleUpload = async () => {
     if (!transcriptionResponse.ok) throw new Error("Transcription failed");
 
     const transcriptionData = await transcriptionResponse.json();
+    console.log("Transcription response data:", transcriptionData);
 
-    setUploadStatus("complete");
+    // 3. Create local URL for audio playback from user file
+    const localAudioUrl = URL.createObjectURL(selectedFile);
 
+    // 4. Build new audio object with local playback URL + transcription summary
     const newAudio = {
       id: Date.now().toString(),
       title: selectedFile.name,
-      duration: transcriptionData.duration || "00:00",
-      transcript: transcriptionData.transcript || "",
-      url: fileUrl,
+      duration: transcriptionData.duration || "00:00", // fallback if available
+      transcript: transcriptionData.summary || "",
+      url: localAudioUrl,
+      s3: fileUrl,
     };
 
+    // 5. Update UI state
     setActiveAudio(newAudio);
     setTranscript(newAudio.transcript);
+    setUploadedAudios((prev) => [newAudio, ...prev]);
 
+
+    // Reset modal and states after short delay for UX
     setTimeout(() => {
       setUploadModalOpen(false);
       setUploadProgress(0);
@@ -275,14 +287,14 @@ const handleUpload = async () => {
       setSelectedFile(null);
     }, 1000);
 
-    setSampleAudios((prev) => [newAudio, ...prev]);
   } catch (error) {
-    console.error("Upload failed", error);
+    console.error("Upload or transcription failed", error);
     setUploadStatus("idle");
     setUploadProgress(0);
-    alert("Upload failed: " + error.message);
+    alert("Upload or transcription failed: " + error.message);
   }
 };
+
 
 const handleTranscribe = async () => {
   if (!activeAudio) return;
@@ -415,6 +427,18 @@ return (
           audioProgress={audioProgress}
             selectAudio={selectAudio} 
         />
+        {uploadedAudios.length > 0 && (
+    <>
+      <h2 className="text-xl font-semibold mt-8 mb-4">Uploaded Audios</h2>
+      <AudioSamples
+        sampleAudios={uploadedAudios}
+        playingAudioId={playingAudioId}
+        togglePlay={togglePlay}
+        audioProgress={audioProgress}
+        selectAudio={selectAudio}
+      />
+    </>
+  )}
 
       </motion.div>
 
@@ -460,6 +484,7 @@ return (
       handleDragOver={handleDragOver}
       handleDrop={handleDrop}
     />
+    
 
     {/* Chat Modal */}
     <ChatModal

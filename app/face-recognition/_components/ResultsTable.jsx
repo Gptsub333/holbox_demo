@@ -1,10 +1,45 @@
-"use client"
+"use client";
 
-import { motion, AnimatePresence } from "framer-motion"
-import { User, Clock, CheckCircle } from "lucide-react"
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { User, Clock, CheckCircle } from "lucide-react";
+
+// Function to group the detected faces by name
+const groupByFaceName = (faces) => {
+  const grouped = {};
+
+  faces.forEach((face) => {
+    const { external_image_id, timestamp } = face;
+
+    if (!grouped[external_image_id]) {
+      grouped[external_image_id] = [];
+    }
+
+    grouped[external_image_id].push(timestamp);
+  });
+
+  return grouped;
+};
 
 export default function ResultsTable({ results, isVisible }) {
-  if (!results || !isVisible) return null
+  const [expandedNames, setExpandedNames] = useState(new Set()); // Track which names are expanded
+
+  if (!results || !isVisible) return null;
+
+  const groupedFaces = groupByFaceName(results.detected_faces);
+
+  // Toggle expansion of name
+  const toggleExpand = (name) => {
+    setExpandedNames((prevExpandedNames) => {
+      const newExpandedNames = new Set(prevExpandedNames);
+      if (newExpandedNames.has(name)) {
+        newExpandedNames.delete(name);
+      } else {
+        newExpandedNames.add(name);
+      }
+      return newExpandedNames;
+    });
+  };
 
   return (
     <AnimatePresence>
@@ -50,12 +85,12 @@ export default function ResultsTable({ results, isVisible }) {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {results.detected_faces?.map((face, index) => (
+                {Object.keys(groupedFaces).map((name) => (
                   <motion.tr
-                    key={index}
+                    key={name}
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.3, delay: index * 0.1 }}
+                    transition={{ duration: 0.3 }}
                     className="hover:bg-gray-50 transition-colors duration-200"
                   >
                     <td className="px-4 py-3 whitespace-nowrap">
@@ -65,18 +100,28 @@ export default function ResultsTable({ results, isVisible }) {
                         </div>
                         <div>
                           <div className="text-sm font-medium text-gray-900">
-                            {face.external_image_id || `Person ${index + 1}`}
+                            {name}
                           </div>
                           <div className="text-xs text-gray-500">Recognized</div>
                         </div>
                       </div>
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                          {face.timestamp?.toFixed(2)}s
-                        </span>
-                      </div>
+                      <button
+                        onClick={() => toggleExpand(name)}
+                        className="text-xs font-medium text-blue-600"
+                      >
+                        {expandedNames.has(name) ? "Hide timestamps" : "Show timestamps"}
+                      </button>
+                      {expandedNames.has(name) && (
+                        <ul className="mt-2 pl-6">
+                          {groupedFaces[name].map((timestamp, index) => (
+                            <li key={index} className="text-xs text-gray-500">
+                              {timestamp.toFixed(2)}s
+                            </li>
+                          ))}
+                        </ul>
+                      )}
                     </td>
                   </motion.tr>
                 ))}
@@ -94,5 +139,5 @@ export default function ResultsTable({ results, isVisible }) {
         </motion.div>
       </motion.div>
     </AnimatePresence>
-  )
-}
+  );
+};

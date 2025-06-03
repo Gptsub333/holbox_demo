@@ -7,27 +7,22 @@ import PDFSample from "./_components/PDFSample";
 import PDFReader from "./_components/PDFReader";
 import UploadButton from "./_components/UploadButton";
 import UploadModal from "./_components/UploadModal";
-import SummaryInterface from "./_components/SummaryInterface"; // Import the new Summary component
+import SummaryInterface from "./_components/SummaryInterface"; // Modal to show summary
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
-export default function PDFExtractorPage() {
-  const [selectedPDF, setSelectedPDF] = useState(null); // Preview info
-  const [pdfId, setPdfId] = useState(null);             // Backend PDF ID
+export default function PDFSummarizerPage() {
+  const [selectedPDF, setSelectedPDF] = useState(null); // { id, title, file?, url?, pages? }
+  const [pdfId, setPdfId] = useState(null);             // Backend-generated pdf_id (string)
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
-  const [isSummaryOpen, setIsSummaryOpen] = useState(false); // Control visibility of summary modal
-  const [summary, setSummary] = useState("");              // Store the summary text
+  const [isSummaryOpen, setIsSummaryOpen] = useState(false);
+  const [summary, setSummary] = useState("");
   const [isUploading, setIsUploading] = useState(false);
 
-  // Dummy summary text to simulate backend response
-  const dummySummary = `
-    This document provides a detailed analysis of PDF processing using React and PDF.js.
-    It explains how to integrate PDF viewer components, handle file uploads, and render the contents 
-    of a PDF file dynamically in the web application. The key takeaway from this document is the 
-    efficient management of resources and how to implement interactive features for end-users.
-  `;
-
-  // User selects sample PDF: instant preview + background upload
+  // When user selects a sample PDF:
+  // 1) Show preview instantly,
+  // 2) Upload file in background (simulate or real upload),
+  // 3) Save returned pdf_id.
   const handleSelectPDF = async (pdf) => {
     setSelectedPDF({
       id: pdf.id,
@@ -37,22 +32,32 @@ export default function PDFExtractorPage() {
       pages: pdf.pages || 0,
     });
     setIsUploading(true);
-    setSummary(""); // Clear previous summary
+    setSummary("");
     setIsSummaryOpen(false);
 
-    // Simulate a successful upload and directly set a dummy summary
-    setTimeout(() => {
-      setIsUploading(false); // End uploading
-    }, 1000); // Simulate a delay before showing the summary
+    try {
+      // For sample PDFs, we fetch file from URL and upload it
+      const response = await fetch(pdf.url);
+      const blob = await response.blob();
+      const file = new File([blob], pdf.title + ".pdf", { type: "application/pdf" });
+
+      const uploadedId = await uploadPDFToBackend(file);
+      setPdfId(uploadedId);
+    } catch (err) {
+      alert("Failed to upload sample PDF: " + err.message);
+      setPdfId(null);
+    } finally {
+      setIsUploading(false);
+    }
   };
 
-  // User uploads PDF file: instant preview + background upload
+  // Handle user uploading a PDF file
   const handleUploadPDF = (file) => {
     setIsUploading(true);
     const url = URL.createObjectURL(file);
     setSelectedPDF({ file, url, title: file.name });
     setPdfId(null);
-    setSummary(""); // Clear previous summary
+    setSummary("");
     setIsSummaryOpen(false);
 
     uploadPDFToBackend(file)
@@ -68,10 +73,11 @@ export default function PDFExtractorPage() {
       });
   };
 
+  // Upload PDF file to backend, returns pdf_id string
   async function uploadPDFToBackend(file) {
     const formData = new FormData();
     formData.append("file", file);
-    const res = await fetch(`${BACKEND_URL}/pdf_data_extraction/upload_pdf`, {
+    const res = await fetch(`${BACKEND_URL}/summarizer/upload_pdf`, {
       method: "POST",
       body: formData,
     });
@@ -81,7 +87,13 @@ export default function PDFExtractorPage() {
   }
 
   // Trigger to show the summary
-  const handleSummarize = () => {
+  const handleSummarize = async () => {
+    const res = await fetch(`${BACKEND_URL}/summarizer/get_summary`, {
+      method: "POST",
+      body: formData,
+    });
+    if (!res.ok) throw new Error("Upload failed");
+    const data = await res.json();
     setSummary(dummySummary); // Set dummy summary
     setIsSummaryOpen(true); // Open the summary modal
   };
@@ -89,6 +101,7 @@ export default function PDFExtractorPage() {
   return (
     <div className="container mx-auto px-4 py-6 max-w-6xl">
       <HeaderSection />
+
       <motion.div
         className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-3 gap-4 min-h-[600px]"
         initial={{ opacity: 0, y: 10 }}
@@ -115,17 +128,22 @@ export default function PDFExtractorPage() {
         onUpload={handleUploadPDF}
       />
 
-      {/* Button to trigger summarization */}
+      {/* Summarize button */}
       <motion.div className="mt-4 text-center">
         <button
           onClick={handleSummarize}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md"
+          disabled={isUploading || !selectedPDF}
+          className={`px-4 py-2 rounded-md text-white ${
+            isUploading || !selectedPDF
+              ? "bg-blue-300 cursor-not-allowed"
+              : "bg-blue-600 hover:bg-blue-700"
+          }`}
         >
-          Summarize PDF
+          {isUploading ? "Processing..." : "Summarize PDF"}
         </button>
       </motion.div>
 
-      {/* Pass the summary to the new SummaryInterface */}
+      {/* Show summary modal */}
       <SummaryInterface
         isOpen={isSummaryOpen}
         onClose={() => setIsSummaryOpen(false)}
