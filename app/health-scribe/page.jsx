@@ -42,6 +42,7 @@ const predefinedAudios = [
 ];
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+console.log("Backend URL:", BACKEND_URL);
 
 export default function HealthScribePage() {
   // === States ===
