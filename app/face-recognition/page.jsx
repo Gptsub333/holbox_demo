@@ -32,6 +32,23 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
     setCurrentTime(time);
   };
 
+  const groupByFaceName = (faces) => {
+  const grouped = {};
+
+  faces.forEach((face) => {
+    const { external_image_id, timestamp } = face;
+
+    if (!grouped[external_image_id]) {
+      grouped[external_image_id] = [];
+    }
+
+    grouped[external_image_id].push(timestamp);
+  });
+
+  return grouped;
+};
+
+
   const handleAnalyze = async (timestamp) => {
     if (!selectedVideo) return;
 

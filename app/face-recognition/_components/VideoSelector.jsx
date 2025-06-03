@@ -8,13 +8,13 @@ const predefinedVideos = [
   {
     id: 1,
     name: "Sample Video 1",
-    url: "https://harsh-rekognition-bucket.s3.us-east-1.amazonaws.com/demo_videos/1.mp4",
+    url: "https://harsh-rekognition-bucket.s3.us-east-1.amazonaws.com/demo_videos/hospital.mp4",
     duration: "0:24",
   },
   {
     id: 2,
     name: "Sample Video 2",
-    url: "https://harsh-rekognition-bucket.s3.us-east-1.amazonaws.com/demo_videos/10.mp4",
+    url: "https://harsh-rekognition-bucket.s3.us-east-1.amazonaws.com/demo_videos/house.mp4",
     duration: "0:36",
   },
   {
