@@ -26,6 +26,7 @@ const features = [
     description: "Analyze videos for safety and compliance",
   },
   { name: "PDF Extractor", href: "/pdf-extractor", icon: FileText, description: "Upload PDFs and chat for insights" },
+  { name: "Text to Image", href: "/text-to-image", icon: Wand2, description: "Generate images from text descriptions" },
   { name: "Virtual Try-On", href: "/virtual-try-on", icon: Shirt, description: "Try garments on models using images" },
   { name: "Traffic Chatbot", href: "/traffic-chatbot", icon: Car, description: "AI assistant for traffic conditions" },
   { name: "Voice-Agent", href: "/voice-agent", icon: Mic, description: "Voice-enabled booking and health assistant" },
@@ -42,6 +43,7 @@ const features = [
     description: "Detect and extract personal information",
   },
   { name: "PII Redactor", href: "/pii-redactor", icon: FileX, description: "Remove PII from input text securely" },
+  
 ]
 
 export function FeatureGrid() {

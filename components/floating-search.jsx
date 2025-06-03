@@ -23,6 +23,7 @@ import {
   Eye,
   StethoscopeIcon,
   CalendarClock,
+  Wand2,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { motion, AnimatePresence } from "framer-motion"
@@ -60,6 +61,8 @@ const features = [
    { name: "Summarizer",href: "/summarizer", icon: FileDigit, description: "Automatically summarize long documents and content" },
 
   { name: "PII Masker", href: "/pii-redactor", icon: FileX, description: "Remove PII from input text securely" },
+  { name: "Text to Image", href: "/text-to-image", icon: Wand2, description: "Generate images from text descriptions" },
+  { name: "Text to Video", href: "/text-to-video", icon: Video, description: "Generate video from text descriptions" },
 
 ]
 

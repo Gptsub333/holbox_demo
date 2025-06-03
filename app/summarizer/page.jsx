@@ -77,7 +77,7 @@ export default function PDFSummarizerPage() {
   async function uploadPDFToBackend(file) {
     const formData = new FormData();
     formData.append("file", file);
-    const res = await fetch(`${BACKEND_URL}/pdf_data_extraction/upload_pdf`, {
+    const res = await fetch(`${BACKEND_URL}/summarizer/upload_pdf`, {
       method: "POST",
       body: formData,
     });
@@ -86,50 +86,16 @@ export default function PDFSummarizerPage() {
     return data.pdf_id;
   }
 
-  // When summarize button clicked
+  // Trigger to show the summary
   const handleSummarize = async () => {
-    if (!selectedPDF) {
-      alert("Please select or upload a PDF first.");
-      return;
-    }
-
-    setIsUploading(true);
-    setSummary("");
-    setIsSummaryOpen(false);
-
-    try {
-      let id = pdfId;
-
-      // If we don't have backend id, upload file first
-      if (!id) {
-        if (selectedPDF.file) {
-          id = await uploadPDFToBackend(selectedPDF.file);
-          setPdfId(id);
-        } else {
-          throw new Error("No file to upload or pdf_id missing");
-        }
-      }
-
-      // Call summarize endpoint with pdf_id (ensure string)
-      const res = await fetch(`${BACKEND_URL}/pdf_data_extraction/summarize_pdf`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ pdf_id: String(id) }),
-      });
-
-      if (!res.ok) {
-        const err = await res.text();
-        throw new Error(err || "Failed to get summary");
-      }
-
-      const data = await res.json();
-      setSummary(data.summary || "No summary returned.");
-      setIsSummaryOpen(true);
-    } catch (err) {
-      alert(`Error during summarization: ${err.message}`);
-    } finally {
-      setIsUploading(false);
-    }
+    const res = await fetch(`${BACKEND_URL}/summarizer/get_summary`, {
+      method: "POST",
+      body: formData,
+    });
+    if (!res.ok) throw new Error("Upload failed");
+    const data = await res.json();
+    setSummary(dummySummary); // Set dummy summary
+    setIsSummaryOpen(true); // Open the summary modal
   };
 
   return (
