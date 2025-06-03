@@ -56,7 +56,7 @@ const features = [
     icon: UserX,
     description: "Detect and extract personal information",
   },
-  { name: "PII Redactor", href: "/pii-redactor", icon: FileX, description: "Remove PII from input text securely" },
+  { name: "PII Masker", href: "/pii-redactor", icon: FileX, description: "Remove PII from input text securely" },
 
 ]
 
