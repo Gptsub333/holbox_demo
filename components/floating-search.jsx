@@ -50,12 +50,7 @@ const features = [
     icon: Clipboard,
     description: "Differential diagnosis from symptoms",
   },
-  {
-    name: "PII Extractor",
-    href: "/pii-extractor",
-    icon: UserX,
-    description: "Detect and extract personal information",
-  },
+  
   { name: "PII Masker", href: "/pii-redactor", icon: FileX, description: "Remove PII from input text securely" },
 
 ]
@@ -69,6 +64,12 @@ const upcomingFeatures = [
     href: "/video-compliance",
     icon: Video,
     description: "Analyze videos for safety and compliance",
+  },
+  {
+    name: "PII Extractor",
+    href: "/pii-extractor",
+    icon: UserX,
+    description: "Detect and extract personal information",
   },
  
   { name: "Traffic Chatbot", href: "/traffic-chatbot", icon: Car, description: "AI assistant for traffic conditions" },
