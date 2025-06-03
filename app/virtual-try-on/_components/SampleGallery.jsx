@@ -49,7 +49,7 @@ export default function SampleGallery({ onSampleSelect }) {
   };
 
   return (
-    <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6 h-full">
+    <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6 h-full flex flex-col">
       <div className="flex items-center space-x-3 mb-6">
         <div className="p-2 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg">
           <Sparkles className="h-5 w-5 text-white" />
@@ -60,7 +60,7 @@ export default function SampleGallery({ onSampleSelect }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 max-h-96 overflow-y-auto custom-scrollbar">
+      <div className="grid grid-cols-2 gap-4 flex-1">
         {SAMPLE_DATA.map((sample, index) => (
           <motion.div
             key={sample.id}
@@ -76,9 +76,9 @@ export default function SampleGallery({ onSampleSelect }) {
             onHoverStart={() => setHoveredSample(sample.id)}
             onHoverEnd={() => setHoveredSample(null)}
           >
-            <div className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-all duration-300">
+            <div className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 h-full flex flex-col">
               {/* Sample Preview */}
-              <div className="relative h-32 bg-gradient-to-br from-gray-100 to-gray-200">
+              <div className="relative flex-1 bg-gradient-to-br from-gray-100 to-gray-200 min-h-[120px]">
                 <div className="absolute inset-0 flex">
                   {/* Model Image */}
                   <div className="w-1/2 relative overflow-hidden">
@@ -129,7 +129,7 @@ export default function SampleGallery({ onSampleSelect }) {
               </div>
 
               {/* Sample Info */}
-              <div className="p-3">
+              <div className="p-3 flex-shrink-0">
                 <h3 className="font-medium text-gray-900 text-sm mb-1">
                   {sample.name}
                 </h3>
@@ -156,7 +156,7 @@ export default function SampleGallery({ onSampleSelect }) {
       </div>
 
       {/* Gallery Stats */}
-      <div className="mt-6 pt-4 border-t border-gray-200">
+      <div className="mt-6 pt-4 border-t border-gray-200 flex-shrink-0">
         <div className="grid grid-cols-3 gap-4 text-center">
           <div>
             <p className="text-lg font-semibold text-purple-600">{SAMPLE_DATA.length}</p>
@@ -174,20 +174,6 @@ export default function SampleGallery({ onSampleSelect }) {
       </div>
 
       <style jsx>{`
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 4px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: #f1f5f9;
-          border-radius: 2px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: #cbd5e1;
-          border-radius: 2px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: #94a3b8;
-        }
         .line-clamp-2 {
           display: -webkit-box;
           -webkit-line-clamp: 2;

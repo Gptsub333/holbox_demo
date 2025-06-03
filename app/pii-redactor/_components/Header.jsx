@@ -47,7 +47,7 @@ export default function Header() {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4, duration: 0.6 }}
           >
-            Automatically identify and redact personally identifiable information from your text.
+            Automatically identify and mask your personally identifiable information from your text.
           </motion.p>
         </div>
       </div>
