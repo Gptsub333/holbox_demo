@@ -123,6 +123,21 @@ export default function VoiceAgent() {
   }, []);
   useEffect(() => {
     return () => {
+      const player = wavStreamPlayerRef.current;
+      if (player) {
+        if (player.analyser) {
+          player.analyser.disconnect();
+          player.analyser = null;
+        }
+        if (player.audioContext) {
+          player.audioContext.close();
+          player.audioContext = null;
+        }
+      }
+    };
+  }, []);
+  useEffect(() => {
+    return () => {
       // Stop any playing audio when component unmounts
       if (currentAudio) {
         currentAudio.pause();
@@ -184,7 +199,15 @@ export default function VoiceAgent() {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [items, userScrolled]);
-
+  const getWebSocketState = (state) => {
+    const states = {
+      0: "CONNECTING",
+      1: "OPEN",
+      2: "CLOSING",
+      3: "CLOSED",
+    };
+    return states[state] || "UNKNOWN";
+  };
   // Handle scroll events to detect manual scrolling
   const handleScroll = useCallback((e) => {
     const element = e.target;
@@ -217,11 +240,29 @@ export default function VoiceAgent() {
         setIsAssistantSpeaking(false);
       }
 
+      // Clean up WavStreamPlayer audio context
+      const player = wavStreamPlayerRef.current;
+      if (player) {
+        if (player.analyser) {
+          player.analyser.disconnect();
+          player.analyser = null;
+        }
+        if (player.audioContext) {
+          await player.audioContext.close();
+          player.audioContext = null;
+        }
+      }
+
       // Stop recording if active
       const recorder = wavRecorderRef.current;
-      if (recorder.getStatus() === "recording") {
+      const currentStatus = recorder.getStatus();
+      if (currentStatus === "recording") {
         await recorder.pause();
+      }
+      try {
         await recorder.end();
+      } catch (e) {
+        console.log("No active session to end");
       }
 
       // Close WebSocket
@@ -237,66 +278,80 @@ export default function VoiceAgent() {
       setConversationState("disconnected");
     } catch (error) {
       console.error("Error during disconnect:", error);
+      // Ensure recorder is cleaned up even on error
+      try {
+        await wavRecorderRef.current.end();
+      } catch (e) {}
     }
   }, [currentAudio]);
-  // Start real-time recording
+
   const startRealtimeRecording = useCallback(async () => {
-    // Stop any playing assistant audio
+    // Stop any playing assistant audio completely
     if (currentAudio) {
       currentAudio.pause();
       currentAudio.currentTime = 0;
       setCurrentAudio(null);
       setIsAssistantSpeaking(false);
+
+      // Clean up audio context
+      const player = wavStreamPlayerRef.current;
+      if (player) {
+        if (player.analyser) {
+          player.analyser.disconnect();
+          player.analyser = null;
+        }
+        if (player.audioContext) {
+          await player.audioContext.close();
+          player.audioContext = null;
+        }
+      }
     }
 
     const recorder = wavRecorderRef.current;
 
     try {
-      // First check if there's an existing recording session
       const currentStatus = recorder.getStatus();
       if (currentStatus === "recording") {
         await recorder.pause();
       }
 
-      // End any existing session before starting new one
       try {
         await recorder.end();
       } catch (e) {}
 
       // Initialize new recording session
       await recorder.begin();
+      console.log("Started real-time recording");
+
+      // Set recording state before starting to record
+      setIsRecording(true);
 
       await recorder.record((data) => {
-        if (
-          wsRef.current?.readyState === WebSocket.OPEN &&
-          !isAssistantSpeaking
-        ) {
+        // Remove isAssistantSpeaking check since we handle it by stopping assistant audio
+        if (wsRef.current?.readyState === WebSocket.OPEN) {
           try {
             const audioData =
               data.mono instanceof ArrayBuffer
                 ? new Int16Array(data.mono)
                 : new Int16Array(data.mono.buffer);
-            console.log("Sending audio chunk:", audioData);
             wsRef.current.send(audioData.buffer);
+            console.log("Sent audio chunk:", audioData.length);
           } catch (error) {
-            console.error("Error sending audio chunk:", error);
+            console.error("Error sending audio:", error);
           }
         }
       });
-
-      setIsRecording(true);
     } catch (error) {
       console.error("Real-time recording error:", error);
       setIsRecording(false);
 
-      // Cleanup on error
       try {
         await recorder.end();
       } catch (e) {
         console.error("Cleanup error:", e);
       }
     }
-  }, [isAssistantSpeaking]);
+  }, [currentAudio]);
 
   // Stop real-time recording
   const stopRealtimeRecording = useCallback(async () => {
@@ -323,6 +378,19 @@ export default function VoiceAgent() {
         // Store the audio element reference
         setCurrentAudio(audio);
 
+        const player = wavStreamPlayerRef.current;
+
+        // Always create a new audio context for each playback
+        if (player.audioContext) {
+          await player.audioContext.close();
+          player.audioContext = null;
+          player.analyser = null;
+        }
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        player.audioContext = new AudioContext();
+        player.analyser = player.audioContext.createAnalyser();
+        player.analyser.fftSize = 2048;
+
         audio.addEventListener("error", (e) => {
           console.error("Audio error:", e);
           setIsAssistantSpeaking(false);
@@ -338,15 +406,6 @@ export default function VoiceAgent() {
         });
 
         try {
-          const player = wavStreamPlayerRef.current;
-          if (!player.audioContext) {
-            const AudioContext =
-              window.AudioContext || window.webkitAudioContext;
-            player.audioContext = new AudioContext();
-            player.analyser = player.audioContext.createAnalyser();
-            player.analyser.fftSize = 2048;
-          }
-
           audio.src = url;
           await new Promise((resolve) => {
             audio.addEventListener("loadedmetadata", resolve, { once: true });
@@ -355,7 +414,6 @@ export default function VoiceAgent() {
           const source = player.audioContext.createMediaElementSource(audio);
           source.connect(player.analyser);
           player.analyser.connect(player.audioContext.destination);
-
           await audio.play();
 
           setItems((prev) => {
@@ -390,94 +448,98 @@ export default function VoiceAgent() {
   );
 
   const connectConversation = useCallback(async () => {
-    isInitialLoad.current = true;
-    setUserScrolled(false);
-    if (wsRef.current) wsRef.current.close();
-    const ws = new WebSocket(
-      `wss://${process.env.NEXT_PUBLIC_BACKEND_URL}/voice_agent/voice`
-    );
-    ws.binaryType = "arraybuffer";
-    ws.onopen = async () => {
-      setIsConnected(true);
-      try {
-        await wavRecorderRef.current.begin();
-        await wavStreamPlayerRef.current.connect();
+    try {
+      // First ensure any existing recorder session is cleaned up
+      const recorder = wavRecorderRef.current;
+      const currentStatus = recorder.getStatus();
 
-        // Send initial message
-        const initialMessage = {
-          event: "initial_message",
-          text: "Hello",
-          mode: conversationMode, // Send conversation mode to backend
-        };
-
-        ws.send(JSON.stringify(initialMessage));
-
-        // Start real-time recording if in real-time mode
-        if (conversationMode === "real-time") {
-          startRealtimeRecording();
-        }
-      } catch (error) {
-        console.error("Error during connection setup:", error);
+      if (currentStatus === "recording") {
+        await recorder.pause();
       }
-    };
-    ws.onmessage = async (event) => {
+
       try {
-        if (typeof event.data === "string") {
-          const msg = JSON.parse(event.data);
-          if (msg.type === "ping") {
-            ws.send(JSON.stringify({ type: "pong" }));
-            return;
+        await recorder.end();
+      } catch (e) {
+        console.log("No active session to end");
+      }
+
+      // Close existing WebSocket
+      if (wsRef.current) {
+        wsRef.current.close();
+        wsRef.current = null;
+      }
+
+      isInitialLoad.current = true;
+      setUserScrolled(false);
+
+      // Create new WebSocket connection
+      const ws = new WebSocket(
+        `wss://demo.holbox.ai/api/demo_backend_v2/voice_agent/voice`
+      );
+      ws.binaryType = "arraybuffer";
+
+      ws.onopen = async () => {
+        setIsConnected(true);
+        try {
+          // Now start new recording session
+          await recorder.begin();
+          await wavStreamPlayerRef.current.connect();
+
+          // Send initial message
+          const initialMessage = {
+            event: "initial_message",
+            text: "Hello",
+            mode: conversationMode,
+          };
+
+          ws.send(JSON.stringify(initialMessage));
+
+          if (conversationMode === "real-time") {
+            await startRealtimeRecording();
           }
-          // Handle start_speaking event
-          if (msg.type === "start_speaking") {
-            setConversationState("speaking");
-            setIsAssistantSpeaking(true);
-            return;
-          }
+        } catch (error) {
+          console.error("Error during connection setup:", error);
+          // Cleanup on error
+          try {
+            await recorder.end();
+          } catch (e) {}
+        }
+      };
 
-          // Handle different message types
-          switch (msg.type) {
-            // Switch to push-to-talk mode if background noise is much
-            case "chat_noise":
-              setConversationMode("push-to-talk");
+      ws.onmessage = async (event) => {
+        try {
+          if (typeof event.data === "string") {
+            const msg = JSON.parse(event.data);
+            if (msg.type === "ping") {
+              ws.send(JSON.stringify({ type: "pong" }));
+              return;
+            }
+            // Handle start_speaking event
+            if (msg.type === "start_speaking") {
+              setConversationState("speaking");
+              setIsAssistantSpeaking(true);
+              return;
+            }
 
-              if (wsRef.current?.readyState === WebSocket.OPEN) {
-                wsRef.current.send(
-                  JSON.stringify({
-                    event: "set_mode",
-                    mode: "push-to-talk",
-                  })
-                );
-              }
-              // Stop real-time recording if active
-              if (isRecording) {
-                await stopRealtimeRecording();
-              }
-              // Add message to conversation
-              setItems((prev) => [
-                ...prev,
-                {
-                  id: Date.now(),
-                  role: "assistant",
-                  formatted: { text: msg.content },
-                },
-              ]);
-              break;
+            // Handle different message types
+            switch (msg.type) {
+              // Switch to push-to-talk mode if background noise is much
+              case "chat_noise":
+                setConversationMode("push-to-talk");
 
-            case "chat_response":
-              if (msg.transcript) {
-                setItems((prev) => [
-                  ...prev,
-                  {
-                    id: Date.now() - 1,
-                    role: "user",
-                    formatted: { text: msg.transcript },
-                  },
-                ]);
-              }
-
-              if (msg.content) {
-                //Assistant response
+                if (wsRef.current?.readyState === WebSocket.OPEN) {
+                  wsRef.current.send(
+                    JSON.stringify({
+                      event: "set_mode",
+                      mode: "push-to-talk",
+                    })
+                  );
+                }
+                // Stop real-time recording if active
+                if (isRecording) {
+                  await stopRealtimeRecording();
+                }
+                // Add message to conversation
                 setItems((prev) => [
                   ...prev,
                   {
@@ -486,83 +548,130 @@ export default function VoiceAgent() {
                     formatted: { text: msg.content },
                   },
                 ]);
-              }
-              break;
+                break;
 
-            case "tool_call":
-              // Handle tool call results
-              const toolData = msg.data;
-              if (toolData.name === "set_memory") {
-                // Update memory state
-                const { key, value } = toolData.arguments;
-                setMemoryKv((prev) => ({ ...prev, [key]: value }));
-
-                // Add to conversation
-                setItems((prev) => [
-                  ...prev,
-                  {
-                    id: Date.now(),
-                    role: "tool",
-                    type: "memory",
-                    formatted: {
-                      text: `Saved information: ${key} = ${value}`,
+              case "chat_response":
+                if (msg.transcript) {
+                  setItems((prev) => [
+                    ...prev,
+                    {
+                      id: Date.now() - 1,
+                      role: "user",
+                      formatted: { text: msg.transcript },
                     },
-                  },
-                ]);
-              } else if (toolData.name === "submit_booking") {
-                // Show booking success
-                setShowBookingSuccess(true);
+                  ]);
+                }
 
-                // Add to conversation
-                setItems((prev) => [
-                  ...prev,
-                  {
-                    id: Date.now(),
-                    role: "tool",
-                    type: "booking",
-                    formatted: {
-                      text: `Booking submitted: ${JSON.stringify(
-                        toolData.arguments
-                      )}`,
+                if (msg.content) {
+                  //Assistant response
+                  setItems((prev) => [
+                    ...prev,
+                    {
+                      id: Date.now(),
+                      role: "assistant",
+                      formatted: { text: msg.content },
                     },
-                  },
-                ]);
-              }
-              break;
+                  ]);
+                }
+                break;
 
-            case "error":
-              console.error("Server error:", msg.content);
-              break;
-          }
-        } else if (event.data instanceof ArrayBuffer) {
-          if (conversationMode === "real-time" && isRecording) {
-            await stopRealtimeRecording();
-          }
-          try {
-            // Play the audio and handle visualization
-            await playAssistantAudio(event.data);
-          } catch (error) {
-            console.error("Error handling audio response:", error);
-          } finally {
-            // When audio playback completes, transition back to listening
-            if (conversationMode === "real-time") {
-              setConversationState("listening");
-              startRealtimeRecording();
+              case "tool_call":
+                // Handle tool call results
+                const toolData = msg.data;
+                if (toolData.name === "set_memory") {
+                  // Update memory state
+                  const { key, value } = toolData.arguments;
+                  setMemoryKv((prev) => ({ ...prev, [key]: value }));
+
+                  // Add to conversation
+                  setItems((prev) => [
+                    ...prev,
+                    {
+                      id: Date.now(),
+                      role: "tool",
+                      type: "memory",
+                      formatted: {
+                        text: `Saved information: ${key} = ${value}`,
+                      },
+                    },
+                  ]);
+                } else if (toolData.name === "submit_booking") {
+                  // Show booking success
+                  setShowBookingSuccess(true);
+
+                  // Add to conversation
+                  setItems((prev) => [
+                    ...prev,
+                    {
+                      id: Date.now(),
+                      role: "tool",
+                      type: "booking",
+                      formatted: {
+                        text: `Booking submitted: ${JSON.stringify(
+                          toolData.arguments
+                        )}`,
+                      },
+                    },
+                  ]);
+                }
+                break;
+
+              case "error":
+                console.error("Server error:", msg.content);
+                break;
+            }
+          } else if (event.data instanceof ArrayBuffer) {
+            if (conversationMode === "real-time" && isRecording) {
+              await stopRealtimeRecording();
+            }
+            try {
+              // Play the audio and handle visualization
+              await playAssistantAudio(event.data);
+            } catch (error) {
+              console.error("Error handling audio response:", error);
+            } finally {
+              // When audio playback completes, transition back to listening
+              if (conversationMode === "real-time") {
+                setConversationState("listening");
+                startRealtimeRecording();
+              }
             }
           }
+        } catch (error) {
+          console.error("Error handling WebSocket message:", error);
         }
-      } catch (error) {
-        console.error("Error handling WebSocket message:", error);
-      }
-    };
+      };
 
-    ws.onclose = () => {
-      setIsConnected(false);
-      setConversationState("disconnected");
-    };
-    ws.onerror = (err) => console.error("WebSocket error:", err);
+      ws.onclose = () => {
+        setIsConnected(false);
+        setConversationState("disconnected");
+      };
+      ws.onerror = (event) => {
+        console.error("WebSocket error:", {
+          code: ws.readyState,
+          state: getWebSocketState(ws.readyState),
+          url: ws.url,
+          timestamp: new Date().toISOString(),
+        });
 
-    wsRef.current = ws;
+        // Clean up resources on error
+        setIsConnected(false);
+        setConversationState("disconnected");
+
+        // Attempt reconnection or show user feedback
+        if (wsRef.current) {
+          wsRef.current.close();
+          wsRef.current = null;
+        }
+      };
+      wsRef.current = ws;
+    } catch (error) {
+      console.error("Connection error:", error);
+      // Ensure cleanup on any error
+      try {
+        await wavRecorderRef.current.end();
+      } catch (e) {}
+    }
   }, [
     conversationMode,
     isRecording,
@@ -577,11 +686,25 @@ export default function VoiceAgent() {
    */
 
   const startRecording = useCallback(async () => {
+    // Stop any playing assistant audio completely
     if (currentAudio) {
       currentAudio.pause();
       currentAudio.currentTime = 0;
       setCurrentAudio(null);
       setIsAssistantSpeaking(false);
+
+      // Clean up audio context
+      const player = wavStreamPlayerRef.current;
+      if (player) {
+        if (player.analyser) {
+          player.analyser.disconnect();
+          player.analyser = null;
+        }
+        if (player.audioContext) {
+          await player.audioContext.close();
+          player.audioContext = null;
+        }
+      }
     }
 
     try {
@@ -603,12 +726,10 @@ export default function VoiceAgent() {
       await recorder.record((data) => {
         if (wsRef.current?.readyState === WebSocket.OPEN) {
           try {
-            // Send raw audio data without processing
             const audioData =
               data.mono instanceof ArrayBuffer
                 ? new Int16Array(data.mono)
                 : new Int16Array(data.mono.buffer);
-
             wsRef.current.send(audioData.buffer);
           } catch (error) {
             console.error("Error processing audio chunk:", error);
@@ -619,8 +740,7 @@ export default function VoiceAgent() {
       console.error("Recording error:", error);
       setIsRecording(false);
     }
-  }, []);
-
+  }, [currentAudio]);
   /**
    * In push-to-talk mode, stop recording
    */
@@ -671,38 +791,50 @@ export default function VoiceAgent() {
     const newMode =
       conversationMode === "push-to-talk" ? "real-time" : "push-to-talk";
 
-    // First stop any ongoing recording
-    if (isRecording) {
-      await stopRecording();
-      setIsRecording(false);
-    }
+    try {
+      // Stop any ongoing recording and audio playback
+      if (isRecording) {
+        await stopRecording();
+        setIsRecording(false);
+      }
 
-    // Stop real-time recording if active
-    if (conversationMode === "real-time") {
-      await stopRealtimeRecording();
-    }
+      if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+        setCurrentAudio(null);
+        setIsAssistantSpeaking(false);
+      }
 
-    // Set the new mode
-    setConversationMode(newMode);
+      // Stop real-time recording if active
+      if (conversationMode === "real-time") {
+        await stopRealtimeRecording();
+      }
 
-    // Notify backend about mode change
-    if (wsRef.current?.readyState === WebSocket.OPEN) {
-      wsRef.current.send(
-        JSON.stringify({
-          event: "set_mode",
-          mode: newMode,
-        })
-      );
-    }
+      // Set the new mode
+      setConversationMode(newMode);
 
-    // Start real-time recording only if switching to real-time mode
-    if (newMode === "real-time") {
-      await startRealtimeRecording();
+      // Notify backend about mode change
+      if (wsRef.current?.readyState === WebSocket.OPEN) {
+        wsRef.current.send(
+          JSON.stringify({
+            event: "set_mode",
+            mode: newMode,
+          })
+        );
+      }
+
+      // Start real-time recording only if switching to real-time mode
+      if (newMode === "real-time") {
+        await startRealtimeRecording();
+      }
+    } catch (error) {
+      console.error("Error toggling mode:", error);
     }
   }, [
     isConnected,
     conversationMode,
     isRecording,
+    currentAudio,
     stopRecording,
     stopRealtimeRecording,
     startRealtimeRecording,

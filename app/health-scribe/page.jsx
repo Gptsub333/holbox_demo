@@ -267,7 +267,7 @@ const handleUpload = async () => {
     const newAudio = {
       id: Date.now().toString(),
       title: selectedFile.name,
-      duration: transcriptionData.duration || "00:00", // fallback if available
+      duration: transcriptionData.duration || "", // fallback if available
       transcript: transcriptionData.summary || "",
       url: localAudioUrl,
       s3: fileUrl,
