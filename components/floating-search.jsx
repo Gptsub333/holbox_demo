@@ -83,7 +83,7 @@ const upcomingFeatures = [
   },
   
   { name: "Traffic Chatbot", href: "/traffic-chatbot", icon: Car, description: "AI assistant for traffic conditions" },
-  { name: "Voice-Agent", href: "/voice-agent", icon: Mic, description: "Voice-enabled booking and health assistant" },
+  
   
   { name: "Enterprise Search", icon: FileSearch, description: "Advanced search across all enterprise data" },
   { name: "Structured Extraction", icon: Layers, description: "Extract structured data from unstructured content" },
