@@ -24,6 +24,7 @@ import {
   StethoscopeIcon,
   CalendarClock,
   Wand2,
+   ScanFace
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { motion, AnimatePresence } from "framer-motion"
@@ -59,7 +60,12 @@ const features = [
   },
    { name: "NL2SQL", href: "/nl2sql", icon: Database, description: "SQL queries using AI with instant results" },
    { name: "Summarizer",href: "/summarizer", icon: FileDigit, description: "Automatically summarize long documents and content" },
-
+     {
+    name: "Face Detection", // New Feature
+    href: "/face-detection",
+    icon: ScanFace || User, // Use ScanFace, fallback to User
+    description: "Detect and recognize faces from images",
+  },
   { name: "PII Masker", href: "/pii-redactor", icon: FileX, description: "Remove PII from input text securely" },
   { name: "Text to Image", href: "/text-to-image", icon: Wand2, description: "Generate images from text descriptions" },
   { name: "Text to Video", href: "/text-to-video", icon: Video, description: "Generate video from text descriptions" },
@@ -75,6 +81,7 @@ const upcomingFeatures = [
     icon: Video,
     description: "Analyze videos for safety and compliance",
   },
+  
   { name: "Traffic Chatbot", href: "/traffic-chatbot", icon: Car, description: "AI assistant for traffic conditions" },
   { name: "Voice-Agent", href: "/voice-agent", icon: Mic, description: "Voice-enabled booking and health assistant" },
   
