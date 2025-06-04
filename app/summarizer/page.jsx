@@ -87,16 +87,29 @@ export default function PDFSummarizerPage() {
   }
 
   // Trigger to show the summary
-  const handleSummarize = async () => {
+ const handleSummarize = async () => {
+  try {
+    // Create the body as a JSON string
     const res = await fetch(`${BACKEND_URL}/summarizer/get_summary`, {
       method: "POST",
-      body: formData,
+      headers: {
+        "Content-Type": "application/json", // Ensure content type is set to JSON
+      },
+      body: JSON.stringify({ pdf_id: pdfId }), // Stringify the body
     });
+
+    // Check if the request was successful
     if (!res.ok) throw new Error("Upload failed");
+
     const data = await res.json();
-    setSummary(dummySummary); // Set dummy summary
+    setSummary(data.summary || "No summary returned.");
     setIsSummaryOpen(true); // Open the summary modal
-  };
+  } catch (error) {
+    console.error("Error during summarization:", error.message);
+    alert(`Error: ${error.message}`);
+  }
+};
+
 
   return (
     <div className="container mx-auto px-4 py-6 max-w-6xl">
