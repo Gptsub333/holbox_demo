@@ -59,7 +59,7 @@ const features = [
   },
    { name: "NL2SQL", href: "/nl2sql", icon: Database, description: "SQL queries using AI with instant results" },
    { name: "Summarizer",href: "/summarizer", icon: FileDigit, description: "Automatically summarize long documents and content" },
-
+   { name: "Voice-Agent", href: "/voice-agent", icon: Mic, description: "Voice-enabled booking and health assistant" },
   { name: "PII Masker", href: "/pii-redactor", icon: FileX, description: "Remove PII from input text securely" },
   { name: "Text to Image", href: "/text-to-image", icon: Wand2, description: "Generate images from text descriptions" },
   { name: "Text to Video", href: "/text-to-video", icon: Video, description: "Generate video from text descriptions" },
@@ -76,7 +76,7 @@ const upcomingFeatures = [
     description: "Analyze videos for safety and compliance",
   },
   { name: "Traffic Chatbot", href: "/traffic-chatbot", icon: Car, description: "AI assistant for traffic conditions" },
-  { name: "Voice-Agent", href: "/voice-agent", icon: Mic, description: "Voice-enabled booking and health assistant" },
+  
   
   { name: "Enterprise Search", icon: FileSearch, description: "Advanced search across all enterprise data" },
   { name: "Structured Extraction", icon: Layers, description: "Extract structured data from unstructured content" },
