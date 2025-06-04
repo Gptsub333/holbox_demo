@@ -69,6 +69,7 @@ const features = [
   { name: "PII Masker", href: "/pii-redactor", icon: FileX, description: "Remove PII from input text securely" },
   { name: "Text to Image", href: "/text-to-image", icon: Wand2, description: "Generate images from text descriptions" },
   { name: "Text to Video", href: "/text-to-video", icon: Video, description: "Generate video from text descriptions" },
+  { name: "Voice Agent", href: "/voice-agent", icon: ScanFace, description: "Voice to Voice conversation" },
 
 ]
 
