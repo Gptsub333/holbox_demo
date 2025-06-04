@@ -24,6 +24,7 @@ import {
   StethoscopeIcon,
   CalendarClock,
   Wand2,
+   ScanFace,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { motion, AnimatePresence } from "framer-motion"
@@ -42,6 +43,12 @@ const features = [
     href: "/face-recognition",
     icon: User,
     description: "Real-time detection and identification",
+  },
+    {
+    name: "Face Detection", // New Feature
+    href: "/face-detection",
+    icon: ScanFace || User, // Use ScanFace, fallback to User
+    description: "Detect and recognize faces from images",
   },
 { name: "Virtual Try-On", href: "/virtual-try-on", icon: Shirt, description: "Try garments on models using images" },
    { name: "PDF Extractor", href: "/pdf-extractor", icon: FileText, description: "Upload PDFs and chat for insights" },
