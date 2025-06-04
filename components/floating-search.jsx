@@ -45,7 +45,7 @@ const features = [
     description: "Real-time detection and identification",
   },
 { name: "Virtual Try-On", href: "/virtual-try-on", icon: Shirt, description: "Try garments on models using images" },
-   { name: "PDF Extractor", href: "/pdf-extractor", icon: FileText, description: "Upload PDFs and chat for insights" },
+  // { name: "PDF Extractor", href: "/pdf-extractor", icon: FileText, description: "Upload PDFs and chat for insights" },
   {
     name: "DDx Assistant",
     href: "/ddx-assistant",
