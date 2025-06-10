@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Play, Sparkles } from "lucide-react";
 
 const SAMPLE_DATA = [
- {
+  {
     id: 1,
     name: "Classic White Tee",
     model: "/models/model1.jpg",
@@ -14,7 +14,7 @@ const SAMPLE_DATA = [
   {
     id: 2,
     name: "Hoodie Style",
-    model: "/models/model2.webp",
+    model: "/models/model2.jpg",
     garment: "/garments/hoodie.jpg",
     category: "Hoodies",
     description: "Comfortable pullover hoodie for casual occasions"
@@ -22,15 +22,15 @@ const SAMPLE_DATA = [
   {
     id: 3,
     name: "Denim Jacket",
-    model: "/models/model1.jpg",
-    garment: "/garments/denim.webp",
+    model: "/models/model3.jpg",
+    garment: "/garments/denim.jpg",
     category: "Jackets",
     description: "Classic denim jacket for layered street style"
   },
   {
     id: 4,
     name: "Polo Shirt",
-    model: "/models/model2.webp",
+    model: "/models/model4.jpg",
     garment: "/garments/poloshirt.jpg",
     category: "Polo",
     description: "Classic collar polo shirt for smart casual look"
@@ -38,11 +38,18 @@ const SAMPLE_DATA = [
 ];
 
 export default function SampleGallery({ onSampleSelect }) {
-  const [selectedSample, setSelectedSample] = useState(null);
-  const [hoveredSample, setHoveredSample] = useState(null);
+  const [selectedSamples, setSelectedSamples] = useState([]);
+  const [hoveredSample, setHoveredSample] = useState(null);  // Declare the hoveredSample state
 
   const handleSampleClick = (sample) => {
-    setSelectedSample(sample.id);
+    // Toggle the selected state of the clicked sample
+    if (selectedSamples.some((s) => s.id === sample.id)) {
+      setSelectedSamples(selectedSamples.filter((s) => s.id !== sample.id)); // Remove the sample
+    } else {
+      setSelectedSamples([...selectedSamples, sample]); // Add the sample
+    }
+
+    // Optionally, call the onSampleSelect callback with the selected sample
     if (onSampleSelect) {
       onSampleSelect(sample);
     }
@@ -65,7 +72,7 @@ export default function SampleGallery({ onSampleSelect }) {
           <motion.div
             key={sample.id}
             className={`relative cursor-pointer group ${
-              selectedSample === sample.id 
+              selectedSamples.some((s) => s.id === sample.id) 
                 ? 'ring-2 ring-purple-500 ring-offset-2' 
                 : ''
             }`}
@@ -94,10 +101,10 @@ export default function SampleGallery({ onSampleSelect }) {
                       Model
                     </div>
                   </div>
-                  
+
                   {/* Divider */}
                   <div className="w-px bg-white/50"></div>
-                  
+
                   {/* Garment Image */}
                   <div className="w-1/2 relative overflow-hidden">
                     <img
@@ -118,7 +125,7 @@ export default function SampleGallery({ onSampleSelect }) {
                 <motion.div
                   className="absolute inset-0 bg-gradient-to-r from-purple-600/90 to-blue-600/90 flex items-center justify-center"
                   initial={{ opacity: 0 }}
-                  animate={{ opacity: hoveredSample === sample.id ? 1 : 0 }}
+                  animate={{ opacity: hoveredSample === sample.id ? 1 : 0 }} // Use the hoveredSample state here
                   transition={{ duration: 0.2 }}
                 >
                   <div className="text-center text-white">
@@ -140,7 +147,7 @@ export default function SampleGallery({ onSampleSelect }) {
               </div>
 
               {/* Selection Indicator */}
-              {selectedSample === sample.id && (
+              {selectedSamples.some((s) => s.id === sample.id) && (
                 <motion.div
                   className="absolute top-2 right-2 bg-purple-500 text-white rounded-full p-1"
                   initial={{ scale: 0 }}

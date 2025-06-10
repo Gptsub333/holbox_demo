@@ -146,25 +146,25 @@ export default function ResultsChart({ chartType, data, xAxisKey, yAxisKey }) {
             </Pie>
           </PieChart>
         )
-      // case "Area": // Area case removed
-      //   return (
-      //     <AreaChart data={chartData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
-      //       <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.5} />
-      //       <XAxis dataKey={xAxisKey} {...commonProps} />
-      //       <YAxis {...commonProps} />
-      //       <Tooltip {...tooltipProps} />
-      //       <Legend {...legendProps} />
-      //       <Area
-      //         type="monotone"
-      //         dataKey={yAxisKey}
-      //         stroke={CHART_COLORS.Area}
-      //         strokeWidth={2}
-      //         fillOpacity={0.2}
-      //         fill={CHART_COLORS.Area}
-      //         name={yAxisKey.replace(/_/g, " ")}
-      //       />
-      //     </AreaChart>
-      //   )
+      case "Area": // Area case removed
+        return (
+          <AreaChart data={chartData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+            <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.5} />
+            <XAxis dataKey={xAxisKey} {...commonProps} />
+            <YAxis {...commonProps} />
+            <Tooltip {...tooltipProps} />
+            <Legend {...legendProps} />
+            <Area
+              type="monotone"
+              dataKey={yAxisKey}
+              stroke={CHART_COLORS.Area}
+              strokeWidth={2}
+              fillOpacity={0.2}
+              fill={CHART_COLORS.Area}
+              name={yAxisKey.replace(/_/g, " ")}
+            />
+          </AreaChart>
+        )
       default:
         return <p className="text-gray-500">Unsupported chart type: {chartType}</p>
     }

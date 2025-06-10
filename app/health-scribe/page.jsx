@@ -14,30 +14,30 @@ import UploadModal from "./_components/UploadModal";
 const predefinedAudios = [
   {
     id: "1",
-    title: "Sample_data1.mp3",
-    url: "https://dax-healthscribe-v2.s3.us-east-1.amazonaws.com/predefinedAudios/predefinedAudios1.mp3",
+    title: "Sample data 1.mp3",
+    url: "https://s3.us-east-1.amazonaws.com/demo.holbox.ai/health_scribe/predefinedAudios/predefinedAudios1.mp3",
     s3: "s3://dax-healthscribe-v2/predefinedAudios/predefinedAudios1.mp3",
     duration: "10:26",
     transcript:
-      "This is a sample transcript for the first audio recording. The actual transcript will be generated when you click 'Transcribe Audio'.",
+      "This is a sample transcript for the first audio recording. The actual transcript will be generated when you click 'Transcribe Audio.",
   },
   {
     id: "2",
-    title: "Sample_data2.mp3",
-    url: "https://dax-healthscribe-v2.s3.us-east-1.amazonaws.com/predefinedAudios/predefinedAudios2.mp3",
+    title: "Sample data 2.mp3",
+    url: "https://s3.us-east-1.amazonaws.com/demo.holbox.ai/health_scribe/predefinedAudios/predefinedAudios2.mp3",
     s3: "s3://dax-healthscribe-v2/predefinedAudios/predefinedAudios2.mp3",
     duration: "10:45",
     transcript:
-      "This is a sample transcript for the second audio recording. The actual transcript will be generated when you click 'Transcribe Audio'.",
+      "This is a sample transcript for the second audio recording. The actual transcript will be generated when you click 'Transcribe Audio.",
   },
   {
     id: "3",
-    title: "Sample_data3.mp3",
-    url: "https://dax-healthscribe-v2.s3.us-east-1.amazonaws.com/predefinedAudios/predefinedAudios3.mp3",
+    title: "Sample data 3.mp3",
+    url: "https://s3.us-east-1.amazonaws.com/demo.holbox.ai/health_scribe/predefinedAudios/predefinedAudios3.mp3",
     s3: "s3://dax-healthscribe-v2/predefinedAudios/predefinedAudios3.mp3",
     duration: "10:46",
     transcript:
-      "This is a sample transcript for the third audio recording. The actual transcript will be generated when you click 'Transcribe Audio'.",
+      "This is a sample transcript for the third audio recording. The actual transcript will be generated when you click 'Transcribe Audio.",
   },
 ];
 
@@ -302,12 +302,15 @@ const handleTranscribe = async () => {
   setIsTranscribing(true);
   setTranscribeProgress(0);
 
-  try {
-    const response = await fetch("https://demo.holbox.ai/api/healthbox/transcription/start", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ audioUrl: activeAudio.s3 }),
-    });
+    try {
+      const response = await fetch(
+       `${BACKEND_URL}/healthscribe/start-transcription`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ audioUrl: activeAudio.s3 }),
+        }
+      );
 
     if (!response.ok) throw new Error("Transcription failed");
 
@@ -358,12 +361,15 @@ const handleChatSubmit = async (e) => {
   setCurrentQuestion("");
   setIsLoadingAnswer(true);
 
-  try {
-    const response = await fetch(`https://demo.holbox.ai/api/healthbox/qa/query`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ question: currentQuestion, transcript }),
-    });
+    try {
+      const response = await fetch(
+        `${BACKEND_URL}/healthscribe/question-ans`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ question: currentQuestion, transcript }),
+        }
+      );
 
     if (!response.ok) throw new Error("Failed to get answer");
 
@@ -442,19 +448,20 @@ return (
 
       </motion.div>
 
-      {/* Right: Transcript and controls */}
-      <motion.div className="lg:col-span-3" variants={itemVariants}>
-        <TranscriptDisplay
-          activeAudio={activeAudio}
-          transcript={transcript}
-          isTranscribing={isTranscribing}
-          transcribeProgress={transcribeProgress}
-          formattedTranscript={formattedTranscript}
-          handleTranscribe={handleTranscribe}
-          handleChatClick={handleChatClick}
-        />
-      </motion.div>
-    </div>
+        {/* Right: Transcript and controls */}
+        <motion.div className="lg:col-span-3" variants={itemVariants}>
+          <TranscriptDisplay
+            activeAudio={activeAudio}
+            transcript={transcript}
+            isTranscribing={isTranscribing}
+            transcribeProgress={transcribeProgress}
+            formattedTranscript={formattedTranscript}
+            handleTranscribe={handleTranscribe}
+            handleChatClick={handleChatClick}
+            handleUploadClick={handleUploadClick}
+          />
+        </motion.div>
+      </div>
 
     {/* Floating Upload Button */}
     <div className="fixed bottom-8 right-8 flex flex-col items-end space-y-4">

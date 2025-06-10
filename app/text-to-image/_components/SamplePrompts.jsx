@@ -9,10 +9,10 @@ const samplePrompts = [
       "A breathtaking mountain range at sunset with golden light casting long shadows across a valley with a winding river",
     color: "bg-blue-100 text-blue-800",
   },
-  {
-    category: "Portrait",
+{
+    category: "Space",
     prompt:
-      "A detailed portrait of a wise elderly person with weathered skin and kind eyes, soft lighting from the side",
+      "A breathtaking view of a futuristic space station orbiting a glowing exoplanet, with distant stars and nebulae in the background, dramatic cinematic lighting",
     color: "bg-purple-100 text-purple-800",
   },
   {

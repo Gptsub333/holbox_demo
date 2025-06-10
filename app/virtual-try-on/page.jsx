@@ -70,13 +70,43 @@ export default function VirtualTryOnPage() {
     }
   };
 
-  const handleSampleSelect = (sample) => {
+const handleSampleSelect = (sample) => {
+  // Check if both model and garment images are already set
+  const isModelImageSet = modelImage !== null;
+  const isGarmentImageSet = garmentImage !== null;
+
+  // If both images are not set, set both model and garment
+  if (!isModelImageSet && !isGarmentImageSet) {
     setModelImagePreview(sample.model);
     setGarmentImagePreview(sample.garment);
-    
-    fetchImageAsFile(sample.model).then(file => setModelImage(file));
-    fetchImageAsFile(sample.garment).then(file => setGarmentImage(file));
-  };
+
+    fetchImageAsFile(sample.model).then((file) => setModelImage(file));
+    fetchImageAsFile(sample.garment).then((file) => setGarmentImage(file));
+  } else {
+    // If model image is missing, set it
+    if (!isModelImageSet) {
+      setModelImagePreview(sample.model);
+      fetchImageAsFile(sample.model).then((file) => setModelImage(file));
+    }
+
+    // If garment image is missing, set it
+    if (!isGarmentImageSet) {
+      setGarmentImagePreview(sample.garment);
+      fetchImageAsFile(sample.garment).then((file) => setGarmentImage(file));
+    }
+
+    // If both images are already set, replace both
+    if (isModelImageSet && isGarmentImageSet) {
+      setModelImagePreview(sample.model);
+      setGarmentImagePreview(sample.garment);
+
+      fetchImageAsFile(sample.model).then((file) => setModelImage(file));
+      fetchImageAsFile(sample.garment).then((file) => setGarmentImage(file));
+    }
+  }
+};
+
+
 
   const fetchImageAsFile = async (url) => {
     const response = await fetch(url, {

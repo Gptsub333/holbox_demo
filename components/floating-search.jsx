@@ -25,6 +25,7 @@ import {
   CalendarClock,
   Wand2,
    ScanFace,
+   Activity
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { motion, AnimatePresence } from "framer-motion"
@@ -70,6 +71,7 @@ const features = [
   { name: "PII Masker", href: "/pii-redactor", icon: FileX, description: "Remove PII from input text securely" },
   { name: "Text to Image", href: "/text-to-image", icon: Wand2, description: "Generate images from text descriptions" },
   { name: "Text to Video", href: "/text-to-video", icon: Video, description: "Generate video from text descriptions" },
+  { name: "Voice Agent", href: "/voice-agent", icon: Activity, description: "Voice to Voice conversation" },
 
 ]
 
