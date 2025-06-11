@@ -19,7 +19,7 @@ const UploadButton = ({ onClick }) => {
         }}
       >
         <Upload className="w-5 h-5" /> {/* Smaller icon */}
-        <span className="text-xs font-medium">Upload Audio</span>{" "}
+        <span className="text-xs font-medium">Upload PDF</span>{" "}
         {/* Smaller text */}
       </motion.button>
     </div>
