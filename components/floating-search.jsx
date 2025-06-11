@@ -71,17 +71,10 @@ const features = [
 
    { name: "Voice-Agent", href: "/voice-agent", icon: Mic, description: "Voice-enabled booking and health assistant" },
 
-     {
-    name: "Face Detection", // New Feature
-    href: "/face-detection",
-    icon: ScanFace || User, // Use ScanFace, fallback to User
-    description: "Detect and recognize faces from images",
-  },
 
   { name: "PII Masker", href: "/pii-redactor", icon: FileX, description: "Remove PII from input text securely" },
   { name: "Text to Image", href: "/text-to-image", icon: Wand2, description: "Generate images from text descriptions" },
-  { name: "Text to Video", href: "/text-to-video", icon: Video, description: "Generate video from text descriptions" },
-  { name: "Voice Agent", href: "/voice-agent", icon: ScanFace, description: "Voice to Voice conversation" },
+  { name: "Text to Video", href: "/text-to-video", icon: Video, description: "Generate video from text descriptions" }
 
 
 ]
