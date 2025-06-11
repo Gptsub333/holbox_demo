@@ -160,6 +160,8 @@ export default function FaceDetectionPage() {
       >
         {/* === MODIFIED HEADER SECTION START === */}
         <motion.div variants={itemVariants} className="mb-8">
+          {" "}
+          {/* Was text-center mb-10 */}
           <div className="flex items-center space-x-3">
             <ScanFace className="h-10 w-10 text-blue-600" strokeWidth={1.5} />
             <h1 className="text-3xl font-bold text-gray-800 heading-font">
@@ -167,6 +169,8 @@ export default function FaceDetectionPage() {
             </h1>
           </div>
           <p className="mt-2 text-base text-gray-600 para-font">
+            {" "}
+            {/* Was text-lg */}
             Upload an image to add or recognize faces with our advanced AI.
           </p>
         </motion.div>
@@ -211,3 +215,14 @@ export default function FaceDetectionPage() {
               />
             </CardContent>
           </Card>
+        </motion.div>
+
+        <ResponseDisplay
+          apiResponse={apiResponse}
+          error={error}
+          imagePreview={imagePreview}
+        />
+      </motion.div>
+    </div>
+  );
+}
