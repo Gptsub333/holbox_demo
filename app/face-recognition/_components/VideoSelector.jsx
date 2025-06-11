@@ -15,7 +15,7 @@ const predefinedVideos = [
     id: 2,
     name: "Sample Video 2",
     url: "http://s3.us-east-1.amazonaws.com/demo.holbox.ai/face_rekognition/demo_videos/house.mp4",
-    duration: "0:36",
+    duration: "0:12",
   },
   {
     id: 3,
