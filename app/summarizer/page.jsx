@@ -18,6 +18,8 @@ export default function PDFSummarizerPage() {
   const [isSummaryOpen, setIsSummaryOpen] = useState(false);
   const [summary, setSummary] = useState("");
   const [isUploading, setIsUploading] = useState(false);
+  const [isSummarizing, setIsSummarizing] = useState(false);
+
 
   // When user selects a sample PDF:
   // 1) Show preview instantly,
@@ -89,6 +91,9 @@ export default function PDFSummarizerPage() {
   // Trigger to show the summary
  const handleSummarize = async () => {
   try {
+
+    setIsSummarizing(true);
+
     // Create the body as a JSON string
     const res = await fetch(`${BACKEND_URL}/summarizer/get_summary`, {
       method: "POST",
@@ -107,6 +112,10 @@ export default function PDFSummarizerPage() {
   } catch (error) {
     console.error("Error during summarization:", error.message);
     alert(`Error: ${error.message}`);
+
+  }finally{
+    setIsSummarizing(false);
+
   }
 };
 
@@ -130,6 +139,7 @@ export default function PDFSummarizerPage() {
             selectedPDF={selectedPDF}
             isUploading={isUploading}
             handleSummarize={handleSummarize}
+           isSummarizing={isSummarizing}
           />
         </div>
       </motion.div>
@@ -150,7 +160,7 @@ export default function PDFSummarizerPage() {
             isUploading || !selectedPDF
               ? "bg-blue-300 cursor-not-allowed"
               : "bg-blue-600 hover:bg-blue-700"
-          }`}
+          }}
         >
           {isUploading ? "Processing..." : "Summarize PDF"}
         </button>

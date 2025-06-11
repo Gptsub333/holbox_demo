@@ -19,7 +19,7 @@ import {
 pdfjs.GlobalWorkerOptions.workerSrc =
   "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.8.69/pdf.worker.min.mjs";
 
-const PDFReader = ({ selectedPDF, handleSummarize, isUploading }) => {
+const PDFReader = ({ selectedPDF, handleSummarize, isUploading, isSummarizing }) => {
   const containerRef = useRef(null);
   const [numPages, setNumPages] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -95,23 +95,33 @@ const PDFReader = ({ selectedPDF, handleSummarize, isUploading }) => {
           PDF Viewer
         </h2>
 
-        <div className="flex items-center space-x-3">
-          {selectedPDF && !isUploading && (
-            <button
-              onClick={handleSummarize}
-              className="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1.5 rounded-md flex items-center transition-colors"
-              aria-label="Ask Question"
-            >
-              <FileQuestion className="w-3.5 h-3.5 mr-1.5" />
+                  <div className="flex items-center space-x-3">
+            {selectedPDF && !isUploading && !isSummarizing && (
+              <button
+                onClick={handleSummarize} // Change this to the new function
+                className="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1.5 rounded-md flex items-center transition-colors"
+                aria-label="Ask Question"
+              >
+                <FileQuestion className="w-3.5 h-3.5 mr-1.5" />
                 Summarize PDF
-            </button>
-          )}
-          {isUploading && (
-            <div className=" bg-blue-50 p-2 rounded-xl  flex items-center space-x-1 text-blue-600 text-xs">
-              <Loader2 className="animate-spin w-4 h-4" />
-              <span>Uploading...</span>
-            </div>
-          )}
+              </button>
+            )}
+
+            {isSummarizing && (
+              <div className="bg-blue-50 p-2 rounded-xl flex items-center space-x-1 text-blue-600 text-xs">
+                <Loader2 className="animate-spin w-4 h-4" />
+                <span>Summarizing...</span>
+              </div>
+            )}
+
+            {isUploading && !isSummarizing && (
+              <div className="bg-blue-50 p-2 rounded-xl flex items-center space-x-1 text-blue-600 text-xs">
+                <Loader2 className="animate-spin w-4 h-4" />
+                <span>Uploading...</span>
+              </div>
+            )}
+
+
 
           {selectedPDF && (
             <div className="flex items-center space-x-2">
