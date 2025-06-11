@@ -20,7 +20,6 @@ export default function PDFSummarizerPage() {
   const [isUploading, setIsUploading] = useState(false);
   const [isSummarizing, setIsSummarizing] = useState(false);
 
-
   // When user selects a sample PDF:
   // 1) Show preview instantly,
   // 2) Upload file in background (simulate or real upload),
@@ -89,36 +88,32 @@ export default function PDFSummarizerPage() {
   }
 
   // Trigger to show the summary
- const handleSummarize = async () => {
-  try {
+  const handleSummarize = async () => {
+    try {
+      setIsSummarizing(true);
 
-    setIsSummarizing(true);
+      // Create the body as a JSON string
+      const res = await fetch(`${BACKEND_URL}/summarizer/get_summary`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json", // Ensure content type is set to JSON
+        },
+        body: JSON.stringify({ pdf_id: pdfId }), // Stringify the body
+      });
 
-    // Create the body as a JSON string
-    const res = await fetch(`${BACKEND_URL}/summarizer/get_summary`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json", // Ensure content type is set to JSON
-      },
-      body: JSON.stringify({ pdf_id: pdfId }), // Stringify the body
-    });
+      // Check if the request was successful
+      if (!res.ok) throw new Error("Upload failed");
 
-    // Check if the request was successful
-    if (!res.ok) throw new Error("Upload failed");
-
-    const data = await res.json();
-    setSummary(data.summary || "No summary returned.");
-    setIsSummaryOpen(true); // Open the summary modal
-  } catch (error) {
-    console.error("Error during summarization:", error.message);
-    alert(`Error: ${error.message}`);
-
-  }finally{
-    setIsSummarizing(false);
-
-  }
-};
-
+      const data = await res.json();
+      setSummary(data.summary || "No summary returned.");
+      setIsSummaryOpen(true); // Open the summary modal
+    } catch (error) {
+      console.error("Error during summarization:", error.message);
+      alert(`Error: ${error.message}`);
+    } finally {
+      setIsSummarizing(false);
+    }
+  };
 
   return (
     <div className="container mx-auto px-4 py-6 max-w-6xl">
@@ -139,7 +134,7 @@ export default function PDFSummarizerPage() {
             selectedPDF={selectedPDF}
             isUploading={isUploading}
             handleSummarize={handleSummarize}
-           isSummarizing={isSummarizing}
+            isSummarizing={isSummarizing}
           />
         </div>
       </motion.div>
@@ -160,7 +155,7 @@ export default function PDFSummarizerPage() {
             isUploading || !selectedPDF
               ? "bg-blue-300 cursor-not-allowed"
               : "bg-blue-600 hover:bg-blue-700"
-          }}
+          }`}
         >
           {isUploading ? "Processing..." : "Summarize PDF"}
         </button>
