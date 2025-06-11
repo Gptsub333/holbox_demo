@@ -127,7 +127,7 @@ export default function VisualizationPanel({
                     <Mic className="w-4 h-4 mr-2" />
                     Push-to-Talk
                   </Button>
-                  {/* <Button
+                  <Button
                     onClick={() => {
                       if (conversationMode !== "real-time")
                         toggleConversationMode();
@@ -140,7 +140,7 @@ export default function VisualizationPanel({
                   >
                     <Activity className="w-4 h-4 mr-2" />
                     Real-Time
-                  </Button> */}
+                  </Button>
                 </div>
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
                   {conversationMode === "push-to-talk"

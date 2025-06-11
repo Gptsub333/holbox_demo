@@ -454,7 +454,9 @@ img {
   flex-direction: column;
   justify-content: space-between;
 }
+
 /* globals.css or in the component itself */
+
 .loader-container {
   position: fixed;
   top: 0;

@@ -1,4 +1,5 @@
 "use client"
+
 import { useState, useRef, useEffect } from "react"
 import { Send, Sparkles, MessageSquare, Loader2, CornerDownLeft } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
@@ -21,11 +22,11 @@ export default function ChatPanel({
   const messagesEndRef = useRef(null)
   const textareaRef = useRef(null)
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-  }
+  // const scrollToBottom = () => {
+  //   messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  // }
 
-  useEffect(scrollToBottom, [currentConversation])
+  // useEffect(scrollToBottom, [currentConversation])
 
   // Auto-resize textarea
   useEffect(() => {
@@ -77,8 +78,7 @@ export default function ChatPanel({
   if (compact) {
     return (
       <motion.div
-        className="bg-white rounded-xl shadow-lg border border-gray-200 flex flex-col h-full"
-        initial={{ opacity: 0, y: 20 }}
+        className="bg-white rounded-xl shadow-lg border border-gray-200 flex flex-col h-full max-w-screen-4xl max-h-[600px]" 
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.1 }}
       >
@@ -90,7 +90,7 @@ export default function ChatPanel({
         </div>
 
         {/* Compact Example Queries */}
-        <div className="p-3 border-b border-gray-200">
+        <div className="p-3 border-b rounded-lg  border-gray-200">
           <p className="text-xs text-gray-500 mb-2 flex items-center">
             <Sparkles className="w-3 h-3 mr-1 text-yellow-500" />
             Quick examples:
@@ -167,7 +167,7 @@ export default function ChatPanel({
         </div>
 
         {/* Compact Textarea Input */}
-        <div className="p-3 border-t border-gray-200 bg-white">
+        <div className="p-3 border-t rounded-lg border-gray-200 bg-white">
           <div className="flex items-end space-x-2 bg-slate-100 rounded-lg p-1 border border-slate-200 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition-all">
             <textarea
               ref={textareaRef}
@@ -190,7 +190,7 @@ export default function ChatPanel({
               <Send className="w-3 h-3" />
             </motion.button>
           </div>
-          <p className="text-xs text-gray-400 mt-1 text-center">
+          <p className="text-xs pt-3 text-gray-400 mt-1 text-center">
             Press <kbd className="px-1 py-0.5 text-xs font-semibold text-gray-700 bg-gray-200 border border-gray-300 rounded">Enter</kbd> to send, <kbd className="px-1 py-0.5 text-xs font-semibold text-gray-700 bg-gray-200 border border-gray-300 rounded">Shift+Enter</kbd> for new line
           </p>
         </div>
@@ -201,7 +201,7 @@ export default function ChatPanel({
   // Original full-size layout
   return (
     <motion.div
-      className="bg-white rounded-xl shadow-lg border border-gray-200 flex flex-col overflow-hidden h-full"
+      className="bg-white rounded-xl shadow-lg border border-gray-200 flex flex-col overflow-hidden h-full max-w-screen-xl" // Updated max-width here
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.1 }}

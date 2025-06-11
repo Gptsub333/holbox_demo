@@ -1,30 +1,13 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import NL2SQLHeader from "./_components/NL2SQLHeader"
-import ResultsTable from "./_components/ResultsTable"
-import ResultsChart from "./_components/ResultsChart"
-import ChatPanel from "./_components/ChatPanel"
-import GeneratedQueryDisplay from "./_components/GeneratedQueryDisplay"
-import { Loader2, AlertTriangle, DatabaseZap, Table, BarChart3, History, Code2, Copy, Check } from "lucide-react"
-
-const exampleApiResponse = {
-  answer: {
-    generated_sql: "SELECT product_id, product_name FROM products LIMIT 2;",
-    data: [
-      { product_id: 1, product_name: "Laptop" },
-      { product_id: 2, product_name: "Smartphone" },
-    ],
-    best_chart: "Bar",
-    selected_columns: {
-      x_axis: "product_name",
-      y_axis: "product_id",
-    },
-    summary:
-      'The query retrieves the product ID and name for the first two products from the database. The results show that the first product is a "Laptop" with an ID of 1, and the second product is a "Smartphone" with an ID of 2.',
-  },
-}
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import NL2SQLHeader from "./_components/NL2SQLHeader";
+import ResultsTable from "./_components/ResultsTable";
+import ResultsChart from "./_components/ResultsChart";
+import ChatPanel from "./_components/ChatPanel";
+import GeneratedQueryDisplay from "./_components/GeneratedQueryDisplay";
+import { Loader2, AlertTriangle, DatabaseZap, Table, BarChart3, History, Code2, Copy, Check } from "lucide-react";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
@@ -38,14 +21,13 @@ const useCopyToClipboard = () => {
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), 2000);
     } catch (err) {
-      console.error('Failed to copy text: ', err);
+      console.error("Failed to copy text: ", err);
     }
   };
 
   return { isCopied, copyToClipboard };
 };
 
-// Enhanced Generated Query Display Component with Copy Button
 const GeneratedQueryDisplayWithCopy = ({ sqlQuery }) => {
   const { isCopied, copyToClipboard } = useCopyToClipboard();
 
@@ -58,11 +40,8 @@ const GeneratedQueryDisplayWithCopy = ({ sqlQuery }) => {
         </h3>
         <button
           onClick={() => copyToClipboard(sqlQuery)}
-          className={`flex items-center px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-200 ${
-            isCopied 
-              ? "bg-green-100 text-green-700 border border-green-200" 
-              : "bg-gray-100 text-gray-600 hover:bg-gray-200 border border-gray-200"
-          }`}
+          className={`flex items-center px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-200 ${isCopied ? "bg-green-100 text-green-700 border border-green-200" : "bg-gray-100 text-gray-600 hover:bg-gray-200 border border-gray-200"
+            }`}
           title="Copy to clipboard"
         >
           {isCopied ? (
@@ -87,7 +66,6 @@ const GeneratedQueryDisplayWithCopy = ({ sqlQuery }) => {
   );
 };
 
-// JSON View Component
 const JSONView = ({ data }) => {
   return (
     <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
@@ -107,26 +85,25 @@ const JSONView = ({ data }) => {
 };
 
 export default function NL2SQLPage() {
-  const [apiResponse, setApiResponse] = useState(null)
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState(null)
-  const [activeView, setActiveView] = useState("table") // "table", "chart", or "json"
-  const [showChatHistory, setShowChatHistory] = useState(false)
-  const [queryHistory, setQueryHistory] = useState([])
-  const [currentQuery, setCurrentQuery] = useState(null) // Track current query
+  const [apiResponse, setApiResponse] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [activeView, setActiveView] = useState("table");
+  const [showChatHistory, setShowChatHistory] = useState(false);
+  const [queryHistory, setQueryHistory] = useState([]);
+  const [currentQuery, setCurrentQuery] = useState(null);
 
   const handleQuerySubmit = async (query) => {
     setIsLoading(true);
     setError(null);
     setApiResponse(null);
-    setCurrentQuery(query); // Set current query
+    setCurrentQuery(query);
 
-    // Add to history
     const historyItem = {
       id: Date.now(),
       query: query,
       timestamp: new Date().toLocaleString(),
-      response: null
+      response: null,
     };
 
     try {
@@ -137,22 +114,19 @@ export default function NL2SQLPage() {
         },
         body: JSON.stringify({ question: query }),
       });
-      console.log(res);
+
       if (!res.ok) {
         throw new Error(`API error: ${res.statusText}`);
       }
 
       const data = await res.json();
       setApiResponse(data);
-      
-      // Update history with response
       historyItem.response = data;
-      setQueryHistory(prev => [historyItem, ...prev]);
-      
+      setQueryHistory((prev) => [historyItem, ...prev]);
     } catch (err) {
       setError(err.message || "Unknown error occurred");
       historyItem.error = err.message;
-      setQueryHistory(prev => [historyItem, ...prev]);
+      setQueryHistory((prev) => [historyItem, ...prev]);
     } finally {
       setIsLoading(false);
     }
@@ -177,12 +151,17 @@ export default function NL2SQLPage() {
       opacity: 1,
       transition: { staggerChildren: 0.1, delayChildren: 0.1 },
     },
-  }
+  };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 15 },
-    visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 100, damping: 12 } },
-  }
+    hidden: { opacity: 0, scale: 0.95 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: { type: "spring", stiffness: 150, damping: 25 },
+    },
+  };
+
 
   return (
     <div className="min-h-screen bg-slate-50 text-gray-800">
@@ -195,12 +174,13 @@ export default function NL2SQLPage() {
         animate="visible"
       >
         {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 h-[calc(100vh-200px)]">
-          
-          {/* Left Side - Results Area (3/4 width) */}
-          <div className="lg:col-span-3 space-y-6 flex flex-col">
-            
-            {/* Loading State */}
+        <div className="
+              flex flex-col-reverse
+              lg:grid lg:grid-cols-6 lg:gap-6
+              h-[calc(100vh-200px)]
+            ">
+            {/* Left Side - Results Area */}
+            <div className="lg:col-span-4 space-y-6 flex flex-col">
             {isLoading && (
               <motion.div
                 className="flex flex-col items-center justify-center text-gray-500 bg-white p-8 rounded-xl shadow-lg border border-gray-200 flex-1"
@@ -213,7 +193,7 @@ export default function NL2SQLPage() {
             )}
 
             {/* Error State */}
-            <AnimatePresence mode="wait">
+            <AnimatePresence>
               {error && !isLoading && (
                 <motion.div
                   className="bg-red-50 p-5 rounded-xl shadow-lg border border-red-200 text-red-700 flex items-start space-x-3"
@@ -242,39 +222,24 @@ export default function NL2SQLPage() {
                   exit={{ opacity: 0 }}
                 >
                   {/* Toggle Buttons */}
-                  <motion.div 
-                    className="flex space-x-2 bg-white p-2 rounded-lg shadow-sm border border-gray-200 w-fit"
-                    variants={itemVariants}
-                  >
+                  <motion.div className="flex space-x-2 bg-white p-2 rounded-lg shadow-sm border border-gray-200 w-fit" variants={itemVariants}>
                     <button
                       onClick={() => setActiveView("table")}
-                      className={`flex items-center px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                        activeView === "table"
-                          ? "bg-blue-600 text-white"
-                          : "text-gray-600 hover:bg-gray-100"
-                      }`}
+                      className={`flex items-center px-4 py-2 rounded-md text-sm font-medium transition-colors ${activeView === "table" ? "bg-blue-600 text-white" : "text-gray-600 hover:bg-gray-100"}`}
                     >
                       <Table className="w-4 h-4 mr-2" />
                       Table View
                     </button>
                     <button
                       onClick={() => setActiveView("chart")}
-                      className={`flex items-center px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                        activeView === "chart"
-                          ? "bg-blue-600 text-white"
-                          : "text-gray-600 hover:bg-gray-100"
-                      }`}
+                      className={`flex items-center px-4 py-2 rounded-md text-sm font-medium transition-colors ${activeView === "chart" ? "bg-blue-600 text-white" : "text-gray-600 hover:bg-gray-100"}`}
                     >
                       <BarChart3 className="w-4 h-4 mr-2" />
                       Chart View
                     </button>
                     <button
                       onClick={() => setActiveView("json")}
-                      className={`flex items-center px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                        activeView === "json"
-                          ? "bg-blue-600 text-white"
-                          : "text-gray-600 hover:bg-gray-100"
-                      }`}
+                      className={`flex items-center px-4 py-2 rounded-md text-sm font-medium transition-colors ${activeView === "json" ? "bg-blue-600 text-white" : "text-gray-600 hover:bg-gray-100"}`}
                     >
                       <Code2 className="w-4 h-4 mr-2" />
                       JSON View
@@ -292,7 +257,13 @@ export default function NL2SQLPage() {
                           exit={{ opacity: 0, x: 20 }}
                           className="h-full"
                         >
-                          <ResultsTable data={apiResponse.answer.data} />
+                          {/* SCROLLABLE, BORDERED TABLE AREA */}
+                          <div className="h-[400px] w-full border border-gray-200 rounded-xl bg-white overflow-x-auto overflow-y-auto p-4">
+                            {/* Center horizontally with mx-auto if the table is small */}
+                            <div className="h-full overflow-x-auto overflow-y-auto items-center justify-center">
+                              <ResultsTable data={apiResponse.answer.data} id="results-table" />
+                            </div>
+                          </div>
                         </motion.div>
                       ) : activeView === "chart" ? (
                         <motion.div
@@ -348,7 +319,6 @@ export default function NL2SQLPage() {
                   variants={containerVariants}
                   exit={{ opacity: 0 }}
                 >
-                  {/* Generated Query with Copy Button Only */}
                   <motion.div variants={itemVariants} className="relative">
                     <GeneratedQueryDisplayWithCopy sqlQuery={apiResponse.answer.generated_sql} />
                   </motion.div>
@@ -357,10 +327,8 @@ export default function NL2SQLPage() {
             </AnimatePresence>
           </div>
 
-          {/* Right Side - Chat Panel (1/4 width) */}
-          <div className="lg:col-span-1 flex flex-col space-y-4">
-            
-            {/* Chat History Button */}
+          {/* Right Side - Chat Panel */}
+         <div className="lg:col-span-2 flex flex-col space-y-4 max-w-md">
             <motion.button
               onClick={() => setShowChatHistory(!showChatHistory)}
               className="flex items-center justify-center px-4 py-2 bg-white rounded-lg shadow-sm border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors"
@@ -410,7 +378,7 @@ export default function NL2SQLPage() {
               <ChatPanel
                 onQuerySubmit={handleQuerySubmit}
                 isLoading={isLoading}
-                summaryResponse={apiResponse?.answer?.summary} // Pass summary to chat panel
+                summaryResponse={apiResponse?.answer?.summary}
                 compact={true}
               />
             </motion.div>
@@ -418,5 +386,5 @@ export default function NL2SQLPage() {
         </div>
       </motion.main>
     </div>
-  )
+  );
 }

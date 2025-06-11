@@ -1,5 +1,7 @@
 import React from "react";
 import { MessageSquare, FileAudio, Loader2, Clock } from "lucide-react";
+import { motion } from "framer-motion";
+import {  Upload } from "lucide-react";
 
 export default function TranscriptDisplay({
   activeAudio,
@@ -9,6 +11,7 @@ export default function TranscriptDisplay({
   transcribeProgress,
   handleChatClick,
   handleTranscribe,
+  handleUploadClick
 }) {
   return (
     <div>
@@ -115,12 +118,12 @@ export default function TranscriptDisplay({
                 </div>
               </>
             ) : (
-              <NoTranscriptMessage handleTranscribe={handleTranscribe} />
+              <NoTranscriptMessage handleTranscribe={handleTranscribe}/>
             )}
           </div>
         </>
       ) : (
-        <NoRecordingSelected />
+        <NoRecordingSelected handleUploadClick={handleUploadClick} />
       )}
     </div>
   );
@@ -171,14 +174,33 @@ function NoTranscriptMessage({ handleTranscribe }) {
 }
 
 // Component shown when no recording is selected
-function NoRecordingSelected() {
+function NoRecordingSelected({ handleUploadClick }) {
   return (
-    <div className="rounded-xl border bg-white p-8 shadow-md flex flex-col items-center justify-center text-center h-80">
+    <div className="rounded-xl border bg-white p-8 shadow-md flex flex-col items-center justify-center text-center h-80 space-y-6">
+      {/* Icon and Title Section */}
       <Clock className="w-12 h-12 text-blue-500 mb-4 opacity-70" />
       <h2 className="text-xl font-semibold heading-font mb-2">No Recording Selected</h2>
-      <p className="text-muted-foreground mb-6 max-w-md">
+
+      {/* Upload Button */}
+      <motion.button
+        onClick={handleUploadClick}
+        className="flex items-center space-x-2 rounded-lg bg-blue-600 text-white shadow-lg hover:bg-blue-700 transition-colors mx-auto"
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        aria-label="Upload Audio"
+        style={{
+          padding: "10px 20px", // Adjust padding
+        }}
+      >
+        <Upload className="w-5 h-5" /> {/* Smaller icon */}
+        <span className="text-xs font-medium">Upload Audio</span>
+      </motion.button>
+
+      {/* Description Section */}
+      <p className="text-muted-foreground mb-6 max-w-md mx-auto">
         Select a recording from the list or upload your own audio file to see the transcript and interact with it.
       </p>
     </div>
   );
 }
+

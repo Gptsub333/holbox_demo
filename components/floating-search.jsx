@@ -24,7 +24,9 @@ import {
   StethoscopeIcon,
   CalendarClock,
   Wand2,
-   ScanFace
+   ScanFace,
+   Activity
+
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { motion, AnimatePresence } from "framer-motion"
@@ -44,6 +46,12 @@ const features = [
     icon: User,
     description: "Real-time detection and identification",
   },
+    {
+    name: "Face Detection", // New Feature
+    href: "/face-detection",
+    icon: ScanFace || User, // Use ScanFace, fallback to User
+    description: "Detect and recognize faces from images",
+  },
 { name: "Virtual Try-On", href: "/virtual-try-on", icon: Shirt, description: "Try garments on models using images" },
   // { name: "PDF Extractor", href: "/pdf-extractor", icon: FileText, description: "Upload PDFs and chat for insights" },
   {
@@ -60,16 +68,14 @@ const features = [
   },
    { name: "NL2SQL", href: "/nl2sql", icon: Database, description: "SQL queries using AI with instant results" },
    { name: "Summarizer",href: "/summarizer", icon: FileDigit, description: "Automatically summarize long documents and content" },
-     {
-    name: "Face Detection", // New Feature
-    href: "/face-detection",
-    icon: ScanFace || User, // Use ScanFace, fallback to User
-    description: "Detect and recognize faces from images",
-  },
+
+   { name: "Voice-Agent", href: "/voice-agent", icon: Mic, description: "Voice-enabled booking and health assistant" },
+
+
   { name: "PII Masker", href: "/pii-redactor", icon: FileX, description: "Remove PII from input text securely" },
   { name: "Text to Image", href: "/text-to-image", icon: Wand2, description: "Generate images from text descriptions" },
-  { name: "Text to Video", href: "/text-to-video", icon: Video, description: "Generate video from text descriptions" },
-  { name: "Voice Agent", href: "/voice-agent", icon: ScanFace, description: "Voice to Voice conversation" },
+  { name: "Text to Video", href: "/text-to-video", icon: Video, description: "Generate video from text descriptions" }
+
 
 ]
 
