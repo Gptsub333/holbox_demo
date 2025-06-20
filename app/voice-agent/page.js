@@ -473,9 +473,8 @@ export default function VoiceAgent() {
       setUserScrolled(false);
 
       // Create new WebSocket connection
-      const ws = new WebSocket(
-        `wss://demo.holbox.ai/api/demo_backend_v2/voice_agent/voice`
-      );
+     const ws = new WebSocket('wss://demo.holbox.ai/api/demo_backend_v2/voice_agent/voice');
+
       ws.binaryType = "arraybuffer";
 
       ws.onopen = async () => {

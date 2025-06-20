@@ -16,9 +16,14 @@ export default function FaceRecognitionPage() {
   const [results, setResults] = useState(null);
   const [showResults, setShowResults] = useState(false);
   const [showScrollHint, setShowScrollHint] = useState(false);
+
+  // Recognition timer state
+  const [recognitionElapsed, setRecognitionElapsed] = useState(0);
+  const recognitionTimerRef = useRef(null);
+
   const resultsRef = useRef(null);
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+  const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
   const handleVideoSelect = (video) => {
     setSelectedVideo(video);
@@ -26,6 +31,11 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
     setShowResults(false);
     setCurrentTime(0);
     setShowScrollHint(false);
+    setRecognitionElapsed(0);
+    if (recognitionTimerRef.current) {
+      clearInterval(recognitionTimerRef.current);
+      recognitionTimerRef.current = null;
+    }
   };
 
   const handleTimeUpdate = (time) => {
@@ -33,21 +43,16 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
   };
 
   const groupByFaceName = (faces) => {
-  const grouped = {};
-
-  faces.forEach((face) => {
-    const { external_image_id, timestamp } = face;
-
-    if (!grouped[external_image_id]) {
-      grouped[external_image_id] = [];
-    }
-
-    grouped[external_image_id].push(timestamp);
-  });
-
-  return grouped;
-};
-
+    const grouped = {};
+    faces.forEach((face) => {
+      const { external_image_id, timestamp } = face;
+      if (!grouped[external_image_id]) {
+        grouped[external_image_id] = [];
+      }
+      grouped[external_image_id].push(timestamp);
+    });
+    return grouped;
+  };
 
   const handleAnalyze = async (timestamp) => {
     if (!selectedVideo) return;
@@ -55,12 +60,20 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
     setIsLoading(true);
     setShowResults(false);
     setShowScrollHint(false);
+    setRecognitionElapsed(0);
+
+    // Start recognition timer
+    if (recognitionTimerRef.current) {
+      clearInterval(recognitionTimerRef.current);
+      recognitionTimerRef.current = null;
+    }
+    recognitionTimerRef.current = setInterval(() => {
+      setRecognitionElapsed((prev) => prev + 1);
+    }, 1000);
 
     try {
       // Fetch video from S3 URL as blob
-      const videoBlob = await fetch(selectedVideo.url).then((res) =>
-        res.blob()
-      );
+      const videoBlob = await fetch(selectedVideo.url).then((res) => res.blob());
 
       // Create a File object to send
       const videoFile = new File(
@@ -75,7 +88,7 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
       const formData = new FormData();
       formData.append("video", videoFile);
 
-      // Send to your FastAPI backend - replace with your EC2 public IP
+      // Send to your FastAPI backend
       const response = await fetch(`${BACKEND_URL}/detect_faces`, {
         method: "POST",
         body: formData,
@@ -90,7 +103,7 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
       setResults(data);
       setShowResults(true);
 
-      // Scroll hint logic same as before
+      // Scroll hint logic
       setTimeout(() => {
         if (resultsRef.current) {
           const rect = resultsRef.current.getBoundingClientRect();
@@ -104,6 +117,11 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
       console.error("Analysis failed:", error);
     } finally {
       setIsLoading(false);
+      // Stop recognition timer
+      if (recognitionTimerRef.current) {
+        clearInterval(recognitionTimerRef.current);
+        recognitionTimerRef.current = null;
+      }
     }
   };
 
@@ -137,12 +155,13 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
           />
         </div>
 
-        {/* Analysis Button */}
+        {/* Analysis Button with recognition timer */}
         <AnalysisButton
           selectedVideo={selectedVideo}
           currentTime={currentTime}
           onAnalyze={handleAnalyze}
           isLoading={isLoading}
+          recognitionElapsed={recognitionElapsed}
         />
 
         {/* Results Table */}

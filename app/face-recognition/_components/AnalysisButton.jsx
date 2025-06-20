@@ -1,8 +1,7 @@
-"use client"
 import { motion } from "framer-motion"
 import { Search, Loader2 } from "lucide-react"
 
-export default function AnalysisButton({ selectedVideo, currentTime, onAnalyze, isLoading }) {
+export default function AnalysisButton({ selectedVideo, currentTime, onAnalyze, isLoading, recognitionElapsed }) {
   const handleAnalyze = () => {
     if (selectedVideo && !isLoading) {
       onAnalyze(currentTime)
@@ -34,6 +33,7 @@ export default function AnalysisButton({ selectedVideo, currentTime, onAnalyze, 
           <>
             <Loader2 className="h-4 w-4 animate-spin" />
             <span>Analyzing...</span>
+            <span className="ml-2">{recognitionElapsed}s</span>
           </>
         ) : (
           <>
@@ -42,18 +42,6 @@ export default function AnalysisButton({ selectedVideo, currentTime, onAnalyze, 
           </>
         )}
       </motion.button>
-
-      {selectedVideo && (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.3, delay: 0.1 }}
-          className="ml-3 flex items-center text-xs text-gray-600"
-        >
-          <div className="w-1.5 h-1.5 bg-green-500 rounded-full mr-1.5"></div>
-          Ready at {Math.floor(currentTime)}s
-        </motion.div>
-      )}
     </motion.div>
   )
 }
