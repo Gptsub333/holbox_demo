@@ -52,7 +52,7 @@ const features = [
     icon: ScanFace || User, // Use ScanFace, fallback to User
     description: "Detect and recognize faces from images",
   },
-{ name: "Virtual Try-On", href: "/virtual-try-on", icon: Shirt, description: "Try garments on models using images" },
+
   // { name: "PDF Extractor", href: "/pdf-extractor", icon: FileText, description: "Upload PDFs and chat for insights" },
   {
     name: "DDx Assistant",
@@ -66,12 +66,7 @@ const features = [
     icon: UserX,
     description: "Detect and extract personal information",
   },
-    {
-    name: "PDF Extractor",
-    href: "/pdf-extractor",
-    icon: FileText,
-    description: "Detect and extract personal information",
-  },
+   
    { name: "NL2SQL", href: "/nl2sql", icon: Database, description: "SQL queries using AI with instant results" },
    { name: "Summarizer",href: "/summarizer", icon: FileDigit, description: "Automatically summarize long documents and content" },
 
@@ -87,6 +82,13 @@ const features = [
 
 // Upcoming features data
 const upcomingFeatures = [
+  { name: "Virtual Try-On", href: "/virtual-try-on", icon: Shirt, description: "Try garments on models using images" },
+   {
+    name: "PDF Extractor",
+    href: "/pdf-extractor",
+    icon: FileText,
+    description: "Detect and extract personal information",
+  },
    
   {
     name: "Video Compliance",

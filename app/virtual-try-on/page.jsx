@@ -8,6 +8,7 @@ import UploadSection from "./_components/UploadSection";
 import ResultModal from "./_components/ResultModal";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+// const BACKEND_URL = "http://0.0.0.0:8000/api/demo_backend_v2" ;
 
 export default function VirtualTryOnPage() {
   const [modelImage, setModelImage] = useState(null);
