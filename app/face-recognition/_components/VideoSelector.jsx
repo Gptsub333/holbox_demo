@@ -8,19 +8,19 @@ const predefinedVideos = [
   {
     id: 1,
     name: "Sample Video 1",
-    url: "http://s3.us-east-1.amazonaws.com/demo.holbox.ai/face_rekognition/demo_videos/hospital.mp4",
+    url: "https://s3.us-east-1.amazonaws.com/demo.holbox.ai/face_rekognition/demo_videos/hospital.mp4",
     duration: "0:15",
   },
   {
     id: 2,
     name: "Sample Video 2",
-    url: "http://s3.us-east-1.amazonaws.com/demo.holbox.ai/face_rekognition/demo_videos/house.mp4",
+    url: "https://s3.us-east-1.amazonaws.com/demo.holbox.ai/face_rekognition/demo_videos/house.mp4",
     duration: "0:12",
   },
   {
     id: 3,
     name: "Sample Video 3",
-    url: "http://s3.us-east-1.amazonaws.com/demo.holbox.ai/face_rekognition/demo_videos/20.mp4",
+    url: "https://s3.us-east-1.amazonaws.com/demo.holbox.ai/face_rekognition/demo_videos/20.mp4",
     duration: "0:27",
   },
 ]
