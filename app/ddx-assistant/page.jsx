@@ -68,6 +68,7 @@ export default function DDxAssistantPage() {
   // Parse the diagnosis response
   const parsedDiagnosis = diagnosis ? parseDiagnosisResponse(diagnosis) : null;
 
+
   return (
     <div className="min-h-screen bg-white py-8 sm:py-10 md:py-12 relative overflow-y-auto">
       <motion.div

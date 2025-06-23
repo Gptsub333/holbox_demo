@@ -11,15 +11,16 @@ import {
   MessageSquare,
   Stethoscope,
 } from "lucide-react";
+
 import { cn } from "@/lib/utils";
 
 export default function DiagnosisPopup({
   isOpen,
   onClose,
   diagnosis,
-  parsedDiagnosis,
+  parsedDiagnosis, // expects object from parseDiagnosisResponseV2
 }) {
-  const [activeSection, setActiveSection] = useState("summary");
+  const [activeSection, setActiveSection] = useState("overview");
   const [showTabLabel, setShowTabLabel] = useState(null);
   const popupRef = useRef(null);
 
@@ -29,7 +30,6 @@ export default function DiagnosisPopup({
       if (popupRef.current && !popupRef.current.contains(event.target)) {
         onClose();
       }
-      // Reset tab label visibility when clicking outside
     };
 
     if (isOpen) {
@@ -48,28 +48,11 @@ export default function DiagnosisPopup({
 
   if (!isOpen || !diagnosis || !parsedDiagnosis) return null;
 
-  // Tab configuration with icons and labels
   const tabs = [
-    {
-      id: "summary",
-      label: "Patient Summary",
-      icon: <FileText className="w-5 h-5" />,
-    },
-    {
-      id: "differential",
-      label: "Differential Diagnosis",
-      icon: <ListChecks className="w-5 h-5" />,
-    },
-    {
-      id: "discussion",
-      label: "Discussion",
-      icon: <MessageSquare className="w-5 h-5" />,
-    },
-    {
-      id: "approach",
-      label: "Diagnostic Approach",
-      icon: <Stethoscope className="w-5 h-5" />,
-    },
+    { id: "overview", label: "Case Overview", icon: <FileText className="w-5 h-5" /> },
+    { id: "possibilities", label: "Top Possibilities", icon: <ListChecks className="w-5 h-5" /> },
+    { id: "reasoning", label: "Clinical Reasoning", icon: <MessageSquare className="w-5 h-5" /> },
+    { id: "nextSteps", label: "Next Steps", icon: <Stethoscope className="w-5 h-5" /> },
   ];
 
   return (
@@ -89,11 +72,9 @@ export default function DiagnosisPopup({
           exit={{ scale: 0.9, y: 30 }}
           transition={{ type: "spring", damping: 25, stiffness: 300 }}
         >
-          {/* Popup Header */}
+          {/* Header */}
           <div className="bg-gradient-to-r from-teal-500 to-blue-500 px-6 py-4 flex justify-between items-center flex-shrink-0 rounded-t-[12px]">
-            <h2 className="text-xl font-semibold text-white">
-              Differential Diagnosis
-            </h2>
+            <h2 className="text-xl font-semibold text-white">Differential Diagnosis</h2>
             <button
               onClick={onClose}
               className="text-white/80 hover:text-white rounded-full p-1 hover:bg-white/10 transition-colors"
@@ -102,7 +83,7 @@ export default function DiagnosisPopup({
             </button>
           </div>
 
-          {/* Navigation Tabs - Responsive Design */}
+          {/* Tabs */}
           <div className="bg-gray-50 border-b border-gray-200 px-3 sm:px-6 py-2 flex justify-between sm:justify-start overflow-x-auto flex-shrink-0">
             {tabs.map((tab) => (
               <div key={tab.id} className="relative">
@@ -124,8 +105,7 @@ export default function DiagnosisPopup({
                     {tab.label}
                   </span>
                 </button>
-
-                {/* Mobile tooltip for non-active tabs */}
+                {/* Mobile tooltip */}
                 {showTabLabel === tab.id && activeSection !== tab.id && (
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
@@ -139,260 +119,107 @@ export default function DiagnosisPopup({
             ))}
           </div>
 
-          {/* Popup Content */}
-          <div
-            className="p-6 overflow-y-auto relative"
-            style={{ maxHeight: "calc(90vh - 140px)" }}
-          >
-            {/* Patient Summary Section */}
-            {activeSection === "summary" && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                <h3 className="text-lg font-medium text-gray-800 mb-4">
-                  Patient Presentation
-                </h3>
-                <div className="bg-blue-50 rounded-lg p-4 border border-blue-100">
-                  <ul className="space-y-2">
-                    {parsedDiagnosis.summary.map((item, index) => (
-                      <motion.li
-                        key={index}
-                        className="flex items-start"
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: index * 0.1, duration: 0.3 }}
-                      >
-                        <div className="h-5 w-5 rounded-full bg-blue-200 flex items-center justify-center mr-3 flex-shrink-0">
-                          <div className="h-2 w-2 rounded-full bg-blue-500"></div>
-                        </div>
-                        <span className="text-blue-800">{item}</span>
-                      </motion.li>
-                    ))}
-                  </ul>
-                </div>
-              </motion.div>
-            )}
-
-            {/* Differential Diagnosis Section */}
-            {activeSection === "differential" && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                <div className="mb-6">
-                  <h3 className="text-lg font-medium text-gray-800 mb-4">
-                    Most Likely/Critical Diagnoses
-                  </h3>
-                  <div className="space-y-3">
-                    {parsedDiagnosis.differential.mostLikely.map(
-                      (condition, index) => (
-                        <motion.div
-                          key={index}
-                          className="p-4 rounded-lg bg-red-50 border border-red-200"
+          {/* Tab content */}
+          <div className="p-6 overflow-y-auto relative" style={{ maxHeight: "calc(90vh - 140px)" }}>
+            {/* Case Overview */}
+            {activeSection === "overview" && (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
+                <h3 className="text-lg font-medium text-gray-800 mb-4">Case Overview</h3>
+                <ul className="space-y-2">
+                  {parsedDiagnosis?.overview?.length > 0
+                    ? parsedDiagnosis.overview.map((item, idx) => (
+                        <motion.li
+                          key={idx}
+                          className="flex items-start"
                           initial={{ opacity: 0, x: -10 }}
                           animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: index * 0.1, duration: 0.3 }}
+                          transition={{ delay: idx * 0.1, duration: 0.3 }}
                         >
-                          <div className="flex items-center">
-                            <div className="h-6 w-6 rounded-full bg-red-200 flex items-center justify-center mr-3 flex-shrink-0">
-                              <div className="h-2 w-2 rounded-full bg-red-500"></div>
-                            </div>
-                            <span className="font-medium text-red-800">
-                              {condition}
-                            </span>
+                          <div className="h-5 w-5 rounded-full bg-blue-200 flex items-center justify-center mr-3 flex-shrink-0">
+                            <div className="h-2 w-2 rounded-full bg-blue-500"></div>
                           </div>
-                        </motion.div>
-                      )
-                    )}
-                  </div>
-                </div>
+                          <span className="text-blue-800">{item}</span>
+                        </motion.li>
+                      ))
+                    : <motion.li>No overview available</motion.li>
+                  }
+                </ul>
+              </motion.div>
+            )}
 
-                <div>
-                  <h3 className="text-lg font-medium text-gray-800 mb-4">
-                    Other Considerations
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {parsedDiagnosis.differential.other.map(
-                      (condition, index) => (
-                        <motion.div
-                          key={index}
-                          className="p-3 rounded-lg bg-gray-50 border border-gray-200"
+            {/* Top Possibilities */}
+            {activeSection === "possibilities" && (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
+                <h3 className="text-lg font-medium text-gray-800 mb-4">Top Diagnostic Possibilities</h3>
+                <ul className="space-y-2">
+                  {parsedDiagnosis?.possibilities?.length > 0
+                    ? parsedDiagnosis.possibilities.map((item, idx) => (
+                        <motion.li
+                          key={idx}
+                          className="flex items-start"
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: idx * 0.1, duration: 0.3 }}
+                        >
+                          <div className="h-5 w-5 rounded-full bg-red-200 flex items-center justify-center mr-3 flex-shrink-0">
+                            <div className="h-2 w-2 rounded-full bg-red-500"></div>
+                          </div>
+                          <span className="text-red-800">{item}</span>
+                        </motion.li>
+                      ))
+                    : <motion.li>No possibilities found</motion.li>
+                  }
+                </ul>
+              </motion.div>
+            )}
+
+            {/* Clinical Reasoning */}
+            {activeSection === "reasoning" && (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
+                <h3 className="text-lg font-medium text-gray-800 mb-4">Key Clinical Reasoning</h3>
+                <ul className="space-y-2">
+                  {parsedDiagnosis?.reasoning?.length > 0
+                    ? parsedDiagnosis.reasoning.map((item, idx) => (
+                        <motion.li
+                          key={idx}
+                          className="flex items-start"
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
-                          transition={{
-                            delay: 0.3 + index * 0.1,
-                            duration: 0.3,
-                          }}
+                          transition={{ delay: idx * 0.1, duration: 0.3 }}
                         >
-                          <div className="flex items-center">
-                            <div className="h-5 w-5 rounded-full bg-gray-200 flex items-center justify-center mr-2 flex-shrink-0">
-                              <div className="h-1.5 w-1.5 rounded-full bg-gray-500"></div>
-                            </div>
-                            <span className="text-gray-700">{condition}</span>
+                          <CheckCircle className="w-5 h-5 text-teal-600 mt-0.5 mr-3 flex-shrink-0" />
+                          <span className="text-teal-800">{item}</span>
+                        </motion.li>
+                      ))
+                    : <motion.li>No clinical reasoning found</motion.li>
+                  }
+                </ul>
+              </motion.div>
+            )}
+
+            {/* Next Steps */}
+            {activeSection === "nextSteps" && (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
+                <h3 className="text-lg font-medium text-gray-800 mb-4">Next Diagnostic Steps</h3>
+                <ul className="space-y-2">
+                  {parsedDiagnosis?.nextSteps?.length > 0
+                    ? parsedDiagnosis.nextSteps.map((item, idx) => (
+                        <motion.li
+                          key={idx}
+                          className="flex items-start"
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: idx * 0.1, duration: 0.3 }}
+                        >
+                          <div className="h-5 w-5 rounded-full bg-purple-200 flex items-center justify-center mr-3 flex-shrink-0">
+                            <div className="h-2 w-2 rounded-full bg-purple-500"></div>
                           </div>
-                        </motion.div>
-                      )
-                    )}
-                  </div>
-                </div>
-              </motion.div>
-            )}
-
-            {/* Discussion Section */}
-            {activeSection === "discussion" && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                <h3 className="text-lg font-medium text-gray-800 mb-4">
-                  Discussion of Top Considerations
-                </h3>
-                <div className="bg-teal-50 rounded-lg p-5 border border-teal-100">
-                  <ul className="space-y-3">
-                    {parsedDiagnosis.discussion.map((point, index) => (
-                      <motion.li
-                        key={index}
-                        className="flex items-start"
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.1, duration: 0.3 }}
-                      >
-                        <CheckCircle className="w-5 h-5 text-teal-600 mt-0.5 mr-3 flex-shrink-0" />
-                        <span className="text-teal-800">{point}</span>
-                      </motion.li>
-                    ))}
-                  </ul>
-                </div>
-              </motion.div>
-            )}
-
-            {/* Diagnostic Approach Section */}
-            {activeSection === "approach" && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                <div className="space-y-6">
-                  {/* Immediate Actions */}
-                  <div>
-                    <h3 className="text-lg font-medium text-gray-800 mb-3">
-                      Immediate Actions
-                    </h3>
-                    <div className="bg-red-50 rounded-lg p-4 border border-red-100">
-                      <ul className="space-y-2">
-                        {parsedDiagnosis.approach.immediate.map(
-                          (action, index) => (
-                            <motion.li
-                              key={index}
-                              className="flex items-start"
-                              initial={{ opacity: 0, x: -10 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              transition={{ delay: index * 0.1, duration: 0.3 }}
-                            >
-                              <div className="h-5 w-5 rounded-full bg-red-200 flex items-center justify-center mr-3 flex-shrink-0">
-                                <div className="h-2 w-2 rounded-full bg-red-500"></div>
-                              </div>
-                              <span className="text-red-800">{action}</span>
-                            </motion.li>
-                          )
-                        )}
-                      </ul>
-                    </div>
-                  </div>
-
-                  {/* Imaging */}
-                  <div>
-                    <h3 className="text-lg font-medium text-gray-800 mb-3">
-                      Imaging
-                    </h3>
-                    <div className="bg-blue-50 rounded-lg p-4 border border-blue-100">
-                      <ul className="space-y-2">
-                        {parsedDiagnosis.approach.imaging.map(
-                          (imaging, index) => (
-                            <motion.li
-                              key={index}
-                              className="flex items-start"
-                              initial={{ opacity: 0, x: -10 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              transition={{
-                                delay: 0.3 + index * 0.1,
-                                duration: 0.3,
-                              }}
-                            >
-                              <div className="h-5 w-5 rounded-full bg-blue-200 flex items-center justify-center mr-3 flex-shrink-0">
-                                <div className="h-2 w-2 rounded-full bg-blue-500"></div>
-                              </div>
-                              <span className="text-blue-800">{imaging}</span>
-                            </motion.li>
-                          )
-                        )}
-                      </ul>
-                    </div>
-                  </div>
-
-                  {/* Laboratory Tests */}
-                  <div>
-                    <h3 className="text-lg font-medium text-gray-800 mb-3">
-                      Laboratory Tests
-                    </h3>
-                    <div className="bg-purple-50 rounded-lg p-4 border border-purple-100">
-                      <ul className="space-y-2">
-                        {parsedDiagnosis.approach.labs.map((lab, index) => (
-                          <motion.li
-                            key={index}
-                            className="flex items-start"
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{
-                              delay: 0.6 + index * 0.1,
-                              duration: 0.3,
-                            }}
-                          >
-                            <div className="h-5 w-5 rounded-full bg-purple-200 flex items-center justify-center mr-3 flex-shrink-0">
-                              <div className="h-2 w-2 rounded-full bg-purple-500"></div>
-                            </div>
-                            <span className="text-purple-800">{lab}</span>
-                          </motion.li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-
-                  {/* Additional Considerations */}
-                  <div>
-                    <h3 className="text-lg font-medium text-gray-800 mb-3">
-                      Additional Considerations
-                    </h3>
-                    <div className="bg-teal-50 rounded-lg p-4 border border-teal-100">
-                      <ul className="space-y-2">
-                        {parsedDiagnosis.approach.additional.map(
-                          (item, index) => (
-                            <motion.li
-                              key={index}
-                              className="flex items-start"
-                              initial={{ opacity: 0, x: -10 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              transition={{
-                                delay: 0.9 + index * 0.1,
-                                duration: 0.3,
-                              }}
-                            >
-                              <div className="h-5 w-5 rounded-full bg-teal-200 flex items-center justify-center mr-3 flex-shrink-0">
-                                <div className="h-2 w-2 rounded-full bg-teal-500"></div>
-                              </div>
-                              <span className="text-teal-800">{item}</span>
-                            </motion.li>
-                          )
-                        )}
-                      </ul>
-                    </div>
-                  </div>
-                </div>
+                          <span className="text-purple-800">{item}</span>
+                        </motion.li>
+                      ))
+                    : <motion.li>No next steps listed</motion.li>
+                  }
+                </ul>
               </motion.div>
             )}
 
@@ -408,19 +235,16 @@ export default function DiagnosisPopup({
                   <AlertCircle className="h-5 w-5 text-gray-500" />
                 </div>
                 <div className="ml-3">
-                  <p className="text-sm text-gray-600">
-                    {parsedDiagnosis.disclaimer}
-                  </p>
+                  <p className="text-sm text-gray-600">{parsedDiagnosis?.disclaimer}</p>
                 </div>
               </div>
             </motion.div>
           </div>
 
-          {/* Popup Footer */}
+          {/* Footer */}
           <div className="border-t border-gray-200 px-6 py-4 flex justify-between items-center bg-gray-50 flex-shrink-0 rounded-b-[12px]">
             <div className="text-xs text-gray-500">
-              <span className="font-medium">Note:</span> This is an AI-generated
-              differential diagnosis
+              <span className="font-medium">Note:</span> This is an AI-generated differential diagnosis
             </div>
             <motion.button
               onClick={onClose}
