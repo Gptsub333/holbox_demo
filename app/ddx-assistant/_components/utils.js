@@ -1,154 +1,90 @@
-// Parse the markdown-like response into sections
+// parseDiagnosisResponseV2.js
 export function parseDiagnosisResponse(response) {
-  if (!response)
+  if (!response || !response.answer) {
     return {
-      summary: ["No patient summary available"],
-      differential: {
-        mostLikely: ["No primary diagnoses available"],
-        other: ["No secondary diagnoses available"],
-      },
-      discussion: ["No detailed discussion available"],
-      approach: {
-        immediate: ["No immediate actions specified"],
-        imaging: ["No imaging recommendations available"],
-        labs: ["No laboratory tests recommended"],
-        additional: ["No additional considerations noted"],
-      },
-      disclaimer:
-        "This is a computer-generated response and should not replace professional medical judgment.",
+      overview: [],
+      possibilities: [],
+      reasoning: [],
+      nextSteps: [],
+      disclaimer: "",
     };
+  }
 
+  // Initialize all new sections
   const sections = {
-    summary: [],
-    differential: {
-      mostLikely: [],
-      other: [],
-    },
-    discussion: [],
-    approach: {
-      immediate: [],
-      imaging: [],
-      labs: [],
-      additional: [],
-    },
+    overview: [],
+    possibilities: [],
+    reasoning: [],
+    nextSteps: [],
     disclaimer: "",
   };
 
-  // Split the response by sections
+  // We'll extract text line by line, using headings as markers.
   const lines = response.answer.split("\n");
-  let currentSection = null;
-  let currentSubsection = null;
+  let current = null;
 
-  for (const line of lines) {
-    // Identify sections
-    if (line.includes("Summary of Patient Presentation")) {
-      currentSection = "summary";
-      currentSubsection = null;
-      continue;
-    } else if (line.includes("Differential Diagnosis")) {
-      currentSection = "differential";
-      currentSubsection = null;
-      continue;
-    } else if (line.includes("Discussion of Top Considerations")) {
-      currentSection = "discussion";
-      currentSubsection = null;
-      continue;
-    } else if (line.includes("Suggested Diagnostic Approach")) {
-      currentSection = "approach";
-      currentSubsection = null;
-      continue;
-    } else if (line.includes("Disclaimer")) {
-      currentSection = "disclaimer";
-      currentSubsection = null;
-      continue;
-    }
+  // Helper regex to match headings or question/numbered list.
+  const headingMatchers = [
+    { regex: /Summary of Patient Presentation/i, section: "overview" },
+    { regex: /Differential Diagnosis/i, section: "possibilities" },
+    { regex: /Discussion of Top Considerations/i, section: "reasoning" },
+    { regex: /Suggested Diagnostic Approach/i, section: "nextSteps" },
+    { regex: /Disclaimer/i, section: "disclaimer" }
+  ];
 
-    // Identify subsections
-    if (currentSection === "differential") {
-      if (line.includes("Most Likely/Critical")) {
-        currentSubsection = "mostLikely";
-        continue;
-      } else if (line.includes("Other Considerations")) {
-        currentSubsection = "other";
-        continue;
-      }
-    } else if (currentSection === "approach") {
-      if (line.includes("Immediate Actions")) {
-        currentSubsection = "immediate";
-        continue;
-      } else if (line.includes("Imaging")) {
-        currentSubsection = "imaging";
-        continue;
-      } else if (line.includes("Laboratory Tests")) {
-        currentSubsection = "labs";
-        continue;
-      } else if (line.includes("Additional Considerations")) {
-        currentSubsection = "additional";
-        continue;
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+
+    // Set the current section if line matches a heading
+    for (let matcher of headingMatchers) {
+      if (matcher.regex.test(line)) {
+        current = matcher.section;
+        // Disclaimer is a special case: capture everything after, so join and break
+        if (current === "disclaimer") {
+          // Grab everything else as disclaimer, skip heading line
+          sections.disclaimer = lines.slice(i + 1).join(" ").trim();
+          return sections;
+        }
+        // Don't process the heading line itself
+        line === lines[i] && i++;
+        break;
       }
     }
 
-    // Process content based on current section and subsection
-    if (currentSection === "summary") {
-      if (line.trim().startsWith("-")) {
-        sections.summary.push(line.trim().substring(1).trim());
-      }
-    } else if (currentSection === "differential") {
-      if (currentSubsection && line.trim().startsWith("-")) {
-        sections.differential[currentSubsection].push(
-          line.trim().substring(1).trim()
-        );
-      }
-    } else if (currentSection === "discussion") {
-      if (line.trim().startsWith("-")) {
-        sections.discussion.push(line.trim().substring(1).trim());
-      }
-    } else if (currentSection === "approach") {
-      if (currentSubsection && line.trim().startsWith("-")) {
-        sections.approach[currentSubsection].push(
-          line.trim().substring(1).trim()
-        );
-      }
-    } else if (currentSection === "disclaimer") {
-      if (line.trim() && !line.includes("Disclaimer")) {
-        sections.disclaimer += line.trim() + " ";
+    // Process lines for each section
+    if (!line) continue; // skip empty lines
+
+    // Overview: bullet points (- or numbered)
+    if (current === "overview" && /^(-|\d+\.)\s?/.test(line)) {
+      sections.overview.push(line.replace(/^(-|\d+\.)\s?/, "").trim());
+    }
+
+    // Possibilities: a) b) c) etc.
+    else if (current === "possibilities" && /^[a-eA-E]\)/.test(line)) {
+      sections.possibilities.push(line.replace(/^[a-eA-E]\)\s?/, "").trim());
+    }
+
+    // Reasoning: - bullet points or a) b) explanation blocks
+    else if (current === "reasoning") {
+      // capture multi-line explanations like 'a) ...' and their bullets
+      if (/^[a-eA-E]\)/.test(line)) {
+        // Begin a new diagnosis explanation (e.g., 'a) Idiopathic Pulmonary Fibrosis (IPF):')
+        sections.reasoning.push(line.replace(/^[a-eA-E]\)\s?/, "").trim());
+      } else if (line.startsWith("-")) {
+        // Bulleted reason for the last diagnosis
+        const last = sections.reasoning.length - 1;
+        if (last >= 0) {
+          // Attach as subtext or group, or just push
+          sections.reasoning.push(line.replace(/^-/, "").trim());
+        }
       }
     }
-  }
-  if (sections.summary.length === 0) {
-    sections.summary = ["No patient summary available"];
-  }
-  if (sections.differential.mostLikely.length === 0) {
-    sections.differential.mostLikely = ["No primary diagnoses available"];
-  }
-  if (sections.differential.other.length === 0) {
-    sections.differential.other = ["No secondary diagnoses available"];
-  }
-  if (sections.discussion.length === 0) {
-    sections.discussion = ["No detailed discussion available"];
-  }
-  if (sections.approach.immediate.length === 0) {
-    sections.approach.immediate = ["No immediate actions specified"];
-  }
-  if (sections.approach.imaging.length === 0) {
-    sections.approach.imaging = ["No imaging recommendations available"];
-  }
-  if (sections.approach.labs.length === 0) {
-    sections.approach.labs = ["No laboratory tests recommended"];
-  }
-  if (sections.approach.additional.length === 0) {
-    sections.approach.additional = ["No additional considerations noted"];
-  }
-  if (!sections.disclaimer.trim()) {
-    sections.disclaimer =
-      "This is a computer-generated response and should not replace professional medical judgment.";
+
+    // Next Steps: - bullets or numbered
+    else if (current === "nextSteps" && (/^(-|\d+\.)\s?/.test(line))) {
+      sections.nextSteps.push(line.replace(/^(-|\d+\.)\s?/, "").trim());
+    }
   }
 
   return sections;
 }
-
-// Sample API response structure for testing
-export const sampleDiagnosisResponse = {
-  answer:
-    "Thank you for providing this clinical scenario. I understand the urgency of the situation, and I'll provide a differential diagnosis along with suggested next steps. Let's break this down:\n\n1. **Summary of Patient Presentation**:\n   - 28-year-old woman\n   - Sudden-onset severe headache\n   - Neck stiffness\n   - Brief loss of consciousness\n   - High mortality without immediate intervention\n   - Potential for improved survival with timely neurosurgical or endovascular treatment\n\n2. **Differential Diagnosis**:\n\na) Most Likely/Critical:\n   - Subarachnoid Hemorrhage (SAH)\n   - Ruptured cerebral aneurysm\n\nb) Other Considerations:\n   - Meningitis (bacterial or viral)\n   - Cerebral venous sinus thrombosis\n   - Cervical artery dissection\n   - Pituitary apoplexy\n   - Reversible cerebral vasoconstriction syndrome (RCVS)\n\n3. **Discussion of Top Considerations**:\n\nSubarachnoid Hemorrhage (SAH) / Ruptured Cerebral Aneurysm:\n- The sudden-onset severe headache, often described as a \"thunderclap headache,\" is classic for SAH.\n- Neck stiffness is a common finding due to meningeal irritation from blood in the subarachnoid space.\n- Loss of consciousness can occur at the time of rupture.\n- The high mortality without intervention and potential for improved outcomes with timely treatment align with the natural history of SAH.\n- SAH is most commonly caused by a ruptured cerebral aneurysm in this age group.\n\n4. **Suggested Diagnostic Approach**:\n\na) Immediate Actions:\n   - Stabilize the patient: Ensure airway, breathing, and circulation are adequate.\n   - Neurological examination, including Glasgow Coma Scale.\n   - Check vital signs, with attention to blood pressure management.\n\nb) Imaging:\n   - Non-contrast CT scan of the head (urgent): This is the first-line imaging test for suspected SAH.\n   - If CT is negative but suspicion remains high, consider lumbar puncture to look for xanthochromia.\n   - CT angiography (CTA) or digital subtraction angiography (DSA) to identify and characterize any aneurysms.\n\nc) Laboratory Tests:\n   - Complete blood count\n   - Coagulation profile (PT, PTT, INR)\n   - Basic metabolic panel\n   - Toxicology screen (to rule out other causes of altered mental status)\n\nd) Additional Considerations:\n   - Neurosurgical or interventional neuroradiology consultation for potential urgent intervention.\n   - Continuous cardiac monitoring and frequent neurological checks.\n   - Consider nimodipine administration to prevent vasospasm if SAH is confirmed.\n\n5. **Disclaimer**:\nThis differential diagnosis is generated to assist clinical reasoning but is not a substitute for professional medical judgment. The suggestions provided should be verified and interpreted by qualified healthcare professionals in the context of the specific patient scenario. The differential diagnosis generated is based solely on the information provided and may change significantly with additional clinical details. This tool does not provide definitive medical advice, diagnosis, or treatment recommendations. In case of medical emergency, contact emergency services immediately.\n\nGiven the potentially life-threatening nature of this presentation, immediate medical attention and rapid diagnostic workup are crucial. The focus should be on quickly confirming or ruling out subarachnoid hemorrhage, as this diagnosis requires urgent intervention to improve outcomes.",
-};
