@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { usePathname } from "next/navigation";
+
 import {
   X,
   Search,
@@ -41,14 +42,16 @@ const features = [
     icon: Stethoscope,
     description: "Transcribe medical audio and get answers",
   },
+  
   {
-    name: "Face Recognition",
+    name: "Face Detection By Video",
     href: "/face-recognition",
     icon: User,
     description: "Real-time detection and identification",
   },
+  
   {
-    name: "Face Detection", // New Feature
+    name: "Face Detection By Image", // New Feature
     href: "/face-detection",
     icon: ScanFace || User, // Use ScanFace, fallback to User
     description: "Detect and recognize faces from images",
@@ -71,9 +74,12 @@ const features = [
   { name: "NL2SQL", href: "/nl2sql", icon: Database, description: "SQL queries using AI with instant results" },
   { name: "Summarizer", href: "/summarizer", icon: FileDigit, description: "Automatically summarize long documents and content" },
 
+ 
+
   { name: "Voice-Agent", href: "/voice-agent", icon: Mic, description: "Voice-enabled booking and health assistant" },
 
-
+  
+  { name: "Virtual Try-On", href: "/virtual-try-on", icon: Shirt, description: "Try garments on models using images" },
   { name: "PII Masker", href: "/pii-redactor", icon: FileX, description: "Remove PII from input text securely" },
   { name: "Text to Image", href: "/text-to-image", icon: Wand2, description: "Generate images from text descriptions" },
   { name: "Text to Video", href: "/text-to-video", icon: Video, description: "Generate video from text descriptions" }
@@ -83,13 +89,16 @@ const features = [
 
 // Upcoming features data
 const upcomingFeatures = [
-  { name: "Virtual Try-On", href: "/virtual-try-on", icon: Shirt, description: "Try garments on models using images" },
+ 
+  
+  
   {
     name: "PDF Extractor",
     href: "/pdf-extractor",
     icon: FileText,
     description: "Detect and extract personal information",
   },
+
 
   {
     name: "Video Compliance",
@@ -98,7 +107,10 @@ const upcomingFeatures = [
     description: "Analyze videos for safety and compliance",
   },
 
+
   { name: "Traffic Chatbot", href: "/traffic-chatbot", icon: Car, description: "AI assistant for traffic conditions" },
+
+
 
 
   { name: "Enterprise Search", icon: FileSearch, description: "Advanced search across all enterprise data" },
@@ -123,8 +135,6 @@ export function FloatingSearch({ isOpen, onClose }) {
   const panelRef = useRef(null)
   const contentRef = useRef(null)
   const pathname = usePathname();  // Use this line to get the current path
-
-
 
   useEffect(() => {
     if (isOpen) {
@@ -283,15 +293,6 @@ export function FloatingSearch({ isOpen, onClose }) {
                 <button
                   className={cn(
                     "px-2.5 py-0.5 text-[10px] rounded-md",
-                    activeTab === "all" ? "bg-blue-900 text-blue-100 font-medium" : "bg-gray-800 text-gray-300 hover:bg-gray-700"
-                  )}
-                  onClick={() => setActiveTab("all")}
-                >
-                  All
-                </button>
-                <button
-                  className={cn(
-                    "px-2.5 py-0.5 text-[10px] rounded-md",
                     activeTab === "features" ? "bg-blue-900 text-blue-100 font-medium" : "bg-gray-800 text-gray-300 hover:bg-gray-700"
                   )}
                   onClick={() => setActiveTab("features")}
@@ -302,11 +303,13 @@ export function FloatingSearch({ isOpen, onClose }) {
                   className={cn(
                     "px-2.5 py-0.5 text-[10px] rounded-md",
                     activeTab === "upcoming" ? "bg-blue-900 text-blue-100 font-medium" : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+                    
                   )}
                   onClick={() => setActiveTab("upcoming")}
                 >
                   Upcoming
                 </button>
+
 
               </div>
             </div>
@@ -368,6 +371,8 @@ export function FloatingSearch({ isOpen, onClose }) {
                         </div>
                       </motion.button>
                     ))}
+
+
 
 
                   </div>
