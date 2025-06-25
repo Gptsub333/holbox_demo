@@ -7,6 +7,9 @@
 /.next/
 /out/
 
+#clerk
+.clerk
+
 # production
 /build
 

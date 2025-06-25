@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
+import { usePathname } from "next/navigation";
 import {
   X,
   Search,
@@ -24,8 +25,8 @@ import {
   StethoscopeIcon,
   CalendarClock,
   Wand2,
-   ScanFace,
-   Activity
+  ScanFace,
+  Activity
 
 } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -40,13 +41,13 @@ const features = [
     icon: Stethoscope,
     description: "Transcribe medical audio and get answers",
   },
-    {
+  {
     name: "Face Recognition",
     href: "/face-recognition",
     icon: User,
     description: "Real-time detection and identification",
   },
-    {
+  {
     name: "Face Detection", // New Feature
     href: "/face-detection",
     icon: ScanFace || User, // Use ScanFace, fallback to User
@@ -66,13 +67,13 @@ const features = [
     icon: UserX,
     description: "Detect and extract personal information",
   },
-   
-   { name: "NL2SQL", href: "/nl2sql", icon: Database, description: "SQL queries using AI with instant results" },
-   { name: "Summarizer",href: "/summarizer", icon: FileDigit, description: "Automatically summarize long documents and content" },
 
-   { name: "Voice-Agent", href: "/voice-agent", icon: Mic, description: "Voice-enabled booking and health assistant" },
+  { name: "NL2SQL", href: "/nl2sql", icon: Database, description: "SQL queries using AI with instant results" },
+  { name: "Summarizer", href: "/summarizer", icon: FileDigit, description: "Automatically summarize long documents and content" },
 
+  { name: "Voice-Agent", href: "/voice-agent", icon: Mic, description: "Voice-enabled booking and health assistant" },
 
+  { name: "Virtual Try-On", href: "/virtual-try-on", icon: Shirt, description: "Try garments on models using images" },
   { name: "PII Masker", href: "/pii-redactor", icon: FileX, description: "Remove PII from input text securely" },
   { name: "Text to Image", href: "/text-to-image", icon: Wand2, description: "Generate images from text descriptions" },
   { name: "Text to Video", href: "/text-to-video", icon: Video, description: "Generate video from text descriptions" }
@@ -82,24 +83,24 @@ const features = [
 
 // Upcoming features data
 const upcomingFeatures = [
-  { name: "Virtual Try-On", href: "/virtual-try-on", icon: Shirt, description: "Try garments on models using images" },
-   {
+ 
+  {
     name: "PDF Extractor",
     href: "/pdf-extractor",
     icon: FileText,
     description: "Detect and extract personal information",
   },
-   
+
   {
     name: "Video Compliance",
     href: "/video-compliance",
     icon: Video,
     description: "Analyze videos for safety and compliance",
   },
-  
+
   { name: "Traffic Chatbot", href: "/traffic-chatbot", icon: Car, description: "AI assistant for traffic conditions" },
-  
-  
+
+
   { name: "Enterprise Search", icon: FileSearch, description: "Advanced search across all enterprise data" },
   { name: "Structured Extraction", icon: Layers, description: "Extract structured data from unstructured content" },
   {
@@ -121,6 +122,9 @@ export function FloatingSearch({ isOpen, onClose }) {
   const inputRef = useRef(null)
   const panelRef = useRef(null)
   const contentRef = useRef(null)
+  const pathname = usePathname();  // Use this line to get the current path
+
+
 
   useEffect(() => {
     if (isOpen) {
@@ -279,9 +283,16 @@ export function FloatingSearch({ isOpen, onClose }) {
                 <button
                   className={cn(
                     "px-2.5 py-0.5 text-[10px] rounded-md",
-                    activeTab === "features"
-                      ? "bg-blue-900 text-blue-100 font-medium"
-                      : "bg-gray-800 text-gray-300 hover:bg-gray-700",
+                    activeTab === "all" ? "bg-blue-900 text-blue-100 font-medium" : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+                  )}
+                  onClick={() => setActiveTab("all")}
+                >
+                  All
+                </button>
+                <button
+                  className={cn(
+                    "px-2.5 py-0.5 text-[10px] rounded-md",
+                    activeTab === "features" ? "bg-blue-900 text-blue-100 font-medium" : "bg-gray-800 text-gray-300 hover:bg-gray-700"
                   )}
                   onClick={() => setActiveTab("features")}
                 >
@@ -290,14 +301,13 @@ export function FloatingSearch({ isOpen, onClose }) {
                 <button
                   className={cn(
                     "px-2.5 py-0.5 text-[10px] rounded-md",
-                    activeTab === "upcoming"
-                      ? "bg-blue-900 text-blue-100 font-medium"
-                      : "bg-gray-800 text-gray-300 hover:bg-gray-700",
+                    activeTab === "upcoming" ? "bg-blue-900 text-blue-100 font-medium" : "bg-gray-800 text-gray-300 hover:bg-gray-700"
                   )}
                   onClick={() => setActiveTab("upcoming")}
                 >
                   Upcoming
                 </button>
+
               </div>
             </div>
 
@@ -320,28 +330,26 @@ export function FloatingSearch({ isOpen, onClose }) {
                     {filteredFeatures.map((feature, index) => (
                       <motion.button
                         key={feature.href}
-                        className="group"
                         onClick={() => handleFeatureClick(feature.href)}
-                        initial={{ opacity: 0, y: 20 }}
+                        className={cn(
+                          "group",
+                          pathname === feature.href
+                            ? "bg-gray-900 border-blue-900 text-blue-600"
+                            : "bg-gray-900 text-gray-200",
+                        )}
+                        initial={{ opacity: pathname === feature.href ? 1 : 0, y: pathname === feature.href ? 0 : 20 }} // Apply initial animation based on active state
                         animate={{ opacity: 1, y: 0 }}
                         transition={{
                           duration: 0.3,
                           delay: index * 0.05,
                           ease: [0.25, 0.1, 0.25, 1.0],
                         }}
-                        whileHover={{
-                          scale: 1.03,
-                          transition: { duration: 0.2 },
-                        }}
                       >
                         <div
                           className={cn(
                             "flex flex-col items-center p-3 sm:p-4 rounded-md",
-                            "bg-gray-900 border border-gray-700",
                             "transition-all duration-300",
-                            "group-hover:border-blue-500 group-hover:shadow-md group-hover:shadow-blue-900/20",
-                            "h-auto min-h-[100px] sm:min-h-[110px]", // Increased height
-                            "w-full", // Full width
+                            pathname === feature.href ? "border-blue-500 shadow-md scale-105" : "border-gray-700 group-hover:border-blue-500 group-hover:shadow-[0_0_12px_rgba(37,99,235,0.5)]"
                           )}
                         >
                           <div className="flex items-center justify-center w-full mb-2.5">
@@ -349,7 +357,6 @@ export function FloatingSearch({ isOpen, onClose }) {
                               <div className="absolute inset-0 rounded-md bg-gray-800 border border-gray-700 flex items-center justify-center group-hover:border-blue-500 group-hover:shadow-[0_0_12px_rgba(37,99,235,0.5)] transition-all duration-300">
                                 <feature.icon className="h-4 w-4 sm:h-5 sm:w-5 text-gray-300 group-hover:text-blue-400 transition-colors duration-300" />
                               </div>
-                              <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-5 h-1 rounded-full bg-transparent group-hover:bg-blue-500/30 transition-all duration-300 blur-sm"></div>
                             </div>
                           </div>
                           <span className="text-xs sm:text-sm font-medium text-gray-200 text-center subheading-font group-hover:text-white transition-colors duration-300 w-full mt-2">
@@ -361,6 +368,8 @@ export function FloatingSearch({ isOpen, onClose }) {
                         </div>
                       </motion.button>
                     ))}
+
+
                   </div>
                 </div>
               )}
@@ -425,21 +434,21 @@ export function FloatingSearch({ isOpen, onClose }) {
               {((activeTab === "features" && filteredFeatures.length === 0) ||
                 (activeTab === "upcoming" && filteredUpcoming.length === 0) ||
                 (activeTab === "all" && filteredFeatures.length === 0 && filteredUpcoming.length === 0)) && (
-                <motion.div
-                  className="flex flex-col items-center justify-center py-8 sm:py-12"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-800 flex items-center justify-center mb-3 sm:mb-4">
-                    <Search className="h-5 w-5 sm:h-6 sm:w-6 text-gray-400" />
-                  </div>
-                  <h3 className="text-sm font-medium text-gray-200 mb-2 subheading-font">No results found</h3>
-                  <p className="text-gray-400 text-center text-xs para-font">
-                    We couldn't find any applications matching "{query}"
-                  </p>
-                </motion.div>
-              )}
+                  <motion.div
+                    className="flex flex-col items-center justify-center py-8 sm:py-12"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-800 flex items-center justify-center mb-3 sm:mb-4">
+                      <Search className="h-5 w-5 sm:h-6 sm:w-6 text-gray-400" />
+                    </div>
+                    <h3 className="text-sm font-medium text-gray-200 mb-2 subheading-font">No results found</h3>
+                    <p className="text-gray-400 text-center text-xs para-font">
+                      We couldn't find any applications matching "{query}"
+                    </p>
+                  </motion.div>
+                )}
             </div>
           </motion.div>
         </motion.div>
