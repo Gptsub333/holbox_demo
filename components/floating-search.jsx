@@ -28,8 +28,6 @@ import {
   Wand2,
   ScanFace,
   Activity
-  ScanFace,
-  Activity
 
 } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -46,14 +44,14 @@ const features = [
   },
   
   {
-    name: "Face Recognition",
+    name: "Face Detection By Video",
     href: "/face-recognition",
     icon: User,
     description: "Real-time detection and identification",
   },
   
   {
-    name: "Face Detection", // New Feature
+    name: "Face Detection By Image", // New Feature
     href: "/face-detection",
     icon: ScanFace || User, // Use ScanFace, fallback to User
     description: "Detect and recognize faces from images",
@@ -137,11 +135,6 @@ export function FloatingSearch({ isOpen, onClose }) {
   const panelRef = useRef(null)
   const contentRef = useRef(null)
   const pathname = usePathname();  // Use this line to get the current path
-
-
-
-
-
 
   useEffect(() => {
     if (isOpen) {
