@@ -7,6 +7,7 @@ import { Grid, CalendarClock, Home, MessageSquare, ChevronDown, X } from "lucide
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { UserButton, useUser } from "@clerk/nextjs"
 
 const chatbotTypes = [
   { name: "AI Assistant", id: "general" },
@@ -108,6 +109,8 @@ function SidebarContent({
   isMobile = false,
   onMobileClose,
 }) {
+  const { user } = useUser();
+
   return (
     <div className="flex flex-col h-full p-3 rounded-xl border border-gray-300 bg-white shadow-sm">
       <div className="p-2.5 mb-3 rounded-xl bg-gray-100 shadow-inner">
@@ -185,6 +188,11 @@ function SidebarContent({
         </nav>
       </div>
 
+      <div className="flex gap-2 items-center justify-center">
+        <UserButton />
+        <span className="text-sm font-medium text-gray-700">{user?.fullName || "User"}</span>
+      </div>
+
       <div className="p-2.5 mt-auto">
         <div className="rounded-xl bg-white shadow-sm p-2.5">
           <DropdownMenu>
@@ -202,7 +210,7 @@ function SidebarContent({
                 />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-[180px]">
+            <DropdownMenuContent align="end" className="w-[180px] bg-gray-100 shadow-lg  z-20 ">
               {chatbotTypes.map((bot) => (
                 <DropdownMenuItem
                   key={bot.id}
@@ -210,13 +218,14 @@ function SidebarContent({
                     setActiveChatbot(bot)
                     onOpenChat(bot)
                   }}
-                  className="text-xs py-1.5"
+                  className="text-xs py-1.5 bg-gray-100 hover:bg-white-200 rounded-lg transition-white-all"
                 >
                   {bot.name}
                 </DropdownMenuItem>
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
+
         </div>
       </div>
     </div>

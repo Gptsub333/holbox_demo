@@ -43,14 +43,14 @@ export default function Home() {
         >
           <motion.div className="text-center mb-6 md:mb-10" variants={itemVariants}>
             <h1 className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-3 md:mb-5 text-gray-800 heading-font">
-              AI Demo Interface
+               Agentic AI Demo Interface
             </h1>
             <p className="text-sm md:text-base text-gray-600 max-w-3xl mx-auto mb-5 md:mb-8 para-font">
-              Explore our suite of advanced AI features and tools designed to transform your business operations
+              Explore our suite of Agentic AI features and tools designed to transform your business operations
             </p>
           </motion.div>
 
-          {/* AI Demo Interface Mockup */}
+          {/* Agentic AI Demo Interface Mockup */}
           <motion.div
             className="rounded-xl overflow-hidden border-2 md:border-4 border-blue-100 bg-blue-50 shadow-lg max-w-4xl mx-auto"
             variants={itemVariants}
@@ -63,7 +63,7 @@ export default function Home() {
                   <div className="w-2 h-2 md:w-3 md:h-3 rounded-full bg-yellow-400"></div>
                   <div className="w-2 h-2 md:w-3 md:h-3 rounded-full bg-green-400"></div>
                 </div>
-                <div className="text-xs md:text-sm font-medium text-gray-500 para-font">AI Demo Interface</div>
+                <div className="text-xs md:text-sm font-medium text-gray-500 para-font"> Agentic AI Demo Interface</div>
                 <div className="flex items-center">
                   <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-blue-500 mr-1 md:mr-2 flex items-center justify-center text-white text-xs font-bold">
                     AI
@@ -288,7 +288,7 @@ export default function Home() {
                 </div>
 
                 <p className="text-sm md:text-base text-gray-600 mb-4 md:mb-5 para-font">
-                  Convert natural language queries into SQL statements using advanced AI. Get instant results and
+                  Convert natural language queries into SQL statements using AI Agent. Get instant results and
                   visualizations from your database without writing complex SQL code.
                 </p>
 
