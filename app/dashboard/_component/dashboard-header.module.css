@@ -1,0 +1,10 @@
+.headerTitle {
+  font-size: 1.5rem; /* 24px */
+  line-height: 2rem; /* 32px */
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  background-image: linear-gradient(to right, hsl(var(--primary)), #3b82f6); /* blue-600 */
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}

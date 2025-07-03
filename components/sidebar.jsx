@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Grid, CalendarClock, Home, MessageSquare, ChevronDown, X } from "lucide-react"
+import { Grid, CalendarClock, Home, MessageSquare, ChevronDown, X, LayoutDashboard, Share2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
@@ -150,7 +150,7 @@ function SidebarContent({
           >
             <Home className="w-3.5 h-3.5" />
             <span className={cn("ml-2.5 text-xs", isMobile ? "inline-block" : "hidden md:inline-block")}>
-              Dashboard
+              Home
             </span>
           </Link>
 
@@ -183,6 +183,38 @@ function SidebarContent({
             <CalendarClock className="w-3.5 h-3.5" />
             <span className={cn("ml-2.5 text-xs", isMobile ? "inline-block" : "hidden md:inline-block")}>
               Up Coming
+            </span>
+          </Link>
+          <Link
+            href="/dashboard"
+            className={cn(
+              "flex items-center justify-center md:justify-start w-full p-2.5 rounded-xl",
+              "text-gray-700 hover:bg-gray-100 hover:shadow-sm transition-all",
+              pathname === "/dashboard" ? "bg-gray-100 shadow-sm text-blue-600 font-medium" : "",
+              "focus:outline-none focus-visible:ring-1 focus-visible:ring-blue-500",
+              isMobile ? "justify-start" : "",
+            )}
+            onClick={isMobile ? onMobileClose : undefined}
+          >
+            <LayoutDashboard className="w-3.5 h-3.5" />
+            <span className={cn("ml-2.5 text-xs", isMobile ? "inline-block" : "hidden md:inline-block")}>
+              Dashboard
+            </span>
+          </Link>
+          <Link
+            href="/connect-to"
+            className={cn(
+              "flex items-center justify-center md:justify-start w-full p-2.5 rounded-xl",
+              "text-gray-700 hover:bg-gray-100 hover:shadow-sm transition-all",
+              pathname === "/connect-to" ? "bg-gray-100 shadow-sm text-blue-600 font-medium" : "",
+              "focus:outline-none focus-visible:ring-1 focus-visible:ring-blue-500",
+              isMobile ? "justify-start" : "",
+            )}
+            onClick={isMobile ? onMobileClose : undefined}
+          >
+            <Share2 className="w-3.5 h-3.5" />
+            <span className={cn("ml-2.5 text-xs", isMobile ? "inline-block" : "hidden md:inline-block")}>
+              ConnectTo
             </span>
           </Link>
         </nav>

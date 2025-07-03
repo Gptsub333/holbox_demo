@@ -9,6 +9,7 @@ import AudioSamples from "./_components/AudioSamples";
 import TranscriptDisplay from "./_components/TranscriptDisplay";
 import ChatModal from "./_components/ChatModal";
 import UploadModal from "./_components/UploadModal";
+import { useAuthContext } from "../../context/AuthContext";  // Import the context
 
 // Predefined audio files from S3 bucket
 const predefinedAudios = [
@@ -64,6 +65,10 @@ export default function HealthScribePage() {
   const [uploadedAudios, setUploadedAudios] = useState([]);
     const [displayedText, setDisplayedText] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
+
+  // Get session token from context
+  const { sessionToken, isLoaded, isSignedIn } = useAuthContext();
+  const token = "Bearer " + sessionToken;
 
   // === Refs ===
   const transcriptRef = useRef(null);
@@ -237,6 +242,9 @@ const handleUpload = async () => {
     const uploadResponse = await fetch(`${BACKEND_URL}/healthscribe/upload-audio`, {
       method: "POST",
       body: formData,
+      headers: {
+        "Authorization": token, // Include Bearer token for authentication
+      },
     });
 
     if (!uploadResponse.ok) throw new Error("File upload failed");
@@ -251,7 +259,7 @@ const handleUpload = async () => {
     // 2. Start transcription with S3 URL
     const transcriptionResponse = await fetch(`${BACKEND_URL}/healthscribe/start-transcription`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", "Authorization": token },
       body: JSON.stringify({ audioUrl: fileUrl }),
     });
 
@@ -307,7 +315,7 @@ const handleTranscribe = async () => {
        `${BACKEND_URL}/healthscribe/start-transcription`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", "Authorization": token },
           body: JSON.stringify({ audioUrl: activeAudio.s3 }),
         }
       );
@@ -366,7 +374,7 @@ const handleChatSubmit = async (e) => {
         `${BACKEND_URL}/healthscribe/question-ans`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", "Authorization": token, },
           body: JSON.stringify({ question: currentQuestion, transcript }),
         }
       );

@@ -18,7 +18,7 @@ const UploadButton = ({ onClick }) => {
           padding: "7px 17px", // Adjust padding
         }}
       >
-        <Upload className="w-5 h-5" /> {/* Smaller icon */}
+        <Upload className="w-5 h-5" /> {/* Smaller icon */} 
         <span className="text-xs font-medium">Upload PDF</span>{" "}
         {/* Smaller text */}
       </motion.button>

@@ -8,6 +8,7 @@ import PDFReader from "./_components/PDFReader";
 import UploadButton from "./_components/UploadButton";
 import UploadModal from "./_components/UploadModal";
 import SummaryInterface from "./_components/SummaryInterface"; // Modal to show summary
+import { useAuthContext } from "../../context/AuthContext"; // Import the context 
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
@@ -19,6 +20,8 @@ export default function PDFSummarizerPage() {
   const [summary, setSummary] = useState("");
   const [isUploading, setIsUploading] = useState(false);
   const [isSummarizing, setIsSummarizing] = useState(false);
+
+  const { sessionToken } = useAuthContext(); // Get the session token from the context
 
   // When user selects a sample PDF:
   // 1) Show preview instantly,
@@ -81,6 +84,9 @@ export default function PDFSummarizerPage() {
     const res = await fetch(`${BACKEND_URL}/summarizer/upload_pdf`, {
       method: "POST",
       body: formData,
+      headers: {
+        "Authorization": `Bearer ${sessionToken}`, // Pass the Bearer token from the context
+      },
     });
     if (!res.ok) throw new Error("Upload failed");
     const data = await res.json();
@@ -97,6 +103,7 @@ export default function PDFSummarizerPage() {
         method: "POST",
         headers: {
           "Content-Type": "application/json", // Ensure content type is set to JSON
+          "Authorization": `Bearer ${sessionToken}`, // Pass the Bearer token from the context
         },
         body: JSON.stringify({ pdf_id: pdfId }), // Stringify the body
       });

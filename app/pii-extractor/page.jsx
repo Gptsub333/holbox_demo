@@ -7,6 +7,7 @@ import SampleTextSelector from "./_components/SampleTextSelector";
 import TextAreaInput from "./_components/TextAreaInput";
 import ExtractButton from "./_components/ExtractButton";
 import FloatingPopup from "./_components/FloatingPopup";
+import { useAuthContext } from "../../context/AuthContext"; // Import the context
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 const EXTRACT_ENDPOINT = "/extract"
@@ -17,6 +18,10 @@ export default function PIIExtractorPage() {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [apiResponse, setApiResponse] = useState(null);
+
+  const { sessionToken } = useAuthContext(); // Get the session token from the context
+
+  const token = "Bearer " + sessionToken;
 
   const handleSelectText = (sampleText, id) => {
     setText(sampleText);
@@ -42,6 +47,7 @@ export default function PIIExtractorPage() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": token, // Send token in Authorization header
         },
         body: JSON.stringify({ text }),
       });
