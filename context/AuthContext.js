@@ -1,11 +1,11 @@
-"use client";
+'use client';
 import { createContext, useContext, useState, useEffect } from "react";
-import { useAuth } from "@clerk/nextjs"; // Clerk's authentication hook
+import { useAuth } from "@clerk/nextjs";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const { isLoaded, isSignedIn, getToken } = useAuth();  // Get Clerk methods
+  const { isLoaded, isSignedIn, getToken } = useAuth();
   const [sessionToken, setSessionToken] = useState(null);
 
   useEffect(() => {
@@ -15,7 +15,6 @@ export const AuthProvider = ({ children }) => {
         setSessionToken(token);
       }
     };
-
     fetchToken();
   }, [isLoaded, isSignedIn, getToken]);
 

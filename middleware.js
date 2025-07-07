@@ -10,3 +10,15 @@ export const config = {
     '/(api|trpc)(.*)',
   ],
 }
+
+
+
+// utils/tenant.js
+export function getSubdomain(req) {
+  const host = req.headers.host; // e.g., org1.holbox.ai
+  const parts = host.split('.');
+  if (parts.length > 2) {
+    return parts[0]; // org1
+  }
+  return null;
+}

@@ -1,33 +1,47 @@
-
-import Loader from "../components/Loader"; // Import the Loader component
-import ClientLayout from "./client-layout"; // Assuming you have a client layout
-import "./globals.css"; // Global CSS
-import { ClerkProvider, SignedIn, SignedOut,SignIn } from "@clerk/nextjs"; // Clerk for authentication
-import { AuthProvider } from "../context/AuthContext"; // Import the AuthProvider
+// app/layout.jsx
+import "./globals.css";
+import { headers } from "next/headers";
+import { getSubdomain } from "../utils/getSubdomain";
+import ClientProviders from "../components/ClientProviders"; // plain import!
 
 export const metadata = {
   title: "Agentic AI Demo Interface",
   description: "Premium AI features showcase with modern design",
   generator: "Holbox.ai.dev",
+  icons: "/holboxai.svg"
 };
 
-export default function RootLayout({ children }) {
+export default async function RootLayout({ children }) {
+  // Get subdomain from headers
+const headersList = await headers();
+const host = headersList.get("host") || "";
+
+  let subdomain = getSubdomain(host);
+
+  if (!subdomain && (host.startsWith("localhost") || host.startsWith("10.7.1.44"))) {
+    subdomain = "demo";
+  }
+
+  // Fetch organization data
+  let organization = null;
+  if (subdomain) {
+    try {
+      const res = await fetch(
+        `${process.env.BACKEND_URL}/api/organization/by-subdomain/${subdomain}`,
+        { cache: "no-store" }
+      );
+      if (res.ok) organization = await res.json();
+    } catch {
+      organization = null;
+    }
+  }
+
   return (
     <html lang="en">
       <body>
-        <ClerkProvider>
-          <AuthProvider> 
-          <SignedOut>
-            <div className="min-w-screen min-h-screen flex items-center justify-center ">
-            <SignIn  routing="hash"/>
-            </div>
-          </SignedOut>
-          <SignedIn>
-            <ClientLayout>{children}</ClientLayout>
-          </SignedIn>
-          </AuthProvider>
-        </ClerkProvider>
-
+        <ClientProviders organization={organization}>
+          {children}
+        </ClientProviders>
       </body>
     </html>
   );

@@ -2,6 +2,8 @@ import HeroSection from "./_components/hero-section"
 import IntegrationsGrid from "./_components/integrations-grid"
 import Header from "./_components/header"
 
+
+
 // Data for all the integrations, categorized for easy display.
 const integrations = [
   { name: "Google Workspace", category: "Productivity/Office", icon: "https://cdn.brandfetch.io/id6O2oGzv-/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1731911483528"},
@@ -21,7 +23,7 @@ const integrations = [
   { name: "Wikipedia", category: "Web/Data/Search", icon: "https://cdn.brandfetch.io/idAo3WRIoq/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1679406640804" },
   { name: "SerpAPI", category: "Web/Data/Search", icon: "https://cdn.brandfetch.io/idDaDfAv6E/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1747726778836" },
   { name: "GitHub", category: "Dev Tools/Automation", icon: "https://cdn.brandfetch.io/idZAyF9rlg/w/400/h/400/theme/dark/icon.png?c=1bxid64Mup7aczewSAYMX&t=1719469970995" },
-  { name: "Jira", category: "Dev Tools/Automation", icon: "https://play-lh.googleusercontent.com/_AZCbg39DTuk8k3DiPRASr9EwyW058pOfzvAu1DsfN9ygtbOlbuucmXaHJi5ooYbokQX" },
+  { name: "Jira", category: "Dev Tools/Automation", icon: "https://res.cloudinary.com/dkou4uxp1/image/upload/v1751871399/Jira_qri7cb.svg" },
   { name: "Zapier", category: "Dev Tools/Automation", icon: "https://cdn.brandfetch.io/idNMs_nMA0/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1667563370395" },
   { name: "IFTTT", category: "Dev Tools/Automation", icon: "https://cdn.brandfetch.io/id3lvq5eTN/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1749264827147" },
   { name: "Make", category: "Dev Tools/Automation", icon: "https://cdn.brandfetch.io/idVHU5hl7_/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1690469452864" },

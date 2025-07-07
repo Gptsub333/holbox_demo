@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { UserButton, useUser } from "@clerk/nextjs"
+import { useOrganization } from "../context/OrganizationContext";
 
 const chatbotTypes = [
   { name: "AI Assistant", id: "general" },
@@ -25,6 +26,7 @@ export function Sidebar({
 }) {
   const pathname = usePathname()
   const [activeChatbot, setActiveChatbot] = useState(chatbotTypes[0])
+  
 
   // Close sidebar when clicking outside on mobile
   useEffect(() => {
@@ -39,7 +41,7 @@ export function Sidebar({
         onMobileClose()
       }
     }
-
+    
     if (isMobileOpen) {
       document.addEventListener("mousedown", handleClickOutside)
     }
@@ -110,6 +112,9 @@ function SidebarContent({
   onMobileClose,
 }) {
   const { user } = useUser();
+  const org = useOrganization();
+  const orgName = org?.name || "Holbox"; // fallback for dev/local/test
+  console.log("Organization in Sidebar:", org?.name, org?.subdomain);
 
   return (
     <div className="flex flex-col h-full p-3 rounded-xl border border-gray-300 bg-white shadow-sm">
@@ -131,7 +136,7 @@ function SidebarContent({
               <path d="M2 12l10 5 10-5" />
             </svg>
           </div>
-          <span className="ml-2.5 text-xs font-medium md:inline-block heading-font">Holbox AI Demo</span>
+          <span className="ml-2.5 text-xs font-medium md:inline-block heading-font">{orgName} AI Demo</span>
         </Link>
       </div>
 
