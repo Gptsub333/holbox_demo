@@ -26,7 +26,6 @@ export default function DDxAssistantPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!symptoms.trim()) return;
-    console.log("Session Token:", sessionToken);
     const token = "Bearer " + sessionToken;
 
     setIsLoading(true);

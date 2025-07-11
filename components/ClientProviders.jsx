@@ -3,10 +3,9 @@
 import { ClerkProvider, SignedIn, SignedOut, SignIn } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { AuthProvider } from "../context/AuthContext";
-import { OrganizationProvider } from "../context/OrganizationContext";
 import ClientLayout from "../app/client-layout";
 
-export default function ClientProviders({ children, organization }) {
+export default function ClientProviders({ children }) {
   const router = useRouter();
 
   return (
@@ -15,7 +14,7 @@ export default function ClientProviders({ children, organization }) {
       routerPush={(to) => router.push(to)}
       routerReplace={(to) => router.replace(to)}
     >
-      <OrganizationProvider value={organization || {}}>
+      
         <AuthProvider>
           <SignedOut>
             <div className="min-w-screen min-h-screen flex items-center justify-center ">
@@ -26,7 +25,6 @@ export default function ClientProviders({ children, organization }) {
             <ClientLayout>{children}</ClientLayout>
           </SignedIn>
         </AuthProvider>
-      </OrganizationProvider>
     </ClerkProvider>
   );
 }

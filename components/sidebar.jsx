@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { UserButton, useUser } from "@clerk/nextjs"
-import { useOrganization } from "../context/OrganizationContext";
+
 
 const chatbotTypes = [
   { name: "AI Assistant", id: "general" },
@@ -112,9 +112,9 @@ function SidebarContent({
   onMobileClose,
 }) {
   const { user } = useUser();
-  const org = useOrganization();
-  const orgName = org?.name || "Holbox"; // fallback for dev/local/test
-  console.log("Organization in Sidebar:", org?.name, org?.subdomain);
+
+  const orgName = "Holbox"; // fallback for dev/local/test
+  
 
   return (
     <div className="flex flex-col h-full p-3 rounded-xl border border-gray-300 bg-white shadow-sm">
