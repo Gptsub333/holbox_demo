@@ -51,9 +51,8 @@ export default function VisualizationPanel({
         </div>
 
         <div
-          className={`flex-1 flex flex-col ${
-            isVisualizationExpanded ? "block" : "hidden lg:flex"
-          }`}
+          className={`flex-1 flex flex-col ${isVisualizationExpanded ? "block" : "hidden lg:flex"
+            }`}
         >
           <ScrollArea className="flex-1 p-4">
             <h3 className="text-base font-semibold mb-3 flex items-center gap-2 text-gray-900 dark:text-gray-100">
@@ -127,7 +126,7 @@ export default function VisualizationPanel({
                     <Mic className="w-4 h-4 mr-2" />
                     Push-to-Talk
                   </Button>
-{/*                   <Button
+                  {/*                   <Button
                     onClick={() => {
                       if (conversationMode !== "real-time")
                         toggleConversationMode();
@@ -176,11 +175,10 @@ export default function VisualizationPanel({
                 <Button
                   variant={isRecording ? "recording" : "outline"}
                   size="compact"
-                  className={`w-full transition-all duration-300 ${
-                    isRecording
+                  className={`w-full transition-all duration-300 ${isRecording
                       ? "bg-red-500 hover:bg-red-600 text-white"
                       : "border-2 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"
-                  }`}
+                    }`}
                   onMouseDown={startRecording}
                   onMouseUp={stopRecording}
                   onTouchStart={startRecording}
@@ -197,6 +195,7 @@ export default function VisualizationPanel({
                   )}
                 </Button>
               )}
+
             </div>
           </div>
         </div>

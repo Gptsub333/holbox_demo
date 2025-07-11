@@ -3,11 +3,12 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Grid, CalendarClock, Home, MessageSquare, ChevronDown, X } from "lucide-react"
+import { Grid, CalendarClock, Home, MessageSquare, ChevronDown, X, LayoutDashboard, Share2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { UserButton, useUser } from "@clerk/nextjs"
+
 
 const chatbotTypes = [
   { name: "AI Assistant", id: "general" },
@@ -25,6 +26,7 @@ export function Sidebar({
 }) {
   const pathname = usePathname()
   const [activeChatbot, setActiveChatbot] = useState(chatbotTypes[0])
+  
 
   // Close sidebar when clicking outside on mobile
   useEffect(() => {
@@ -39,7 +41,7 @@ export function Sidebar({
         onMobileClose()
       }
     }
-
+    
     if (isMobileOpen) {
       document.addEventListener("mousedown", handleClickOutside)
     }
@@ -111,6 +113,9 @@ function SidebarContent({
 }) {
   const { user } = useUser();
 
+  const orgName = "Holbox"; // fallback for dev/local/test
+  
+
   return (
     <div className="flex flex-col h-full p-3 rounded-xl border border-gray-300 bg-white shadow-sm">
       <div className="p-2.5 mb-3 rounded-xl bg-gray-100 shadow-inner">
@@ -131,7 +136,7 @@ function SidebarContent({
               <path d="M2 12l10 5 10-5" />
             </svg>
           </div>
-          <span className="ml-2.5 text-xs font-medium md:inline-block heading-font">Holbox AI Demo</span>
+          <span className="ml-2.5 text-xs font-medium md:inline-block heading-font">{orgName} AI Demo</span>
         </Link>
       </div>
 
@@ -150,7 +155,7 @@ function SidebarContent({
           >
             <Home className="w-3.5 h-3.5" />
             <span className={cn("ml-2.5 text-xs", isMobile ? "inline-block" : "hidden md:inline-block")}>
-              Dashboard
+              Home
             </span>
           </Link>
 
@@ -183,6 +188,38 @@ function SidebarContent({
             <CalendarClock className="w-3.5 h-3.5" />
             <span className={cn("ml-2.5 text-xs", isMobile ? "inline-block" : "hidden md:inline-block")}>
               Up Coming
+            </span>
+          </Link>
+          <Link
+            href="/dashboard"
+            className={cn(
+              "flex items-center justify-center md:justify-start w-full p-2.5 rounded-xl",
+              "text-gray-700 hover:bg-gray-100 hover:shadow-sm transition-all",
+              pathname === "/dashboard" ? "bg-gray-100 shadow-sm text-blue-600 font-medium" : "",
+              "focus:outline-none focus-visible:ring-1 focus-visible:ring-blue-500",
+              isMobile ? "justify-start" : "",
+            )}
+            onClick={isMobile ? onMobileClose : undefined}
+          >
+            <LayoutDashboard className="w-3.5 h-3.5" />
+            <span className={cn("ml-2.5 text-xs", isMobile ? "inline-block" : "hidden md:inline-block")}>
+              Dashboard
+            </span>
+          </Link>
+          <Link
+            href="/connect-to"
+            className={cn(
+              "flex items-center justify-center md:justify-start w-full p-2.5 rounded-xl",
+              "text-gray-700 hover:bg-gray-100 hover:shadow-sm transition-all",
+              pathname === "/connect-to" ? "bg-gray-100 shadow-sm text-blue-600 font-medium" : "",
+              "focus:outline-none focus-visible:ring-1 focus-visible:ring-blue-500",
+              isMobile ? "justify-start" : "",
+            )}
+            onClick={isMobile ? onMobileClose : undefined}
+          >
+            <Share2 className="w-3.5 h-3.5" />
+            <span className={cn("ml-2.5 text-xs", isMobile ? "inline-block" : "hidden md:inline-block")}>
+              ConnectTo
             </span>
           </Link>
         </nav>

@@ -1,0 +1,12 @@
+.dashboardContainer {
+  background-image: gray-300;
+}
+
+.cardHover {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.cardHover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}

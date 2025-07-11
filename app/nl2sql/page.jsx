@@ -8,6 +8,7 @@ import ResultsChart from "./_components/ResultsChart";
 import ChatPanel from "./_components/ChatPanel";
 import GeneratedQueryDisplay from "./_components/GeneratedQueryDisplay";
 import { Loader2, AlertTriangle, DatabaseZap, Table, BarChart3, History, Code2, Copy, Check } from "lucide-react";
+import { useAuthContext } from "../../context/AuthContext"; // Import the context
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
@@ -93,6 +94,11 @@ export default function NL2SQLPage() {
   const [queryHistory, setQueryHistory] = useState([]);
   const [currentQuery, setCurrentQuery] = useState(null);
 
+
+  const { sessionToken} = useAuthContext();
+  const token = "Bearer " + sessionToken;
+
+
   const handleQuerySubmit = async (query) => {
     setIsLoading(true);
     setError(null);
@@ -111,6 +117,7 @@ export default function NL2SQLPage() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+           "Authorization": token,  // Add the Bearer token here
         },
         body: JSON.stringify({ question: query }),
       });

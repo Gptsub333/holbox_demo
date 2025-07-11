@@ -7,6 +7,8 @@ import { TextInput } from "./_components/TextInput"
 import { GenerateButton } from "./_components/GenerateButton"
 import { SamplePrompts } from "./_components/SamplePrompts"
 import { VideoDisplay } from "./_components/VideoDisplay"
+import { useAuthContext } from "../../context/AuthContext" // Import the context
+
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 export default function TextToVideoPage() {
@@ -15,6 +17,9 @@ export default function TextToVideoPage() {
   const [generatedVideo, setGeneratedVideo] = useState(null)
   const [jobId, setJobId] = useState(null)
   const [videoStatus, setVideoStatus] = useState("")
+
+  const { sessionToken } = useAuthContext() // Get the session token from the context
+  const token = "Bearer " + sessionToken
 
   const handlePromptChange = (e) => {
     setPrompt(e.target.value)
@@ -36,7 +41,8 @@ export default function TextToVideoPage() {
       const response = await fetch(`${BACKEND_URL}/generate-video`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          "Authorization": token // Send token in Authorization header
         },
         body: JSON.stringify({
           text: prompt,
@@ -65,7 +71,13 @@ export default function TextToVideoPage() {
   const checkVideoStatus = async (jobId) => {
     try {
       // Check video status using job_id
-      const statusResponse = await fetch(`${BACKEND_URL}/video-status?job_id=${jobId}`)
+      const statusResponse = await fetch(`${BACKEND_URL}/video-status?job_id=${jobId}`, {
+        method: "GET",  // Since it's a GET request
+        headers: {
+          "Authorization": `Bearer ${sessionToken}`,  // Include the session token here
+          "Content-Type": "application/json",  // Optional, depending on your API
+        },
+      });
       const statusData = await statusResponse.json()
 
       if (statusData.status === "completed") {

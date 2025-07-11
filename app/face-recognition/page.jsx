@@ -8,6 +8,7 @@ import VideoPlayer from "./_components/VideoPlayer";
 import AnalysisButton from "./_components/AnalysisButton";
 import ResultsTable from "./_components/ResultsTable";
 import ScrollHintArrow from "./_components/ScrollHintArrow";
+import { useAuthContext } from "../../context/AuthContext";  // Import the context
 
 export default function FaceRecognitionPage() {
   const [selectedVideo, setSelectedVideo] = useState(null);
@@ -20,10 +21,12 @@ export default function FaceRecognitionPage() {
   // Recognition timer state
   const [recognitionElapsed, setRecognitionElapsed] = useState(0);
   const recognitionTimerRef = useRef(null);
+  const { sessionToken, isLoaded, isSignedIn } = useAuthContext();
 
   const resultsRef = useRef(null);
 
   const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+  // const BACKEND_URL = "http://0.0.0.0:8000/api/demo_backend_v2";
 
   const handleVideoSelect = (video) => {
     setSelectedVideo(video);
@@ -92,6 +95,9 @@ export default function FaceRecognitionPage() {
       const response = await fetch(`${BACKEND_URL}/detect_faces`, {
         method: "POST",
         body: formData,
+        headers: {
+          Authorization: `Bearer ${sessionToken}`, // Add the Bearer token here
+        },
       });
 
       if (!response.ok) {

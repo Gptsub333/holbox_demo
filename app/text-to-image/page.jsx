@@ -7,6 +7,8 @@ import { SamplePrompts } from "./_components/SamplePrompts"
 import { GenerateButton } from "./_components/GenerateButton"
 import { ImageDisplay } from "./_components/ImageDisplay"
 import { motion } from "framer-motion"
+import { useAuthContext } from "../../context/AuthContext" // Import the context
+
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 
@@ -14,6 +16,9 @@ export default function TextToImagePage() {
   const [prompt, setPrompt] = useState("")
   const [isGenerating, setIsGenerating] = useState(false)
   const [generatedImages, setGeneratedImages] = useState([]) // Array now
+
+  const { sessionToken, isLoaded, isSignedIn } = useAuthContext() // Get the session token from the context
+  const token = "Bearer " + sessionToken
   
 
   const handlePromptSelect = (selectedPrompt) => {
@@ -30,7 +35,8 @@ export default function TextToImagePage() {
       const response = await fetch(`${BACKEND_URL}/generate`,{
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          "Authorization": token // Send token in Authorization header
         },
         body: JSON.stringify({
           text: prompt,

@@ -7,8 +7,10 @@ import SampleTexts from "./_components/SampleTexts";
 import TextInput from "./_components/TextInput";
 import RedactButton from "./_components/RedactButton";
 import ResultsPopup from "./_components/ResultsPopup";
+import { useAuthContext } from "../../context/AuthContext";  // Import the context
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+// const BACKEND_URL = "http://0.0.0.0:8000/api/demo_backend_v2";
 export default function PIIRedactorPage() {
   const [inputText, setInputText] = useState("");
   const [selectedSample, setSelectedSample] = useState(null);
@@ -16,6 +18,10 @@ export default function PIIRedactorPage() {
   const [showResults, setShowResults] = useState(false);
   const [originalText, setOriginalText] = useState("");
   const [redactedText, setRedactedText] = useState("");
+  const { sessionToken, isLoaded, isSignedIn } = useAuthContext();
+
+
+  const token = "Bearer " + sessionToken;
 
   const handleSampleSelect = (sample) => {
     setSelectedSample(sample);
@@ -32,6 +38,7 @@ export default function PIIRedactorPage() {
       const response = await fetch(`${BACKEND_URL}/redact`, {
         method: "POST",
         headers: {
+          "Authorization": token, // Send token in Authorization header
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ text: inputText }),

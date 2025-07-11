@@ -6,6 +6,7 @@ import { Shirt } from "lucide-react";
 import SampleGallery from "./_components/SampleGallery";
 import UploadSection from "./_components/UploadSection";
 import ResultModal from "./_components/ResultModal";
+import { useAuthContext } from "../../context/AuthContext"; // Import the context
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 // const BACKEND_URL = "http://0.0.0.0:8000/api/demo_backend_v2" ;
@@ -23,6 +24,9 @@ export default function VirtualTryOnPage() {
   const [showResultModal, setShowResultModal] = useState(false);
   const modelInputRef = useRef(null);
   const garmentInputRef = useRef(null);
+  const { sessionToken } = useAuthContext(); // Get the session token from the context
+
+
 
   const convertToBase64 = (file) => {
     return new Promise((resolve, reject) => {
@@ -124,6 +128,7 @@ const handleSampleSelect = (sample) => {
       const response = await fetch(`${BACKEND_URL}/virtual-tryon/status/${jobId}`, {
         headers: {
           "ngrok-skip-browser-warning": "true",
+          "Authorization": `Bearer ${sessionToken}`, // Pass the Bearer token from the context
         }
       });
       
@@ -229,6 +234,7 @@ const handleSampleSelect = (sample) => {
         headers: {
           "Content-Type": "application/json",
           "ngrok-skip-browser-warning": "true",
+          "Authorization": `Bearer ${sessionToken}`, // Pass the Bearer token from the context
         },
         body: JSON.stringify(requestBody),
       });

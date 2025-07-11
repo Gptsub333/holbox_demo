@@ -5,7 +5,7 @@ import { Play, Sparkles } from "lucide-react";
 const SAMPLE_DATA = [
   {
     id: 1,
-    name: "Classic White Tee",
+    name: "Classic Blue Top",
     model: "/models/model1.jpg",
     garment: "/garments/whitetshirt.jpg",
     category: "T-Shirts",
@@ -13,7 +13,7 @@ const SAMPLE_DATA = [
   },
   {
     id: 2,
-    name: "Hoodie Style",
+    name: "Shirt Style",
     model: "/models/model2.jpg",
     garment: "/garments/hoodie.jpg",
     category: "Hoodies",
@@ -21,7 +21,7 @@ const SAMPLE_DATA = [
   },
   {
     id: 3,
-    name: "Denim Jacket",
+    name: "Full Dress",
     model: "/models/model3.jpg",
     garment: "/garments/denim.jpg",
     category: "Jackets",
@@ -29,7 +29,7 @@ const SAMPLE_DATA = [
   },
   {
     id: 4,
-    name: "Polo Shirt",
+    name: "Mans Shirt",
     model: "/models/model4.jpg",
     garment: "/garments/poloshirt.jpg",
     category: "Polo",

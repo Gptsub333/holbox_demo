@@ -7,6 +7,7 @@ import Header from "./_components/Header";
 import VisualizationPanel from "./_components/VisualizationPanel";
 import MainConversationPanel from "./_components/MainConversationPanel";
 import MemoryPanel from "./_components/MemoryPanel";
+import { useAuthContext } from "../../context/AuthContext";  // Import the context
 
 export default function VoiceAgent() {
   /**
@@ -56,6 +57,11 @@ export default function VoiceAgent() {
   const [audioProcessor, setAudioProcessor] = useState(null);
   const [currentAudio, setCurrentAudio] = useState(null);
   const [userScrolled, setUserScrolled] = useState(false);
+
+  const { sessionToken, isLoaded, isSignedIn } = useAuthContext(); // Get the session token from the context
+   const token = "Bearer " + sessionToken;
+
+
 
   // Initialize audio context and processor
   useEffect(() => {
@@ -447,237 +453,402 @@ export default function VoiceAgent() {
     [conversationMode, startRealtimeRecording, stopRealtimeRecording]
   );
 
+  // const connectConversation = useCallback(async () => {
+  //   try {
+  //     // First ensure any existing recorder session is cleaned up
+  //     const recorder = wavRecorderRef.current;
+  //     const currentStatus = recorder.getStatus();
+
+  //     if (currentStatus === "recording") {
+  //       await recorder.pause();
+  //     }
+
+  //     try {
+  //       await recorder.end();
+  //     } catch (e) {
+  //       console.log("No active session to end");
+  //     }
+
+  //     // Close existing WebSocket
+  //     if (wsRef.current) {
+  //       wsRef.current.close();
+  //       wsRef.current = null;
+  //     }
+
+  //     isInitialLoad.current = true;
+  //     setUserScrolled(false);
+
+  //     // Create new WebSocket connection
+  //    const ws = new WebSocket('wss://demo.holbox.ai/api/demo_backend_v2/voice_agent/voice', token);
+
+  //     ws.binaryType = "arraybuffer";
+
+     
+  //       if (!token) {
+  //         console.error("Token is missing or invalid");
+  //         return;
+  //       }
+
+  //     ws.onopen = async () => {
+  //       setIsConnected(true);
+  //       try {
+  //         // Now start new recording session
+  //         await recorder.begin();
+  //         await wavStreamPlayerRef.current.connect();
+
+  //         // Send initial message
+  //         const initialMessage = {
+  //           event: "initial_message",
+  //           text: "Hello",
+  //           mode: conversationMode,
+  //         };
+
+  //         ws.send(JSON.stringify(initialMessage));
+
+  //         if (conversationMode === "real-time") {
+  //           await startRealtimeRecording();
+  //         }
+  //       } catch (error) {
+  //         console.error("Error during connection setup:", error);
+  //         // Cleanup on error
+  //         try {
+  //           await recorder.end();
+  //         } catch (e) {}
+  //       }
+  //     };
+
+  //     ws.onmessage = async (event) => {
+  //       try {
+  //         if (typeof event.data === "string") {
+  //           const msg = JSON.parse(event.data);
+  //           if (msg.type === "ping") {
+  //             ws.send(JSON.stringify({ type: "pong" }));
+  //             return;
+  //           }
+  //           // Handle start_speaking event
+  //           if (msg.type === "start_speaking") {
+  //             setConversationState("speaking");
+  //             setIsAssistantSpeaking(true);
+  //             return;
+  //           }
+
+  //           // Handle different message types
+  //           switch (msg.type) {
+  //             // Switch to push-to-talk mode if background noise is much
+  //             case "chat_noise":
+  //               setConversationMode("push-to-talk");
+
+  //               if (wsRef.current?.readyState === WebSocket.OPEN) {
+  //                 wsRef.current.send(
+  //                   JSON.stringify({
+  //                     event: "set_mode",
+  //                     mode: "push-to-talk",
+  //                   })
+  //                 );
+  //               }
+  //               // Stop real-time recording if active
+  //               if (isRecording) {
+  //                 await stopRealtimeRecording();
+  //               }
+  //               // Add message to conversation
+  //               setItems((prev) => [
+  //                 ...prev,
+  //                 {
+  //                   id: Date.now(),
+  //                   role: "assistant",
+  //                   formatted: { text: msg.content },
+  //                 },
+  //               ]);
+  //               break;
+
+  //             case "chat_response":
+  //               if (msg.transcript) {
+  //                 setItems((prev) => [
+  //                   ...prev,
+  //                   {
+  //                     id: Date.now() - 1,
+  //                     role: "user",
+  //                     formatted: { text: msg.transcript },
+  //                   },
+  //                 ]);
+  //               }
+
+  //               if (msg.content) {
+  //                 //Assistant response
+  //                 setItems((prev) => [
+  //                   ...prev,
+  //                   {
+  //                     id: Date.now(),
+  //                     role: "assistant",
+  //                     formatted: { text: msg.content },
+  //                   },
+  //                 ]);
+  //               }
+  //               break;
+
+  //             case "tool_call":
+  //               // Handle tool call results
+  //               const toolData = msg.data;
+  //               if (toolData.name === "set_memory") {
+  //                 // Update memory state
+  //                 const { key, value } = toolData.arguments;
+  //                 setMemoryKv((prev) => ({ ...prev, [key]: value }));
+
+  //                 // Add to conversation
+  //                 setItems((prev) => [
+  //                   ...prev,
+  //                   {
+  //                     id: Date.now(),
+  //                     role: "tool",
+  //                     type: "memory",
+  //                     formatted: {
+  //                       text: `Saved information: ${key} = ${value}`,
+  //                     },
+  //                   },
+  //                 ]);
+  //               } else if (toolData.name === "submit_booking") {
+  //                 // Show booking success
+  //                 setShowBookingSuccess(true);
+
+  //                 // Add to conversation
+  //                 setItems((prev) => [
+  //                   ...prev,
+  //                   {
+  //                     id: Date.now(),
+  //                     role: "tool",
+  //                     type: "booking",
+  //                     formatted: {
+  //                       text: `Booking submitted: ${JSON.stringify(
+  //                         toolData.arguments
+  //                       )}`,
+  //                     },
+  //                   },
+  //                 ]);
+  //               }
+  //               break;
+
+  //             case "error":
+  //               console.error("Server error:", msg.content);
+  //               break;
+  //           }
+  //         } else if (event.data instanceof ArrayBuffer) {
+  //           if (conversationMode === "real-time" && isRecording) {
+  //             await stopRealtimeRecording();
+  //           }
+  //           try {
+  //             // Play the audio and handle visualization
+  //             await playAssistantAudio(event.data);
+  //           } catch (error) {
+  //             console.error("Error handling audio response:", error);
+  //           } finally {
+  //             // When audio playback completes, transition back to listening
+  //             if (conversationMode === "real-time") {
+  //               setConversationState("listening");
+  //               startRealtimeRecording();
+  //             }
+  //           }
+  //         }
+  //       } catch (error) {
+  //         console.error("Error handling WebSocket message:", error);
+  //       }
+  //     };
+
+  //     ws.onclose = () => {
+  //       setIsConnected(false);
+  //       setConversationState("disconnected");
+  //     };
+  //     ws.onerror = (event) => {
+  //       console.error("WebSocket error:", {
+  //         code: ws.readyState,
+  //         state: getWebSocketState(ws.readyState),
+  //         url: ws.url,
+  //         timestamp: new Date().toISOString(),
+  //       });
+
+  //       // Clean up resources on error
+  //       setIsConnected(false);
+  //       setConversationState("disconnected");
+
+  //       // Attempt reconnection or show user feedback
+  //       if (wsRef.current) {
+  //         wsRef.current.close();
+  //         wsRef.current = null;
+  //       }
+  //     };
+  //     wsRef.current = ws;
+  //   } catch (error) {
+  //     console.error("Connection error:", error);
+  //     // Ensure cleanup on any error
+  //     try {
+  //       await wavRecorderRef.current.end();
+  //     } catch (e) {}
+  //   }
+  // }, [
+  //   conversationMode,
+  //   isRecording,
+  //   playAssistantAudio,
+  //   startRealtimeRecording,
+  //   stopRealtimeRecording,
+  // ]);
+
   const connectConversation = useCallback(async () => {
+  try {
+    // Step 1: Ensure any existing recorder session is cleaned up
+    const recorder = wavRecorderRef.current;
+    const currentStatus = recorder.getStatus();
+
+    if (currentStatus === "recording") {
+      await recorder.pause();
+    }
+
     try {
-      // First ensure any existing recorder session is cleaned up
-      const recorder = wavRecorderRef.current;
-      const currentStatus = recorder.getStatus();
+      await recorder.end();
+    } catch (e) {
+      console.log("No active session to end");
+    }
 
-      if (currentStatus === "recording") {
-        await recorder.pause();
-      }
+    // Step 2: Close existing WebSocket if there's an active connection
+    if (wsRef.current) {
+      wsRef.current.close();
+      wsRef.current = null;
+    }
 
+    isInitialLoad.current = true;
+    setUserScrolled(false);
+
+    // Step 3: Ensure token is available and valid
+    // const token = getToken(); // Replace with your method of obtaining the token
+
+    if (!token) {
+      console.error("Token is missing or invalid");
+      return;
+    }
+
+    // Step 4: Create new WebSocket connection
+    const ws = new WebSocket(`wss://demo.holbox.ai/api/demo_backend_v2/voice_agent/voice?token=${token}`);
+
+    ws.binaryType = "arraybuffer";
+
+    ws.onopen = async () => {
+      setIsConnected(true);
       try {
-        await recorder.end();
-      } catch (e) {
-        console.log("No active session to end");
-      }
+        // Step 5: Send the authentication message after WebSocket is opened
+        const authMessage = {
+          type: "authenticate",
+          token: token, // Send token in the first message to authenticate
+        };
+        ws.send(JSON.stringify(authMessage));
 
-      // Close existing WebSocket
+        // Step 6: Start a new recording session
+        await recorder.begin();
+        await wavStreamPlayerRef.current.connect();
+
+        // Send initial message for conversation start
+        const initialMessage = {
+          event: "initial_message",
+          text: "Hello",
+          mode: conversationMode,
+        };
+        ws.send(JSON.stringify(initialMessage));
+
+        if (conversationMode === "real-time") {
+          await startRealtimeRecording();
+        }
+      } catch (error) {
+        console.error("Error during connection setup:", error);
+        // Cleanup on error
+        try {
+          await recorder.end();
+        } catch (e) {}
+      }
+    };
+
+    ws.onmessage = async (event) => {
+      try {
+        // Handle received messages from WebSocket
+        if (typeof event.data === "string") {
+          const msg = JSON.parse(event.data);
+          if (msg.type === "ping") {
+            ws.send(JSON.stringify({ type: "pong" }));
+            return;
+          }
+
+          // Handle various event types like start_speaking, chat_response, etc.
+          handleWebSocketMessages(msg, ws);
+        } else if (event.data instanceof ArrayBuffer) {
+          // Handle audio data
+          await playAssistantAudio(event.data);
+        }
+      } catch (error) {
+        console.error("Error handling WebSocket message:", error);
+      }
+    };
+
+    ws.onclose = () => {
+      setIsConnected(false);
+      setConversationState("disconnected");
+    };
+
+    ws.onerror = (event) => {
+      console.error("WebSocket error:", event);
+      setIsConnected(false);
+      setConversationState("disconnected");
+
+      // Clean up resources on error
       if (wsRef.current) {
         wsRef.current.close();
         wsRef.current = null;
       }
+    };
 
-      isInitialLoad.current = true;
-      setUserScrolled(false);
+    wsRef.current = ws; // Store the WebSocket connection reference
 
-      // Create new WebSocket connection
-     const ws = new WebSocket('wss://demo.holbox.ai/api/demo_backend_v2/voice_agent/voice');
-
-      ws.binaryType = "arraybuffer";
-
-      ws.onopen = async () => {
-        setIsConnected(true);
-        try {
-          // Now start new recording session
-          await recorder.begin();
-          await wavStreamPlayerRef.current.connect();
-
-          // Send initial message
-          const initialMessage = {
-            event: "initial_message",
-            text: "Hello",
-            mode: conversationMode,
-          };
-
-          ws.send(JSON.stringify(initialMessage));
-
-          if (conversationMode === "real-time") {
-            await startRealtimeRecording();
-          }
-        } catch (error) {
-          console.error("Error during connection setup:", error);
-          // Cleanup on error
-          try {
-            await recorder.end();
-          } catch (e) {}
-        }
-      };
-
-      ws.onmessage = async (event) => {
-        try {
-          if (typeof event.data === "string") {
-            const msg = JSON.parse(event.data);
-            if (msg.type === "ping") {
-              ws.send(JSON.stringify({ type: "pong" }));
-              return;
-            }
-            // Handle start_speaking event
-            if (msg.type === "start_speaking") {
-              setConversationState("speaking");
-              setIsAssistantSpeaking(true);
-              return;
-            }
-
-            // Handle different message types
-            switch (msg.type) {
-              // Switch to push-to-talk mode if background noise is much
-              case "chat_noise":
-                setConversationMode("push-to-talk");
-
-                if (wsRef.current?.readyState === WebSocket.OPEN) {
-                  wsRef.current.send(
-                    JSON.stringify({
-                      event: "set_mode",
-                      mode: "push-to-talk",
-                    })
-                  );
-                }
-                // Stop real-time recording if active
-                if (isRecording) {
-                  await stopRealtimeRecording();
-                }
-                // Add message to conversation
-                setItems((prev) => [
-                  ...prev,
-                  {
-                    id: Date.now(),
-                    role: "assistant",
-                    formatted: { text: msg.content },
-                  },
-                ]);
-                break;
-
-              case "chat_response":
-                if (msg.transcript) {
-                  setItems((prev) => [
-                    ...prev,
-                    {
-                      id: Date.now() - 1,
-                      role: "user",
-                      formatted: { text: msg.transcript },
-                    },
-                  ]);
-                }
-
-                if (msg.content) {
-                  //Assistant response
-                  setItems((prev) => [
-                    ...prev,
-                    {
-                      id: Date.now(),
-                      role: "assistant",
-                      formatted: { text: msg.content },
-                    },
-                  ]);
-                }
-                break;
-
-              case "tool_call":
-                // Handle tool call results
-                const toolData = msg.data;
-                if (toolData.name === "set_memory") {
-                  // Update memory state
-                  const { key, value } = toolData.arguments;
-                  setMemoryKv((prev) => ({ ...prev, [key]: value }));
-
-                  // Add to conversation
-                  setItems((prev) => [
-                    ...prev,
-                    {
-                      id: Date.now(),
-                      role: "tool",
-                      type: "memory",
-                      formatted: {
-                        text: `Saved information: ${key} = ${value}`,
-                      },
-                    },
-                  ]);
-                } else if (toolData.name === "submit_booking") {
-                  // Show booking success
-                  setShowBookingSuccess(true);
-
-                  // Add to conversation
-                  setItems((prev) => [
-                    ...prev,
-                    {
-                      id: Date.now(),
-                      role: "tool",
-                      type: "booking",
-                      formatted: {
-                        text: `Booking submitted: ${JSON.stringify(
-                          toolData.arguments
-                        )}`,
-                      },
-                    },
-                  ]);
-                }
-                break;
-
-              case "error":
-                console.error("Server error:", msg.content);
-                break;
-            }
-          } else if (event.data instanceof ArrayBuffer) {
-            if (conversationMode === "real-time" && isRecording) {
-              await stopRealtimeRecording();
-            }
-            try {
-              // Play the audio and handle visualization
-              await playAssistantAudio(event.data);
-            } catch (error) {
-              console.error("Error handling audio response:", error);
-            } finally {
-              // When audio playback completes, transition back to listening
-              if (conversationMode === "real-time") {
-                setConversationState("listening");
-                startRealtimeRecording();
-              }
-            }
-          }
-        } catch (error) {
-          console.error("Error handling WebSocket message:", error);
-        }
-      };
-
-      ws.onclose = () => {
-        setIsConnected(false);
-        setConversationState("disconnected");
-      };
-      ws.onerror = (event) => {
-        console.error("WebSocket error:", {
-          code: ws.readyState,
-          state: getWebSocketState(ws.readyState),
-          url: ws.url,
-          timestamp: new Date().toISOString(),
-        });
-
-        // Clean up resources on error
-        setIsConnected(false);
-        setConversationState("disconnected");
-
-        // Attempt reconnection or show user feedback
-        if (wsRef.current) {
-          wsRef.current.close();
-          wsRef.current = null;
-        }
-      };
-      wsRef.current = ws;
-    } catch (error) {
-      console.error("Connection error:", error);
-      // Ensure cleanup on any error
-      try {
-        await wavRecorderRef.current.end();
-      } catch (e) {}
+  } catch (error) {
+    console.error("Connection error:", error);
+    try {
+      await wavRecorderRef.current.end();
+    } catch (e) {
+      console.error("Error during cleanup:", e);
     }
-  }, [
-    conversationMode,
-    isRecording,
-    playAssistantAudio,
-    startRealtimeRecording,
-    stopRealtimeRecording,
-  ]);
+  }
+}, [conversationMode, isRecording, playAssistantAudio, startRealtimeRecording, stopRealtimeRecording]);
+
+// Handle WebSocket messages
+const handleWebSocketMessages = (msg, ws) => {
+  switch (msg.type) {
+    case "chat_noise":
+      setConversationMode("push-to-talk");
+      if (ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ event: "set_mode", mode: "push-to-talk" }));
+      }
+      if (isRecording) {
+        stopRealtimeRecording();
+      }
+      setItems((prev) => [...prev, { id: Date.now(), role: "assistant", formatted: { text: msg.content } }]);
+      break;
+
+    case "chat_response":
+      if (msg.transcript) {
+        setItems((prev) => [...prev, { id: Date.now() - 1, role: "user", formatted: { text: msg.transcript } }]);
+      }
+      if (msg.content) {
+        setItems((prev) => [...prev, { id: Date.now(), role: "assistant", formatted: { text: msg.content } }]);
+      }
+      break;
+
+    case "tool_call":
+      // Handle tool call results like "set_memory" or "submit_booking"
+      break;
+
+    case "error":
+      console.error("Server error:", msg.content);
+      break;
+
+    default:
+      console.log("Unknown message type:", msg.type);
+  }
+};
+  
 
   /**
    * In push-to-talk mode, start recording
