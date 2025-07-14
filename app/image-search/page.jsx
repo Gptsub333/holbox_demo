@@ -32,12 +32,12 @@ const handleSearch = async (query) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ query, k: 5 }),
+        body: JSON.stringify({ query, k: 3 }),
       });
     } else {
       const formData = new FormData();
       formData.append("file", query);
-      formData.append("k", "15");
+      formData.append("k", "3");
 
       response = await fetch(`${BACKEND_URL_IMAGE_SEARCH}/search_by_image`, {
         method: "POST",
