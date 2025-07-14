@@ -8,6 +8,9 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { UserButton, useUser } from "@clerk/nextjs"
+import OrgNameHeader from "./OrgNameHeader"
+import Loader from "@/components/Loader"; // Adjust the path according to your file structure
+
 
 
 const chatbotTypes = [
@@ -113,13 +116,51 @@ function SidebarContent({
 }) {
   const { user } = useUser();
 
-  const orgName = "Holbox"; // fallback for dev/local/test
+  const [orgName, setOrgName] = useState("Holbox AI Demo"); // fallback for dev/local/test
+  const [loading, setLoading] = useState(true);
+
+  // useEffect(() => {
+  //   const fetchOrgName = async () => {
+  //     try {
+  //       const cachedName = localStorage.getItem("orgName"); // Check if it's already stored
+  //       if (cachedName) {
+  //         setOrgName(cachedName);
+  //         setLoading(false); // If it's already cached, no need to load again
+  //       } else {
+  //         const res = await fetch('/api/org-name');
+  //         const data = await res.json();
+  //         if (data.orgName) {
+  //           setOrgName(data.orgName); // Set the organization name after fetching
+  //           // localStorage.setItem("orgName", data.orgName); // Store it in localStorage
+  //         }
+  //         setLoading(false);
+  //       }
+  //     } catch (err) {
+  //       console.error("Error fetching organization name:", err);
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchOrgName(); // Call the fetch function
+  // }, []);
+    // Fetch orgName from localStorage or set the default
+          useEffect(() => {
+            const savedOrgName = localStorage.getItem("orgName");
+            if (savedOrgName) {
+              setOrgName(savedOrgName); // If saved in localStorage, use that
+              setLoading(false);
+            } else {
+              // If nothing is saved, set default value
+              setOrgName("Holbox AI Demo");
+              setLoading(false);
+            }
+          }, []);
   
 
   return (
     <div className="flex flex-col h-full p-3 rounded-xl border border-gray-300 bg-white shadow-sm">
       <div className="p-2.5 mb-3 rounded-xl bg-gray-100 shadow-inner">
-        <Link href="/" className="flex items-center justify-center md:justify-start">
+        <div  className="flex items-center justify-center md:justify-start">
           <div className="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -136,8 +177,14 @@ function SidebarContent({
               <path d="M2 12l10 5 10-5" />
             </svg>
           </div>
-          <span className="ml-2.5 text-xs font-medium md:inline-block heading-font">{orgName} AI Demo</span>
-        </Link>
+          {/* Conditionally render the OrgNameHeader when orgName is fetched */}
+          {loading ? (
+            <Loader /> // Render your loader component while loading
+          ) : (
+            <OrgNameHeader orgName={orgName} setOrgName={setOrgName} />
+          )}
+
+        </div>
       </div>
 
       <div className="flex-1 py-3 overflow-y-auto">
