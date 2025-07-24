@@ -89,9 +89,6 @@ const features = [
 
 // Upcoming features data
 const upcomingFeatures = [
- 
-  
-  
   {
     name: "PDF Extractor",
     href: "/pdf-extractor",

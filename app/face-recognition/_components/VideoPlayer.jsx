@@ -1,64 +1,64 @@
-"use client"
+"use client";
 
-import { useRef, useEffect, useState } from "react"
-import { motion } from "framer-motion"
-import { Play, Pause, Volume2, Maximize } from "lucide-react"
+import { useRef, useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { Play, Pause, Volume2, Maximize } from "lucide-react";
 
-export default function VideoPlayer({ selectedVideo, onTimeUpdate }) {
-  const videoRef = useRef(null)
-  const [isPlaying, setIsPlaying] = useState(false)
-  const [currentTime, setCurrentTime] = useState(0)
-  const [duration, setDuration] = useState(0)
-  const [volume, setVolume] = useState(1)
+export default function VideoPlayer({ selectedVideo, onTimeUpdate, timestamps = [] }) {
+  const videoRef = useRef(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [volume, setVolume] = useState(1);
 
   useEffect(() => {
     if (selectedVideo && videoRef.current) {
-      videoRef.current.load()
-      setIsPlaying(false)
-      setCurrentTime(0)
+      videoRef.current.load();
+      setIsPlaying(false);
+      setCurrentTime(0);
     }
-  }, [selectedVideo])
+  }, [selectedVideo]);
 
   const togglePlay = () => {
     if (videoRef.current) {
       if (isPlaying) {
-        videoRef.current.pause()
+        videoRef.current.pause();
       } else {
-        videoRef.current.play()
+        videoRef.current.play();
       }
-      setIsPlaying(!isPlaying)
+      setIsPlaying(!isPlaying);
     }
-  }
+  };
 
   const handleTimeUpdate = () => {
     if (videoRef.current) {
-      const time = videoRef.current.currentTime
-      setCurrentTime(time)
-      onTimeUpdate(time)
+      const time = videoRef.current.currentTime;
+      setCurrentTime(time);
+      onTimeUpdate(time);
     }
-  }
+  };
 
   const handleLoadedMetadata = () => {
     if (videoRef.current) {
-      setDuration(videoRef.current.duration)
+      setDuration(videoRef.current.duration);
     }
-  }
+  };
 
   const handleSeek = (e) => {
     if (videoRef.current) {
-      const rect = e.currentTarget.getBoundingClientRect()
-      const pos = (e.clientX - rect.left) / rect.width
-      const time = pos * duration
-      videoRef.current.currentTime = time
-      setCurrentTime(time)
+      const rect = e.currentTarget.getBoundingClientRect();
+      const pos = (e.clientX - rect.left) / rect.width;
+      const time = pos * duration;
+      videoRef.current.currentTime = time;
+      setCurrentTime(time);
     }
-  }
+  };
 
   const formatTime = (time) => {
-    const minutes = Math.floor(time / 60)
-    const seconds = Math.floor(time % 60)
-    return `${minutes}:${seconds.toString().padStart(2, "0")}`
-  }
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+  };
 
   return (
     <motion.div
@@ -101,11 +101,36 @@ export default function VideoPlayer({ selectedVideo, onTimeUpdate }) {
             transition={{ duration: 0.3 }}
           >
             {/* Progress Bar */}
-            <div className="w-full h-1 bg-white/30 rounded-full mb-2 cursor-pointer" onClick={handleSeek}>
+            <div
+              className="w-full h-1 bg-white/30 rounded-full mb-2 cursor-pointer"
+              onClick={handleSeek}
+            >
               <div
                 className="h-full bg-[#2564eb] rounded-full transition-all duration-100"
                 style={{ width: `${(currentTime / duration) * 100}%` }}
               />
+              {/* Render green dots for timestamps */}
+              <div className="absolute top-[10px] left-3 right-0 flex items-center w-full h-1">
+                {timestamps &&
+                  timestamps.length > 0 &&
+                  timestamps.map((timestamp, index) => {
+                    const position = (timestamp / duration) * 100;
+                    // Ensure the position stays within bounds of the progress bar (0% to 100%)
+                    const clampedPosition = Math.min(Math.max(position, 0), 100);
+                    return (
+                      <div
+                        key={index}
+                        className="w-2.5 h-2.5 rounded-full bg-green-500"
+                        style={{
+                          left: `${clampedPosition}%`,
+                          position: "absolute",
+                          top: "-4px", // Adjusted to align properly on the progress bar
+                          zIndex: 1, // Ensure it appears on top of the progress bar
+                        }}
+                      />
+                    );
+                  })}
+              </div>
             </div>
 
             {/* Controls */}
@@ -131,10 +156,10 @@ export default function VideoPlayer({ selectedVideo, onTimeUpdate }) {
                     step="0.1"
                     value={volume}
                     onChange={(e) => {
-                      const vol = Number.parseFloat(e.target.value)
-                      setVolume(vol)
+                      const vol = Number.parseFloat(e.target.value);
+                      setVolume(vol);
                       if (videoRef.current) {
-                        videoRef.current.volume = vol
+                        videoRef.current.volume = vol;
                       }
                     }}
                     className="w-12 h-1 bg-white/30 rounded-full appearance-none cursor-pointer"
@@ -154,5 +179,5 @@ export default function VideoPlayer({ selectedVideo, onTimeUpdate }) {
         )}
       </div>
     </motion.div>
-  )
+  );
 }

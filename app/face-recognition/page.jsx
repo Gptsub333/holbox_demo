@@ -9,6 +9,8 @@ import AnalysisButton from "./_components/AnalysisButton";
 import ResultsTable from "./_components/ResultsTable";
 import ScrollHintArrow from "./_components/ScrollHintArrow";
 import { useAuthContext } from "../../context/AuthContext";  // Import the context
+import UsersTable from "../../components/face-table";
+
 
 export default function FaceRecognitionPage() {
   const [selectedVideo, setSelectedVideo] = useState(null);
@@ -17,6 +19,7 @@ export default function FaceRecognitionPage() {
   const [results, setResults] = useState(null);
   const [showResults, setShowResults] = useState(false);
   const [showScrollHint, setShowScrollHint] = useState(false);
+  const [timestamps, setTimestamps] = useState([]);
 
   // Recognition timer state
   const [recognitionElapsed, setRecognitionElapsed] = useState(0);
@@ -35,6 +38,7 @@ export default function FaceRecognitionPage() {
     setCurrentTime(0);
     setShowScrollHint(false);
     setRecognitionElapsed(0);
+    setTimestamps([]);
     if (recognitionTimerRef.current) {
       clearInterval(recognitionTimerRef.current);
       recognitionTimerRef.current = null;
@@ -106,7 +110,12 @@ export default function FaceRecognitionPage() {
 
       const data = await response.json();
 
-      setResults(data);
+          // Set the timestamps from the API response
+    const faces = data.detected_faces || [];
+    const faceTimestamps = faces.map(face => face.timestamp);  // Extract timestamps
+    setTimestamps(faceTimestamps);  // Set the timestamps in state
+  
+       setResults(data);
       setShowResults(true);
 
       // Scroll hint logic
@@ -158,6 +167,7 @@ export default function FaceRecognitionPage() {
           <VideoPlayer
             selectedVideo={selectedVideo}
             onTimeUpdate={handleTimeUpdate}
+            timestamps={timestamps}
           />
         </div>
 
@@ -180,6 +190,8 @@ export default function FaceRecognitionPage() {
           showHint={showScrollHint}
           onHintDismiss={handleHintDismiss}
         />
+         <UsersTable />
+       
       </motion.div>
     </div>
   );
