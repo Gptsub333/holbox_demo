@@ -9,6 +9,8 @@ import { cn } from "@/lib/utils";
 import { UploadArea } from "./_components/upload-area";
 import ShowResult from "./_components/ShowResult";
 import { useAuthContext } from "../../context/AuthContext";  // Import the context
+import UsersTable from "../../components/face-table";
+
 
 
 // You can swap this for process.env.NEXT_PUBLIC_BACKEND_URL in production
@@ -60,7 +62,7 @@ export default function FaceDetectionPage() {
 async function recognizeFaceAPI(formData) {
   // Get the token from your context or global state (assuming useAuth hook)
 
-  
+  //delete_face_by_photo  recognize_face
   const res = await fetch(`${BACKEND_URL}/recognize_face`, {
     method: "POST",
     body: formData,
@@ -282,6 +284,7 @@ async function recognizeFaceAPI(formData) {
             )}
           </CardContent>
         </Card>
+         <UsersTable />
       </motion.div>
     </div>
   );
@@ -307,6 +310,7 @@ function SectionToggle({ current, onChange }) {
           {type === "add" ? "Add Face" : "Recognize Face"}
         </button>
       ))}
+     
     </div>
   );
 }
