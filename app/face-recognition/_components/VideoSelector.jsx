@@ -1,9 +1,7 @@
 "use client"
-
 import { useState } from "react"
 import { motion } from "framer-motion"
 import { ChevronDown, Video, Clock } from "lucide-react"
-
 const predefinedVideos = [
   {
     id: 1,
@@ -24,15 +22,12 @@ const predefinedVideos = [
     duration: "0:02",
   },
 ]
-
 export default function VideoSelector({ selectedVideo, onVideoSelect }) {
   const [isOpen, setIsOpen] = useState(false)
-
   const handleVideoSelect = (video) => {
     onVideoSelect(video)
     setIsOpen(false)
   }
-
   return (
     <motion.div
       className="bg-white rounded-lg border border-gray-200 shadow-sm p-4"
@@ -41,12 +36,10 @@ export default function VideoSelector({ selectedVideo, onVideoSelect }) {
       transition={{ duration: 0.5 }}
     >
       <div className="flex items-center mb-3">
-        <Video className="h-4 w-4 text-[#2564eb] mr-2" />
+        <Video className="h-4 w-4 text-[#2564EB] mr-2" />
         <h3 className="text-base font-medium text-gray-900">Select Video</h3>
       </div>
-
       <p className="text-xs text-gray-600 mb-4">Choose a sample video to analyze for face recognition.</p>
-
       <div className="relative">
         <button
           onClick={() => setIsOpen(!isOpen)}
@@ -62,7 +55,6 @@ export default function VideoSelector({ selectedVideo, onVideoSelect }) {
             <ChevronDown className="h-3 w-3 text-gray-500" />
           </motion.div>
         </button>
-
         <motion.div
           initial={false}
           animate={{
@@ -85,7 +77,7 @@ export default function VideoSelector({ selectedVideo, onVideoSelect }) {
               transition={{ duration: 0.2, delay: index * 0.05 }}
             >
               <div className="flex items-center">
-                <Video className="h-3 w-3 text-[#2564eb] mr-2" />
+                <Video className="h-3 w-3 text-[#2564EB] mr-2" />
                 <span className="text-gray-900 font-medium">{video.name}</span>
               </div>
               <div className="flex items-center text-xs text-gray-500">
@@ -96,7 +88,6 @@ export default function VideoSelector({ selectedVideo, onVideoSelect }) {
           ))}
         </motion.div>
       </div>
-
       {selectedVideo && (
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -105,7 +96,7 @@ export default function VideoSelector({ selectedVideo, onVideoSelect }) {
           className="mt-3 p-2 bg-blue-50 border border-blue-200 rounded-lg"
         >
           <div className="flex items-center">
-            <div className="w-2 h-2 bg-[#2564eb] rounded-full mr-2"></div>
+            <div className="w-2 h-2 bg-[#2564EB] rounded-full mr-2"></div>
             <span className="text-xs font-medium text-blue-900">{selectedVideo.name} selected</span>
           </div>
           <p className="text-xs text-blue-700 mt-1">Duration: {selectedVideo.duration} • Ready for analysis</p>
