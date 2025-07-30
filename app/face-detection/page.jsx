@@ -41,7 +41,7 @@ export default function FaceDetectionPage() {
 
 
 
-  async function addFaceAPI(formData) {
+  async function addFaceAPI(formData) {;
   // Get the token from your context or global state (assuming useAuth hook)
   
   
@@ -314,3 +314,5 @@ function SectionToggle({ current, onChange }) {
     </div>
   );
 }
+
+
