@@ -1,6 +1,7 @@
 // app/layout.jsx
 import "./globals.css";
 import ClientProviders from "../components/ClientProviders"; // plain import!
+import { Toaster } from "@/components/ui/sonner"
 
 export const metadata = {
   title: "Agentic AI Demo Interface",
@@ -17,6 +18,7 @@ export default async function RootLayout({ children }) {
       <body>
         <ClientProviders >
           {children}
+           <Toaster />   
         </ClientProviders>
       </body>
     </html>

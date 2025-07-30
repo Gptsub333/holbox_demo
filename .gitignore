@@ -9,6 +9,7 @@
 
 #clerk
 .clerk
+.DS_Store
 
 # production
 /build
