@@ -5,6 +5,8 @@ import { GradientButton } from "@/components/ui/gradient-button"
 import { Stethoscope, FileText, User, Bot, Shirt } from "lucide-react"
 import { motion } from "framer-motion"
 
+
+
 export default function Home() {
   // Animation variants for staggered children
   const containerVariants = {
