@@ -13,7 +13,7 @@ export default function Query({ query, setQuery, onQuerySubmit, isLoading, query
   }
 
   return (
-    <Card>
+    <Card className="mb-8 bg-white border border-gray-200 rounded-xl shadow-sm">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <HelpCircle className="h-6 w-6 text-gray-600" />
@@ -29,7 +29,7 @@ export default function Query({ query, setQuery, onQuerySubmit, isLoading, query
             placeholder="e.g., What is the average value of column 'target'?"
             className="flex-grow"
           />
-          <Button type="submit" disabled={isLoading || !query}>
+          <Button className="bg-blue-600 rounded-md text-white" type="submit" disabled={isLoading || !query}>
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Submit Query
           </Button>
@@ -37,7 +37,7 @@ export default function Query({ query, setQuery, onQuerySubmit, isLoading, query
         {queryResult && (
           <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
             <p className="text-sm font-semibold text-blue-800 mb-2">Query Result</p>
-            <p className="text-gray-700">{queryResult.query_result}</p>
+            <p className="text-gray-700">{queryResult.result}</p>
           </div>
         )}
       </CardContent>

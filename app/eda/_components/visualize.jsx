@@ -6,7 +6,7 @@ import { Loader2, BarChart } from "lucide-react"
 
 export default function Visualize({ onVisualize, isLoading, visualizations }) {
   const vizOptions = ["dist", "corr", "cat", "time"]
-
+  console.log("Visualizations:", visualizations)
   return (
     <Card>
       <CardHeader>
@@ -29,21 +29,23 @@ export default function Visualize({ onVisualize, isLoading, visualizations }) {
           </Button>
         </div>
 
-        {Object.keys(visualizations).length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {Object.entries(visualizations).map(([key, value]) => (
-              <div key={key} className="p-4 border rounded-lg bg-white">
-                <h3 className="text-lg font-semibold mb-2 capitalize">{key} Plot</h3>
-                <img
-                   src={getImgSrc(value)}
-                  alt={`${key} visualization`}
-                  className="w-full h-auto rounded-md object-contain border"
-                />
-
+        {Object.entries(visualizations).map(([key, value]) => (
+          <div key={key} className="mb-4">
+            <h3 className="text-lg font-semibold mb-2 capitalize">{key} Plot</h3>
+            {typeof value === "string" && value.startsWith("data:image") ? (
+              <img
+                src={value}
+                alt={`${key} visualization`}
+                className="w-full h-auto rounded-md object-contain border"
+              />
+            ) : (
+              <div className="text-gray-500 text-sm italic border border-gray-200 p-4 rounded bg-gray-50">
+                {value}
               </div>
-            ))}
+            )}
           </div>
-        )}
+        ))}
+
       </CardContent>
     </Card>
   )

@@ -56,7 +56,7 @@ const features = [
     icon: ScanFace || User, // Use ScanFace, fallback to User
     description: "Detect and recognize faces from images",
   },
-
+  
   // { name: "PDF Extractor", href: "/pdf-extractor", icon: FileText, description: "Upload PDFs and chat for insights" },
   {
     name: "DDx Assistant",
@@ -70,20 +70,20 @@ const features = [
     icon: UserX,
     description: "Detect and extract personal information",
   },
-
+  
   { name: "NL2SQL", href: "/nl2sql", icon: Database, description: "SQL queries using AI with instant results" },
   { name: "Summarizer", href: "/summarizer", icon: FileDigit, description: "Automatically summarize long documents and content" },
-
- 
-
+  
+  
+  {name:"x-ray-analysis", href:"/x-ray-analysis", icon: Stethoscope, description:"Analyze and report on X-ray images"},
+  {name: "Handwritten to Digital Text", href: "handtext2text", icon: FileText, description:"Easily convert images of handwritten notes into editable, digital text."},
   { name: "Voice-Agent", href: "/voice-agent", icon: Mic, description: "Voice-enabled booking and health assistant" },
-   {name: "Handwritten to Digital Text", href: "handtext2text", icon: FileText, description:"Easily convert images of handwritten notes into editable, digital text."},
   { name: "Image Search", href: "/image-search", icon: FileSearch, description: "Search images using text or other images" },
   { name: "Virtual Try-On", href: "/virtual-try-on", icon: Shirt, description: "Try garments on models using images" },
   { name: "PII Masker", href: "/pii-redactor", icon: FileX, description: "Remove PII from input text securely" },
   { name: "Text to Image", href: "/text-to-image", icon: Wand2, description: "Generate images from text descriptions" },
   { name: "Text to Video", href: "/text-to-video", icon: Video, description: "Generate video from text descriptions" },
-  // { name: "EDA", href: "/eda", icon: BrainCircuit, description: "Analysis of data" }
+  { name: "EDA", href: "/eda", icon: BrainCircuit, description: "Analysis of data" }
 
 ]
 
