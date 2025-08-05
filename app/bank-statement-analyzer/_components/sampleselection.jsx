@@ -4,7 +4,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { FileText, CheckCircle, ChevronRight, Loader2 } from "lucide-react"
-import ResultsModal from "./ResultsModal"  // Import the ResultsModal component
+import ResultsModal from "./resultsmodal"  // Import the ResultsModal component
 
 // Mock data for sample analysis with amounts
 const sampleMerchants = {
