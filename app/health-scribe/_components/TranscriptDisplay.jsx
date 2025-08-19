@@ -11,7 +11,8 @@ export default function TranscriptDisplay({
   transcribeProgress,
   handleChatClick,
   handleTranscribe,
-  handleUploadClick
+  handleUploadClick,
+  handleCancel,
 }) {
   return (
     <div>
@@ -44,8 +45,8 @@ export default function TranscriptDisplay({
                   disabled={isTranscribing}
                   className={`text-sm flex items-center ${
                     isTranscribing
-                      ? "text-gray-400 cursor-not-allowed"
-                      : "text-blue-600 hover:text-blue-800 transition-colors"
+                      ? 'text-gray-400 cursor-not-allowed'
+                      : 'text-blue-600 hover:text-blue-800 transition-colors'
                   }`}
                 >
                   {isTranscribing ? (
@@ -65,17 +66,22 @@ export default function TranscriptDisplay({
 
             {/* Transcription Process or Content */}
             {isTranscribing ? (
-              <div className="bg-gray-50 rounded-lg p-6 flex flex-col items-center justify-center">
-                <div className="w-12 h-12 rounded-full border-4 border-blue-100 border-t-blue-600 animate-spin mb-4"></div>
-                <p className="text-sm font-medium mb-2">Transcribing audio...</p>
-                <div className="w-full max-w-md bg-gray-200 rounded-full h-1.5 mb-1">
-                  <div
-                    className="bg-blue-600 h-1.5 rounded-full"
-                    style={{ width: `${transcribeProgress}%` }}
-                  ></div>
+              <>
+                <div className="bg-gray-50 rounded-lg p-6 flex flex-col items-center justify-center">
+                  <div className="w-12 h-12 rounded-full border-4 border-blue-100 border-t-blue-600 animate-spin mb-4"></div>
+                  <p className="text-sm font-medium mb-2">Transcribing audio...</p>
+                  <div className="w-full max-w-md bg-gray-200 rounded-full h-1.5 mb-1">
+                    <div className="bg-blue-600 h-1.5 rounded-full" style={{ width: `${transcribeProgress}%` }}></div>
+                  </div>
+                  <p className="text-xs text-muted-foreground">{transcribeProgress}% complete</p>
                 </div>
-                <p className="text-xs text-muted-foreground">{transcribeProgress}% complete</p>
-              </div>
+                <button
+                  onClick={handleCancel}
+                  className="w-full rounded-lg px-4 py-3 text-white font-medium bg-gray-300  hover:bg-gray-400 transition-colors"
+                >
+                  Cancel
+                </button>
+              </>
             ) : transcript ? (
               <>
                 <div className="bg-gray-50 rounded-lg p-6 max-h-[400px] overflow-y-auto mb-4">
@@ -118,7 +124,7 @@ export default function TranscriptDisplay({
                 </div>
               </>
             ) : (
-              <NoTranscriptMessage handleTranscribe={handleTranscribe}/>
+              <NoTranscriptMessage handleTranscribe={handleTranscribe} />
             )}
           </div>
         </>
