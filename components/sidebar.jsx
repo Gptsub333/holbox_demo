@@ -29,7 +29,7 @@ export function Sidebar({
 }) {
   const pathname = usePathname()
   const [activeChatbot, setActiveChatbot] = useState(chatbotTypes[0])
-  
+
 
   // Close sidebar when clicking outside on mobile
   useEffect(() => {
@@ -44,7 +44,7 @@ export function Sidebar({
         onMobileClose()
       }
     }
-    
+
     if (isMobileOpen) {
       document.addEventListener("mousedown", handleClickOutside)
     }
@@ -143,24 +143,24 @@ function SidebarContent({
 
   //   fetchOrgName(); // Call the fetch function
   // }, []);
-    // Fetch orgName from localStorage or set the default
-          useEffect(() => {
-            const savedOrgName = localStorage.getItem("orgName");
-            if (savedOrgName) {
-              setOrgName(savedOrgName); // If saved in localStorage, use that
-              setLoading(false);
-            } else {
-              // If nothing is saved, set default value
-              setOrgName("Holbox AI Demo");
-              setLoading(false);
-            }
-          }, []);
-  
+  // Fetch orgName from localStorage or set the default
+  useEffect(() => {
+    const savedOrgName = localStorage.getItem("orgName");
+    if (savedOrgName) {
+      setOrgName(savedOrgName); // If saved in localStorage, use that
+      setLoading(false);
+    } else {
+      // If nothing is saved, set default value
+      setOrgName("Holbox AI Demo");
+      setLoading(false);
+    }
+  }, []);
+
 
   return (
     <div className="flex flex-col h-full p-3 rounded-xl border border-gray-300 bg-white shadow-sm">
       <div className="p-2.5 mb-3 rounded-xl bg-gray-100 shadow-inner">
-        <div  className="flex items-center justify-center md:justify-start">
+        <div className="flex items-center justify-center md:justify-start">
           <div className="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -272,10 +272,21 @@ function SidebarContent({
         </nav>
       </div>
 
-      <div className="flex gap-2 items-center justify-center">
+      <div className="flex items-center justify-center gap-2">
         <UserButton />
-        <span className="text-sm font-medium text-gray-700">{user?.fullName || "User"}</span>
+        <div className="flex flex-col leading-tight">
+          <span className="text-sm font-medium text-gray-700">
+            {user?.fullName || "User"}
+          </span>
+          {user?.fullName === "GPT Subscription" && (
+            <span className="text-[11px] font-semibold text-gray-600 -mt-0.5">
+              Admin
+            </span>
+          )}
+        </div>
       </div>
+
+
 
       <div className="p-2.5 mt-auto">
         <div className="rounded-xl bg-white shadow-sm p-2.5">
