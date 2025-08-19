@@ -91,6 +91,7 @@ const features = [
 
 // Upcoming features data
 const upcomingFeatures = [
+  { name: "calories-counter", href: "/calories-counter", icon: Activity, description: "Upload food images to get calorie counts and nutritional information" },
   {
     name: "PDF Extractor",
     href: "/pdf-extractor",
@@ -119,7 +120,7 @@ const upcomingFeatures = [
     icon: CalendarClock,
     description: "Get insights and summaries from meeting recordings",
   },
-  { name: "Data Masking", icon: Eye, description: "Automatically mask sensitive data in documents" },
+
   { name: "ICD Coding", icon: BookOpen, description: "Automated medical coding for healthcare documentation" },
   { name: "Medical Copilot", icon: StethoscopeIcon, description: "AI assistant for medical professionals" },
 ]
