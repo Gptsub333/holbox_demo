@@ -21,12 +21,13 @@ export default function UploadModal({
 
   // Close modal safely if not uploading/processing
   const handleClose = () => {
-    if (uploadStatus !== 'uploading' && uploadStatus !== 'processing') {
-      setUploadModalOpen(false);
-      setUploadProgress(0);
-      setUploadStatus('idle');
-      setSelectedFile(null);
-    }
+    // if (uploadStatus !== 'uploading' && uploadStatus !== 'processing') {
+    // }
+    setUploadModalOpen(false);
+    setUploadProgress(0);
+    setUploadStatus('idle');
+    setSelectedFile(null);
+    handleCancel();
   };
 
   if (!uploadModalOpen) return null;
@@ -49,7 +50,7 @@ export default function UploadModal({
           <button
             onClick={handleClose}
             className="text-gray-500 hover:text-gray-700"
-            disabled={uploadStatus === 'uploading' || uploadStatus === 'processing'}
+            // disabled={uploadStatus === 'uploading' || uploadStatus === 'processing'}
           >
             <X className="w-5 h-5" />
           </button>
@@ -107,10 +108,13 @@ export default function UploadModal({
                 <h3 className="text-lg font-medium mb-2">
                   {uploadStatus === 'uploading' ? 'Uploading...' : 'Processing...'}
                 </h3>
+                <div className="flex-1 min-w-0 mb-2">
+                  <p className="text-sm font-medium truncate">{selectedFile.name}</p>
+                  <p className="text-xs text-muted-foreground">{(selectedFile.size / (1024 * 1024)).toFixed(2)} MB</p>
+                </div>
                 <p className="text-sm text-muted-foreground mb-6">
                   {uploadStatus === 'uploading' ? 'Your file is being uploaded' : 'Converting audio to text'}
                 </p>
-
                 {uploadStatus === 'uploading' && (
                   <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
                     <div className="bg-blue-600 h-2 rounded-full" style={{ width: `${uploadProgress}%` }}></div>

@@ -214,7 +214,7 @@ export default function HealthScribePage() {
   //   if (transcript) setChatModalOpen(true);
   // };
 
-  const handleFileSelect = (e) => {
+  const handleFileSelect = async (e) => {
     const file = e.target.files[0];
     if (!file) {
       return;
@@ -223,6 +223,8 @@ export default function HealthScribePage() {
     const fileError = helpers.fileSize(constants.fileSize.audio.inBytes, constants.fileSize.audio.inMB)(file);
 
     const typeError = helpers.checkAudioFileType(file);
+
+    const corruptionError = await helpers.checkAudioCorruption(file);
 
     if (fileError) {
       toast(fileError);
@@ -233,6 +235,12 @@ export default function HealthScribePage() {
       toast(typeError);
       return;
     }
+
+    if (corruptionError) {
+      toast(corruptionError);
+      return;
+    }
+
     setSelectedFile(file);
   };
 
@@ -248,7 +256,6 @@ export default function HealthScribePage() {
 
   const handleUpload = async () => {
     if (!selectedFile) return;
-
     setUploadStatus('uploading');
     setUploadProgress(0);
 
@@ -306,7 +313,7 @@ export default function HealthScribePage() {
       }, 1000);
     } catch (error) {
       if (error.name === 'AbortError') {
-        toast(`Upload canceled`);
+        toast(`Upload cancelled`);
       } else {
         console.error('Error:', error);
         alert('Upload or transcription failed: ' + error.message);
@@ -331,7 +338,6 @@ export default function HealthScribePage() {
 
   const handleTranscribe = async () => {
     if (!activeAudio) return;
-
     setIsTranscribing(true);
     setTranscribeProgress(0);
 
@@ -381,7 +387,7 @@ export default function HealthScribePage() {
       setTranscribeProgress(100);
     } catch (error) {
       if (error.name === 'AbortError') {
-        toast('Transcription canceled');
+        toast('Transcription cancelled');
       } else {
         console.error('Transcription error:', error.message);
         setTranscript('Error during transcription. Please try again.');
@@ -469,7 +475,7 @@ export default function HealthScribePage() {
       </motion.div>
 
       {/* Main content */}
-      <div className="grid gap-8 lg:grid-cols-5 ">
+      <div className="grid gap-8 lg:grid-cols-5">
         {/* Left: Audio Samples */}
         <motion.div className="lg:col-span-2" variants={itemVariants}>
           <AudioSamples

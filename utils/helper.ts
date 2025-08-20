@@ -26,46 +26,59 @@ const helpers = {
           ? `Upload file less than  ${sizeInMB}`
           : undefined,
 
-  uploadFile: async (selectedFile: File, token: string, setUploadProgress?: (p: number) => void, onAbortRef?: React.MutableRefObject<null | (() => void)>) => {
-  return new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest();
-    const formData = new FormData();
-    formData.append('file', selectedFile);
+  checkAudioCorruption: async function (file: File | null): Promise<string | undefined> {
+    if (!file) return;
 
-    xhr.open('POST', `${process.env.NEXT_PUBLIC_BACKEND_URL}/healthscribe/upload-audio`);
-
-    // ✅ Add Authorization header
-    xhr.setRequestHeader('Authorization', token);
-
-    // ✅ Track progress
-    xhr.upload.onprogress = (event) => {
-      if (event.lengthComputable && setUploadProgress) {
-        const percent = Math.round((event.loaded / event.total) * 100);
-        setUploadProgress(percent);
-      }
-    };
-
-    // ✅ Handle success
-    xhr.onload = () => {
-      if (xhr.status >= 200 && xhr.status < 300) {
-        resolve(JSON.parse(xhr.responseText));
-      } else {
-        reject(new Error(`Upload failed: ${xhr.statusText}`));
-      }
-    };
-
-    // ✅ Handle error
-    xhr.onerror = () => reject(new Error("Network error while uploading"));
-    xhr.onabort = () => reject(new DOMException("Upload canceled", "AbortError"));
-
-    // ✅ Expose abort function to outside via ref
-    if (onAbortRef) {
-      onAbortRef.current = () => xhr.abort();
+    try {
+      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const arrayBuffer = await file.arrayBuffer();
+      await audioContext.decodeAudioData(arrayBuffer); // will throw error if corrupted
+      return undefined; // file is valid
+    } catch (error) {
+      return 'The selected audio file appears to be corrupted or unreadable.';
     }
+  },
 
-    xhr.send(formData);
-  });
-}
+  uploadFile: async (selectedFile: File, token: string, setUploadProgress?: (p: number) => void, onAbortRef?: React.MutableRefObject<null | (() => void)>) => {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+
+      xhr.open('POST', `${process.env.NEXT_PUBLIC_BACKEND_URL}/healthscribe/upload-audio`);
+
+      // ✅ Add Authorization header
+      xhr.setRequestHeader('Authorization', token);
+
+      // ✅ Track progress
+      xhr.upload.onprogress = (event) => {
+        if (event.lengthComputable && setUploadProgress) {
+          const percent = Math.round((event.loaded / event.total) * 100);
+          setUploadProgress(percent);
+        }
+      };
+
+      // ✅ Handle success
+      xhr.onload = () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          resolve(JSON.parse(xhr.responseText));
+        } else {
+          reject(new Error(`Upload failed: ${xhr.statusText}`));
+        }
+      };
+
+      // ✅ Handle error
+      xhr.onerror = () => reject(new Error("Network error while uploading"));
+      xhr.onabort = () => reject(new DOMException("Upload canceled", "AbortError"));
+
+      // ✅ Expose abort function to outside via ref
+      if (onAbortRef) {
+        onAbortRef.current = () => xhr.abort();
+      }
+
+      xhr.send(formData);
+    });
+  }
 
 }
 
