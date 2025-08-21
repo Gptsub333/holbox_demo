@@ -74,7 +74,7 @@ const features = [
   
   { name: "NL2SQL", href: "/nl2sql", icon: Database, description: "SQL queries using AI with instant results" },
   { name: "Summarizer", href: "/summarizer", icon: FileDigit, description: "Automatically summarize long documents and content" },
-  
+  { name: "ConciergeAI", href: "/concierge-ai", icon: User, description: "AI assistant for business inquiries" },
   { name: "calories-counter", href: "/calories-counter", icon: Activity, description: "Upload food images to get calorie counts and nutritional information" },
   {name:"x-ray-analysis", href:"/x-ray-analysis", icon: Stethoscope, description:"Analyze and report on X-ray images"},
   {name: "Handwritten to Digital Text", href: "handtext2text", icon: FileText, description:"Easily convert images of handwritten notes into editable, digital text."},
