@@ -6,17 +6,17 @@ const sampleFoods = [
   {
     id: 1,
     name: "Grilled Chicken Salad",
-    image: "/food/r.jpg",
+    image: "/food/s.jpeg",
   },
   {
     id: 2,
-    name: "Avocado Toast",
+    name: "Indian Thali",
     image: "/food/2.jpeg",
   },
   {
     id: 3,
     name: "Berry Smoothie Bowl",
-    image: "/food/b.png",
+    image: "/food/r.jpg",
   },
 ]
 
