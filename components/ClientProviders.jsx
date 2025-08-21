@@ -14,17 +14,18 @@ export default function ClientProviders({ children }) {
       routerPush={(to) => router.push(to)}
       routerReplace={(to) => router.replace(to)}
     >
-      
-        <AuthProvider>
-          <SignedOut>
-            <div className="min-w-screen min-h-screen flex items-center justify-center ">
-              <SignIn routing="hash" />
-            </div>
-          </SignedOut>
-          <SignedIn>
-            <ClientLayout>{children}</ClientLayout>
-          </SignedIn>
-        </AuthProvider>
+
+      <AuthProvider>
+        <SignedOut>
+          <div className="min-w-screen min-h-screen flex items-center justify-center ">
+            <SignIn routing="hash" />
+          </div>
+        </SignedOut>
+        <SignedIn>
+          <ClientLayout>{children}</ClientLayout>
+        </SignedIn>
+      </AuthProvider>
+
     </ClerkProvider>
   );
 }

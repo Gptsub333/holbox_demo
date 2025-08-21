@@ -238,8 +238,9 @@ const handleUpload = async () => {
     // 1. Upload the file, get S3 URL
     const formData = new FormData();
     formData.append("file", selectedFile);
+    //${BACKEND_URL}/healthscribe/upload-audio
 
-    const uploadResponse = await fetch(`${BACKEND_URL}/healthscribe/upload-audio`, {
+    const uploadResponse = await fetch(`http://127.0.0.1:8000/api/demo_backend_v2/healthscribe/upload-audio`, {
       method: "POST",
       body: formData,
       headers: {

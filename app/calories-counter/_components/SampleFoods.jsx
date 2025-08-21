@@ -6,29 +6,17 @@ const sampleFoods = [
   {
     id: 1,
     name: "Grilled Chicken Salad",
-    image: "/placeholder.svg?height=120&width=120",
-    calories: 285,
-    protein: "32g",
-    carbs: "12g",
-    fat: "8g",
+    image: "/food/r.jpg",
   },
   {
     id: 2,
     name: "Avocado Toast",
-    image: "/placeholder.svg?height=120&width=120",
-    calories: 320,
-    protein: "12g",
-    carbs: "28g",
-    fat: "18g",
+    image: "/food/2.jpeg",
   },
   {
     id: 3,
     name: "Berry Smoothie Bowl",
-    image: "/placeholder.svg?height=120&width=120",
-    calories: 245,
-    protein: "8g",
-    carbs: "42g",
-    fat: "6g",
+    image: "/food/b.png",
   },
 ]
 
