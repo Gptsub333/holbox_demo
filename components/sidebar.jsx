@@ -7,7 +7,7 @@ import { Grid, CalendarClock, Home, MessageSquare, ChevronDown, X, LayoutDashboa
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-// import { UserButton, useUser } from "@clerk/nextjs"
+import { UserButton, useUser } from "@clerk/nextjs"
 import OrgNameHeader from "./OrgNameHeader"
 import Loader from "@/components/Loader"; // Adjust the path according to your file structure
 
@@ -114,7 +114,7 @@ function SidebarContent({
   isMobile = false,
   onMobileClose,
 }) {
-  // const { user } = useUser();
+  const { user } = useUser();
 
   const [orgName, setOrgName] = useState("Holbox AI Demo"); // fallback for dev/local/test
   const [loading, setLoading] = useState(true);
@@ -272,7 +272,7 @@ function SidebarContent({
         </nav>
       </div>
 
-      {/* <div className="flex items-center justify-center gap-2">
+       <div className="flex items-center justify-center gap-2">
         <UserButton />
         <div className="flex flex-col leading-tight">
           <span className="text-sm font-medium text-gray-700">
@@ -284,7 +284,7 @@ function SidebarContent({
             </span>
           )}
         </div>
-      </div> */}
+      </div> 
 
 
 
