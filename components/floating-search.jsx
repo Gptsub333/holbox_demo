@@ -85,8 +85,8 @@ const features = [
   { name: "PII Masker", href: "/pii-redactor", icon: FileX, description: "Remove PII from input text securely" },
   { name: "Text to Image", href: "/text-to-image", icon: Wand2, description: "Generate images from text descriptions" },
   { name: "Text to Video", href: "/text-to-video", icon: Video, description: "Generate video from text descriptions" },
-  
-
+   { name: "EDA", href: "/eda", icon: BrainCircuit, description: "Exploratory Data Analysis of data your .csv" },
+   
 ]
 
 // Upcoming features data
@@ -99,7 +99,7 @@ const upcomingFeatures = [
     description: "Detect and extract personal information",
   },
 { name: "Voice-Agent", href: "/voice-agent", icon: Mic, description: "Voice-enabled booking and health assistant" },
- { name: "EDA", href: "/eda", icon: BrainCircuit, description: "Exploratory Data Analysis of data your .csv" },
+
   {
     name: "Video Compliance",
     href: "/video-compliance",
