@@ -226,6 +226,8 @@ export default function HealthScribePage() {
 
     const corruptionError = await helpers.checkAudioCorruption(file);
 
+    const isValid = await helpers.checkAudioDuration(file, constants.fileSize.audio.maxSize);
+
     if (fileError) {
       toast(fileError);
       return;
@@ -238,6 +240,11 @@ export default function HealthScribePage() {
 
     if (corruptionError) {
       toast(corruptionError);
+      return;
+    }
+
+    if (!isValid) {
+      toast(`File is too long. Max allowed is ${constants.fileSize.audio.maxSize} minutes.`);
       return;
     }
 

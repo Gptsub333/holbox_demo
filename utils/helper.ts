@@ -78,6 +78,25 @@ const helpers = {
 
       xhr.send(formData);
     });
+  },
+
+  checkAudioDuration: async (file: File, maxMinutes: number): Promise<boolean> => {
+    return new Promise((resolve, reject) => {
+      const audioContext = new AudioContext();
+      const reader = new FileReader();
+
+      reader.onload = (e) => {
+        if (!e.target?.result) return reject("Failed to read file");
+        const arrayBuffer = e.target.result as ArrayBuffer;
+
+        audioContext.decodeAudioData(arrayBuffer, (buffer) => {
+          const durationInMinutes = buffer.duration / 60;
+          resolve(durationInMinutes <= maxMinutes);
+        }, reject);
+      };
+
+      reader.readAsArrayBuffer(file);
+    });
   }
 
 }

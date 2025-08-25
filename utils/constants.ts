@@ -4,6 +4,7 @@ const constants = {
     audio: {
       inBytes: 50 * 1024 * 1024,
       inMB: '50MB',
+      maxSize: 30 // in minutes
     },
   }
 }
