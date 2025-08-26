@@ -5,13 +5,13 @@ import { motion } from "framer-motion"
 
 export default function NL2SQLHeader() {
   return (
-     <motion.div
+    <motion.div
       className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6"
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
     >
-      <div className="flex  items-center space-x-3 mb-3">
+      <div className="flex items-center space-x-3 mb-3">
         <motion.div
           className="relative"
           initial={{ scale: 0 }}
@@ -30,7 +30,6 @@ export default function NL2SQLHeader() {
             <DatabaseZap className="w-2 h-2 text-white" />
           </motion.div>
         </motion.div>
-
         <div>
           <motion.h1
             className="text-xl font-bold text-gray-900"
@@ -38,21 +37,20 @@ export default function NL2SQLHeader() {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.6 }}
           >
-           NL2SQL Converter
+            NL2SQL Converter
           </motion.h1>
-
           <motion.p
             className="text-xs text-gray-600"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4, duration: 0.6 }}
           >
-                Convert natural language queries into SQL with instant visualizations and summaries.
+            Convert natural language queries into SQL with instant visualizations and summaries.
           </motion.p>
         </div>
       </div>
     </motion.div>
-  )
+  );
 
    
 }
