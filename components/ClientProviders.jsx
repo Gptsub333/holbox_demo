@@ -9,22 +9,26 @@ export default function ClientProviders({ children }) {
   const router = useRouter();
 
   return (
-    <ClerkProvider
-      publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
-      routerPush={(to) => router.push(to)}
-      routerReplace={(to) => router.replace(to)}
-    >
+
+    // <ClerkProvider
+    //   publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
+    //   routerPush={(to) => router.push(to)}
+    //   routerReplace={(to) => router.replace(to)}
+    // >
+
       
+        // {/* <SignedOut> */}
+        //   {/* <div className="min-w-screen min-h-screen flex items-center justify-center ">
+        //     <SignIn routing="hash" />
+        //   </div> */}
+        // {/* </SignedOut> */}
+        // {/* <SignedIn> */}
         <AuthProvider>
-          <SignedOut>
-            <div className="min-w-screen min-h-screen flex items-center justify-center ">
-              <SignIn routing="hash" />
-            </div>
-          </SignedOut>
-          <SignedIn>
-            <ClientLayout>{children}</ClientLayout>
-          </SignedIn>
-        </AuthProvider>
-    </ClerkProvider>
+          <ClientLayout>{children}</ClientLayout>
+       
+      </AuthProvider>
+    //   {/* </SignedIn> */}
+    // {/* </ClerkProvider> */}
+
   );
 }
