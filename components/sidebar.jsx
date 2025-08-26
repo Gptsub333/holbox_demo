@@ -114,7 +114,9 @@ function SidebarContent({
   isMobile = false,
   onMobileClose,
 }) {
+
   // const { user,isLoaded } = useUser();
+
 
   const [orgName, setOrgName] = useState("Holbox AI Demo"); // fallback for dev/local/test
   const [loading, setLoading] = useState(true);
@@ -306,7 +308,11 @@ function SidebarContent({
         </nav>
       </div>
 
+
+       // <div className="flex items-center justify-center gap-2">
+
        {/* <div className="flex items-center justify-center gap-2">
+
         <UserButton />
         <div className="flex flex-col leading-tight">
           <span className="text-sm font-medium text-gray-700">
@@ -318,7 +324,11 @@ function SidebarContent({
             </span>
           )}
         </div>
+
+      </div> 
+
       </div>  */}
+
 
       {/* <div>
 
