@@ -5,7 +5,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Send, User, Bot, Loader2 } from "lucide-react"; // Import the loader icon
 import ReactMarkdown from "react-markdown";  // Import react-markdown
 import remarkGfm from "remark-gfm";  // Import remark-gfm for GitHub-flavored markdown
-import { useUser } from "@clerk/nextjs";
+// import { useUser } from "@clerk/nextjs";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL + "/ai_concierge/ask"; // Your backend URL
 
@@ -13,8 +13,8 @@ export default function ChatbotPanel({ messages, setMessages, input, setInput })
   const messagesEndRef = useRef(null);
   const scrollAreaRef = useRef(null);
   const [loading, setLoading] = useState(false); // State to track loading
-  const { user, isLoaded } = useUser(); // Get user data from Clerk
-
+  // const { user, isLoaded } = useUser(); // Get user data from Clerk
+  const user = { id: "local-user-1234" }; // Dummy user for local testing
   // Ensure the user is loaded before sending the API call
   if (!isLoaded || !user) {
     console.error("User data not loaded.");
