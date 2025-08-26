@@ -86,6 +86,7 @@ export function ModernChatbot({ isOpen, onClose, title = "AI Assistant" }) {
 
   if (!isOpen) return null
 
+  
   return (
     <AnimatePresence>
       <motion.div
