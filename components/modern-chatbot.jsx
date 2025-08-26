@@ -89,7 +89,7 @@ export function ModernChatbot({ isOpen, onClose, title = "AI Assistant" }) {
   return (
     <AnimatePresence>
       <motion.div
-        className="fixed bottom-4 right-4 z-50 flex flex-col w-full max-w-sm shadow-xl rounded-xl overflow-hidden"
+        className="fixed bottom-0 right-0 left-0 sm:bottom-4 sm:right-4 sm:left-auto z-50 flex flex-col w-full sm:w-auto max-w-full sm:max-w-sm shadow-xl rounded-t-xl sm:rounded-xl overflow-hidden"
         initial={{ opacity: 0, y: 20, x: 20 }}
         animate={{ opacity: 1, y: 0, x: 0 }}
         exit={{ opacity: 0, y: 20, x: 20 }}
