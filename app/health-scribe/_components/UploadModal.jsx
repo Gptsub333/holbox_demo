@@ -1,6 +1,6 @@
-import React, { useRef } from "react";
-import { motion } from "framer-motion";
-import { Upload, X, FileAudio, CheckCircle2 } from "lucide-react";
+import React, { useRef } from 'react';
+import { motion } from 'framer-motion';
+import { Upload, X, FileAudio, CheckCircle2 } from 'lucide-react';
 
 export default function UploadModal({
   uploadModalOpen,
@@ -13,6 +13,7 @@ export default function UploadModal({
   setSelectedFile,
   handleFileSelect,
   handleUpload,
+  handleCancel,
   handleDragOver,
   handleDrop,
 }) {
@@ -20,12 +21,13 @@ export default function UploadModal({
 
   // Close modal safely if not uploading/processing
   const handleClose = () => {
-    if (uploadStatus !== "uploading" && uploadStatus !== "processing") {
-      setUploadModalOpen(false);
-      setUploadProgress(0);
-      setUploadStatus("idle");
-      setSelectedFile(null);
-    }
+    // if (uploadStatus !== 'uploading' && uploadStatus !== 'processing') {
+    // }
+    setUploadModalOpen(false);
+    setUploadProgress(0);
+    setUploadStatus('idle');
+    setSelectedFile(null);
+    handleCancel();
   };
 
   if (!uploadModalOpen) return null;
@@ -48,14 +50,14 @@ export default function UploadModal({
           <button
             onClick={handleClose}
             className="text-gray-500 hover:text-gray-700"
-            disabled={uploadStatus === "uploading" || uploadStatus === "processing"}
+            // disabled={uploadStatus === 'uploading' || uploadStatus === 'processing'}
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         <div className="p-6">
-          {uploadStatus === "idle" && (
+          {uploadStatus === 'idle' && (
             <>
               <div
                 className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center mb-6 cursor-pointer hover:border-blue-500 transition-colors"
@@ -69,13 +71,7 @@ export default function UploadModal({
                 <button className="rounded-lg bg-blue-100 px-4 py-2 text-blue-700 text-sm font-medium hover:bg-blue-200 transition-colors">
                   Browse Files
                 </button>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="audio/*"
-                  className="hidden"
-                  onChange={handleFileSelect}
-                />
+                <input ref={fileInputRef} type="file" accept="audio/*" className="hidden" onChange={handleFileSelect} />
               </div>
 
               {selectedFile && (
@@ -85,14 +81,9 @@ export default function UploadModal({
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium truncate">{selectedFile.name}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB
-                    </p>
+                    <p className="text-xs text-muted-foreground">{(selectedFile.size / (1024 * 1024)).toFixed(2)} MB</p>
                   </div>
-                  <button
-                    onClick={() => setSelectedFile(null)}
-                    className="text-gray-500 hover:text-gray-700"
-                  >
+                  <button onClick={() => setSelectedFile(null)} className="text-gray-500 hover:text-gray-700">
                     <X className="w-4 h-4" />
                   </button>
                 </div>
@@ -102,7 +93,7 @@ export default function UploadModal({
                 onClick={handleUpload}
                 disabled={!selectedFile}
                 className={`w-full rounded-lg px-4 py-3 text-white font-medium ${
-                  selectedFile ? "bg-blue-600 hover:bg-blue-700" : "bg-gray-300 cursor-not-allowed"
+                  selectedFile ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-300 cursor-not-allowed'
                 } transition-colors`}
               >
                 Upload and Transcribe
@@ -110,29 +101,40 @@ export default function UploadModal({
             </>
           )}
 
-          {(uploadStatus === "uploading" || uploadStatus === "processing") && (
-            <div className="text-center py-6">
-              <div className="w-16 h-16 rounded-full border-4 border-blue-100 border-t-blue-600 animate-spin mx-auto mb-6"></div>
-              <h3 className="text-lg font-medium mb-2">
-                {uploadStatus === "uploading" ? "Uploading..." : "Processing..."}
-              </h3>
-              <p className="text-sm text-muted-foreground mb-6">
-                {uploadStatus === "uploading" ? "Your file is being uploaded" : "Converting audio to text"}
-              </p>
-
-              {uploadStatus === "uploading" && (
-                <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
-                  <div className="bg-blue-600 h-2 rounded-full" style={{ width: `${uploadProgress}%` }}></div>
+          {(uploadStatus === 'uploading' || uploadStatus === 'processing') && (
+            <>
+              <div className="text-center py-6">
+                <div className="w-16 h-16 rounded-full border-4 border-blue-100 border-t-blue-600 animate-spin mx-auto mb-6"></div>
+                <h3 className="text-lg font-medium mb-2">
+                  {uploadStatus === 'uploading' ? 'Uploading...' : 'Processing...'}
+                </h3>
+                <div className="flex-1 min-w-0 mb-2">
+                  <p className="text-sm font-medium truncate">{selectedFile.name}</p>
+                  <p className="text-xs text-muted-foreground">{(selectedFile.size / (1024 * 1024)).toFixed(2)} MB</p>
                 </div>
-              )}
+                <p className="text-sm text-muted-foreground mb-6">
+                  {uploadStatus === 'uploading' ? 'Your file is being uploaded' : 'Converting audio to text'}
+                </p>
+                {uploadStatus === 'uploading' && (
+                  <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
+                    <div className="bg-blue-600 h-2 rounded-full" style={{ width: `${uploadProgress}%` }}></div>
+                  </div>
+                )}
 
-              <p className="text-xs text-muted-foreground">
-                {uploadStatus === "uploading" ? `${uploadProgress}% complete` : "This may take a minute"}
-              </p>
-            </div>
+                <p className="text-xs text-muted-foreground">
+                  {uploadStatus === 'uploading' ? `${uploadProgress}% complete` : 'This may take a minute'}
+                </p>
+              </div>
+              <button
+                onClick={handleCancel}
+                className="w-full rounded-lg px-4 py-3 text-white font-medium bg-gray-300  hover:bg-gray-400 transition-colors"
+              >
+                Cancel
+              </button>
+            </>
           )}
 
-          {uploadStatus === "complete" && (
+          {uploadStatus === 'complete' && (
             <div className="text-center py-6">
               <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-6">
                 <CheckCircle2 className="w-8 h-8 text-green-600" />
