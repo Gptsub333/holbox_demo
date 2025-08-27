@@ -108,6 +108,7 @@
 // export default OrgNameHeader;
 import React, { useState, useEffect, useRef } from "react";
 
+const orgNameKey =  process.env.NEXT_PUBLIC_COMPANY_NAME;// Key to store org name in localStorage
 function OrgNameHeader({ orgName, setOrgName }) {
   const [editing, setEditing] = useState(false);
   const [input, setInput] = useState(orgName);
@@ -122,8 +123,8 @@ function OrgNameHeader({ orgName, setOrgName }) {
       setOrgName(savedOrgName);
       setInput(savedOrgName); // Set the initial input state from localStorage
     } else {
-      setOrgName("Holbox AI Demo"); // Default name
-      setInput("Holbox AI Demo");
+      setOrgName(orgNameKey); // Default name
+      setInput(orgNameKey);
     }
   }, []);
 
