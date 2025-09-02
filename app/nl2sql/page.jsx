@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import NL2SQLHeader from "./_components/NL2SQLHeader";
-import ResultsTable from "./_components/ResultsTable";
-import ResultsChart from "./_components/ResultsChart";
-import ChatPanel from "./_components/ChatPanel";
-import GeneratedQueryDisplay from "./_components/GeneratedQueryDisplay";
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import NL2SQLHeader from './_components/NL2SQLHeader';
+import ResultsTable from './_components/ResultsTable';
+import ResultsChart from './_components/ResultsChart';
+import ChatPanel from './_components/ChatPanel';
+import GeneratedQueryDisplay from './_components/GeneratedQueryDisplay';
 import {
   Loader2,
   AlertTriangle,
@@ -17,8 +17,9 @@ import {
   Code2,
   Copy,
   Check,
-} from "lucide-react";
-import { useAuthContext } from "../../context/AuthContext"; // Import the context
+  Download,
+} from 'lucide-react';
+import { useAuthContext } from '../../context/AuthContext'; // Import the context
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
@@ -32,44 +33,91 @@ const useCopyToClipboard = () => {
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), 2000);
     } catch (err) {
-      console.error("Failed to copy text: ", err);
+      console.error('Failed to copy text: ', err);
     }
   };
 
   return { isCopied, copyToClipboard };
 };
 
+const useCSVDownload = () => {
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  const downloadCSV = async (sqlString) => {
+    setIsDownloading(true);
+    try {
+      // Escape any existing quotes
+      const escapedSQL = sqlString.replace(/"/g, '""');
+
+      // Wrap in quotes so commas don't split cells
+      const csvData = `"${escapedSQL}"`;
+
+      const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'results.csv';
+      link.click();
+
+      setIsDownloading(false);
+    } catch (err) {
+      console.error('Failed to download CSV: ', err);
+      setIsDownloading(false);
+    }
+  };
+
+  return { isDownloading, downloadCSV };
+};
+
 const GeneratedQueryDisplayWithCopy = ({ sqlQuery }) => {
   const { isCopied, copyToClipboard } = useCopyToClipboard();
+  const { isDownloading, downloadCSV } = useCSVDownload();
 
   return (
     <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
-      <div className="p-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
+      <div className="p-4 border-b border-gray-200 bg-gray-50 block sm:flex justify-between items-center">
         <h3 className="text-sm font-semibold text-gray-800 flex items-center">
           <Code2 className="w-4 h-4 mr-2" />
           Generated SQL Query
         </h3>
-        <button
-          onClick={() => copyToClipboard(sqlQuery)}
-          className={`flex items-center px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-200 ${
-            isCopied
-              ? "bg-green-100 text-green-700 border border-green-200"
-              : "bg-gray-100 text-gray-600 hover:bg-gray-200 border border-gray-200"
+        <div className="flex space-x-2 mt-2 sm:mt-0">
+          <button
+            onClick={() => copyToClipboard(sqlQuery)}
+            className={`flex items-center px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-200 ${
+            
+              isCopied
+             
+                ? 'bg-green-100 text-green-700 border border-green-200'
+               
+              : 'bg-gray-100 text-gray-600 hover:bg-gray-200 border border-gray-200'
           }`}
-          title="Copy to clipboard"
-        >
-          {isCopied ? (
-            <>
-              <Check className="w-3 h-3 mr-1" />
-              Copied!
-            </>
-          ) : (
-            <>
-              <Copy className="w-3 h-3 mr-1" />
-              Copy
-            </>
-          )}
-        </button>
+            title="Copy to clipboard"
+          >
+            {isCopied ? (
+              <>
+                <Check className="w-3 h-3 mr-1" />
+                Copied!
+              </>
+            ) : (
+              <>
+                <Copy className="w-3 h-3 mr-1" />
+                Copy
+              </>
+            )}
+          </button>
+          <button
+            onClick={() => downloadCSV(sqlQuery)}
+            disabled={isDownloading}
+            className={`flex items-center px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-200 ${
+              isDownloading
+                ? 'bg-green-100 text-green-700 border border-green-200'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200 border border-gray-200'
+            }`}
+            title="Copy to clipboard"
+          >
+            <Download className="w-3 h-3 mr-1" /> Export CSV
+          </button>
+        </div>
       </div>
       <div className="p-4">
         <pre className="text-sm text-gray-700 font-mono whitespace-pre-wrap bg-gray-50 p-4 rounded-lg border border-gray-200">
@@ -102,13 +150,13 @@ export default function NL2SQLPage() {
   const [apiResponse, setApiResponse] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [activeView, setActiveView] = useState("table");
+  const [activeView, setActiveView] = useState('table');
   const [showChatHistory, setShowChatHistory] = useState(false);
   const [queryHistory, setQueryHistory] = useState([]);
   const [currentQuery, setCurrentQuery] = useState(null);
 
   const { sessionToken } = useAuthContext();
-  const token = "Bearer " + sessionToken;
+  const token = 'Bearer ' + sessionToken;
 
   const handleQuerySubmit = async (query) => {
     setIsLoading(true);
@@ -125,10 +173,10 @@ export default function NL2SQLPage() {
 
     try {
       const res = await fetch(`${BACKEND_URL}/nl2sql/ask`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          Authorization: token, // Add the Bearer token here
+          'Content-Type': 'application/json',
+          'Authorization': token, // Add the Bearer token here
         },
         body: JSON.stringify({ question: query }),
       });
@@ -142,7 +190,7 @@ export default function NL2SQLPage() {
       historyItem.response = data;
       setQueryHistory((prev) => [historyItem, ...prev]);
     } catch (err) {
-      setError(err.message || "Unknown error occurred");
+      setError(err.message || 'Unknown error occurred');
       historyItem.error = err.message;
       setQueryHistory((prev) => [historyItem, ...prev]);
     } finally {
@@ -176,7 +224,7 @@ export default function NL2SQLPage() {
     visible: {
       opacity: 1,
       scale: 1,
-      transition: { type: "spring", stiffness: 150, damping: 25 },
+      transition: { type: 'spring', stiffness: 150, damping: 25 },
     },
   };
 
@@ -198,6 +246,7 @@ export default function NL2SQLPage() {
       >
         {/* Main Content Grid */}
         {/* <div
+         
           className="
               flex flex-col-reverse
               lg:grid lg:grid-cols-6 lg:gap-6
@@ -219,7 +268,7 @@ export default function NL2SQLPage() {
               //   variants={itemVariants}
               // >
               <motion.div
-                className="flex flex-wrap gap-2 bg-white p-2 rounded-lg shadow-sm border border-gray-200 w-full"
+                className="flex flex-wrap gap-2 bg-white p-2 rounded-lg shadow-sm border border-gray-200 w-full mt-[10px] md:mt-[10px] lg:mt-0"
                 variants={itemVariants}
               >
                 <Loader2 className="w-8 h-8 animate-spin text-blue-600 mb-3" />
@@ -232,7 +281,7 @@ export default function NL2SQLPage() {
             <AnimatePresence>
               {error && !isLoading && (
                 <motion.div
-                  className="bg-red-50 p-5 rounded-xl shadow-lg border border-red-200 text-red-700 flex items-start space-x-3"
+                  className="bg-red-50 p-5 rounded-xl shadow-lg border border-red-200 text-red-700 flex items-start space-x-3 mt-[10px] md:mt-[10px] lg:mt-0"
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
@@ -251,7 +300,7 @@ export default function NL2SQLPage() {
             <AnimatePresence>
               {apiResponse && !isLoading && !error && (
                 <motion.div
-                  className="flex-1 flex flex-col space-y-4"
+                  className="flex-1 flex flex-col space-y-4 mt-[10px] md:mt-[10px] lg:mt-0"
                   initial="hidden"
                   animate="visible"
                   variants={containerVariants}
@@ -259,37 +308,46 @@ export default function NL2SQLPage() {
                 >
                   {/* Toggle Buttons */}
                   <motion.div
-                    className="flex space-x-2 bg-white p-2 rounded-lg shadow-sm border border-gray-200 w-fit"
+                   
+                    className="flex space-x-2 bg-white p-2 rounded-lg shadow-sm border border-gray-200 lg:w-fit"
+                   
                     variants={itemVariants}
+                  
                   >
                     <button
-                      onClick={() => setActiveView("table")}
+                      onClick={() => setActiveView('table')}
                       className={`flex items-center px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                        activeView === "table"
-                          ? "bg-blue-600 text-white"
-                          : "text-gray-600 hover:bg-gray-100"
+                        
+                        activeView === 'table'
+                          ? 'bg-blue-600 text-white'
+                          : 'text-gray-600 hover:bg-gray-100'
+                      
                       }`}
                     >
                       <Table className="w-4 h-4 mr-2" />
                       Table View
                     </button>
                     <button
-                      onClick={() => setActiveView("chart")}
+                      onClick={() => setActiveView('chart')}
                       className={`flex items-center px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                        activeView === "chart"
-                          ? "bg-blue-600 text-white"
-                          : "text-gray-600 hover:bg-gray-100"
+                        
+                        activeView === 'chart'
+                          ? 'bg-blue-600 text-white'
+                          : 'text-gray-600 hover:bg-gray-100'
+                      
                       }`}
                     >
                       <BarChart3 className="w-4 h-4 mr-2" />
                       Chart View
                     </button>
                     <button
-                      onClick={() => setActiveView("json")}
+                      onClick={() => setActiveView('json')}
                       className={`flex items-center px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                        activeView === "json"
-                          ? "bg-blue-600 text-white"
-                          : "text-gray-600 hover:bg-gray-100"
+                        
+                        activeView === 'json'
+                          ? 'bg-blue-600 text-white'
+                          : 'text-gray-600 hover:bg-gray-100'
+                      
                       }`}
                     >
                       <Code2 className="w-4 h-4 mr-2" />
@@ -303,7 +361,7 @@ export default function NL2SQLPage() {
                     variants={itemVariants}
                   >
                     <AnimatePresence mode="wait">
-                      {activeView === "table" ? (
+                      {activeView === 'table' ? (
                         <motion.div
                           key="table"
                           initial={{ opacity: 0, x: -20 }}
@@ -323,7 +381,7 @@ export default function NL2SQLPage() {
                             </div>
                           </div>
                         </motion.div>
-                      ) : activeView === "chart" ? (
+                      ) : activeView === 'chart' ? (
                         <motion.div
                           key="chart"
                           initial={{ opacity: 0, x: 20 }}
@@ -362,7 +420,7 @@ export default function NL2SQLPage() {
             {/* Welcome State */}
             {!isLoading && !apiResponse && !error && (
               <motion.div
-                className="text-center text-gray-400 py-12 bg-white p-8 rounded-xl shadow-lg border border-gray-200 flex-1 flex flex-col justify-center items-center"
+                className="text-center text-gray-400 py-12 bg-white p-8 rounded-xl shadow-lg border border-gray-200 flex-1 flex flex-col justify-center items-center mt-[10px] md:mt-[10px] lg:mt-0"
                 variants={itemVariants}
               >
                 <DatabaseZap size={40} className="mx-auto mb-3 text-gray-300" />
@@ -397,7 +455,7 @@ export default function NL2SQLPage() {
 
           {/* Right Side - Chat Panel */}
           {/* <div className="lg:col-span-2 flex flex-col space-y-4 max-w-md"> */}
-          <div className="lg:col-span-2 flex flex-col space-y-4 max-w-md w-full">
+           <div className="lg:col-span-2 flex flex-col space-y-4  w-full">
             <motion.button
               onClick={() => setShowChatHistory(!showChatHistory)}
               className="flex items-center justify-center px-4 py-2 bg-white rounded-lg shadow-sm border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors"
@@ -415,7 +473,7 @@ export default function NL2SQLPage() {
                 <motion.div
                   className="bg-white rounded-xl shadow-lg border border-gray-200 p-4 max-h-60 overflow-y-auto"
                   initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
+                  animate={{ opacity: 1, height: 'auto' }}
                   exit={{ opacity: 0, height: 0 }}
                 >
                   <h3 className="text-sm font-semibold text-gray-800 mb-3">
@@ -437,11 +495,9 @@ export default function NL2SQLPage() {
                           <p className="text-xs text-gray-500">
                             {item.timestamp}
                           </p>
-                          {item.error && (
-                            <p className="text-xs text-red-500">
+                          {item.error && <p className="text-xs text-red-500">
                               Error occurred
-                            </p>
-                          )}
+                            </p>}
                         </div>
                       ))}
                     </div>

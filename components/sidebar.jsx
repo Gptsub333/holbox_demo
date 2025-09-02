@@ -7,7 +7,7 @@ import { Grid, CalendarClock, Home, MessageSquare, ChevronDown, X, LayoutDashboa
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { UserButton, useUser } from "@clerk/nextjs"
+// import { UserButton, useUser } from "@clerk/nextjs"
 import OrgNameHeader from "./OrgNameHeader"
 import Loader from "@/components/Loader"; // Adjust the path according to your file structure
 
@@ -114,7 +114,9 @@ function SidebarContent({
   isMobile = false,
   onMobileClose,
 }) {
-  const { user } = useUser();
+
+  // const { user,isLoaded } = useUser();
+
 
   const [orgName, setOrgName] = useState("Holbox AI Demo"); // fallback for dev/local/test
   const [loading, setLoading] = useState(true);
@@ -144,11 +146,45 @@ function SidebarContent({
   //   fetchOrgName(); // Call the fetch function
   // }, []);
   // Fetch orgName from localStorage or set the default
+
+
+
+
+
+//  const [email, setEmail] = useState(null);
+
+//   const [userId, setUserId] = useState(null);
+//    useEffect(() => {
+//     if (isLoaded && user) {
+//       console.log("User data loaded:", user); // Log the entire user object
+//       const uniqueUserId = user.id; // Access the unique user ID
+//       setUserId(uniqueUserId); // Set the unique user ID in state
+//       console.log("Unique User ID:", uniqueUserId); // Log unique user ID
+//     } else {
+//       console.log("User data is not yet loaded");
+//     }
+//   }, [isLoaded, user]);
+//  useEffect(() => {
+//     if (isLoaded && user) {
+//       console.log("User data loaded:", user); // Log the entire user object
+//       if (user.emailAddresses && user.emailAddresses.length > 0) {
+//         setEmail(user.emailAddresses[0].emailAddress); // Set the primary email
+//         console.log("User's email address:", user.emailAddresses[0].emailAddress); // Log email
+//       } else {
+//         console.log("No email found for the user");
+//       }
+//     } else {
+//       console.log("User data is not yet loaded");
+//     }
+//   }, [isLoaded, user]);
+
+
   useEffect(() => {
     const savedOrgName = localStorage.getItem("orgName");
     if (savedOrgName) {
       setOrgName(savedOrgName); // If saved in localStorage, use that
       setLoading(false);
+
     } else {
       // If nothing is saved, set default value
       setOrgName("Holbox AI Demo");
@@ -272,7 +308,11 @@ function SidebarContent({
         </nav>
       </div>
 
-      <div className="flex items-center justify-center gap-2">
+
+        {/* <div className="flex items-center justify-center gap-2"> */}
+
+       {/* <div className="flex items-center justify-center gap-2">
+
         <UserButton />
         <div className="flex flex-col leading-tight">
           <span className="text-sm font-medium text-gray-700">
@@ -280,11 +320,33 @@ function SidebarContent({
           </span>
           {user?.fullName === "GPT Subscription" && (
             <span className="text-[11px] font-semibold text-gray-600 -mt-0.5">
-              Admin
+              Admin 
             </span>
           )}
         </div>
-      </div>
+
+      </div> 
+
+      </div>  */}
+
+
+      {/* <div>
+
+       Display email address if it's available
+      {email ? (
+        <div>Email: {email}</div>
+      ) : (
+        <div>Loading email...</div>
+      )}
+    </div>
+     <div>
+      {/* Display user ID if it's available */}
+      {/* {userId ? (
+        <div>User ID: {userId}</div>
+      ) : (
+        <div>Loading user ID...</div>
+      )}
+    </div>  */}
 
 
 

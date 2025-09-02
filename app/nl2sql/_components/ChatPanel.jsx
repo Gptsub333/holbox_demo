@@ -78,7 +78,7 @@ export default function ChatPanel({
   if (compact) {
     return (
       <motion.div
-        className="bg-white rounded-xl shadow-lg border border-gray-200 flex flex-col h-full max-w-screen-4xl max-h-[600px]" 
+        className="bg-white rounded-xl shadow-lg border border-gray-200 flex flex-col h-full max-w-screen-4xl max-h-[600px]"
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.1 }}
       >
@@ -104,7 +104,7 @@ export default function ChatPanel({
                 whileHover={{ scale: 1.01 }}
                 whileTap={{ scale: 0.99 }}
               >
-                {exQuery.length > 40 ? exQuery.substring(0, 37) + "..." : exQuery}
+                {exQuery.length > 40 ? exQuery.substring(0, 37) + '...' : exQuery}
               </motion.button>
             ))}
           </div>
@@ -121,7 +121,7 @@ export default function ChatPanel({
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, transition: { duration: 0.15 } }}
-                transition={{ duration: 0.3, ease: "easeOut" }}
+                transition={{ duration: 0.3, ease: 'easeOut' }}
                 layout
               >
                 <div className="max-w-[90%] px-2 py-1.5 rounded-lg shadow-sm text-xs bg-blue-600 text-white rounded-br-sm">
@@ -138,7 +138,7 @@ export default function ChatPanel({
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, transition: { duration: 0.15 } }}
-                transition={{ duration: 0.3, ease: "easeOut" }}
+                transition={{ duration: 0.3, ease: 'easeOut' }}
                 layout
               >
                 <div className="max-w-[90%] px-2 py-1.5 rounded-lg shadow-sm text-xs bg-gray-200 text-gray-800 rounded-bl-sm">
@@ -157,9 +157,9 @@ export default function ChatPanel({
               </div>
             </motion.div>
           )}
-          
+
           <div ref={messagesEndRef} />
-          
+
           {/* Empty State */}
           {!currentConversation.userQuery && !isLoading && (
             <div className="text-center text-gray-400 text-xs py-4">Your conversation will appear here.</div>
@@ -168,7 +168,7 @@ export default function ChatPanel({
 
         {/* Compact Textarea Input */}
         <div className="p-3 border-t rounded-lg border-gray-200 bg-white">
-          <div className="flex items-end space-x-2 bg-slate-100 rounded-lg p-1 border border-slate-200 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition-all">
+          <div className="flex justify-center items-center items-end space-x-2 bg-slate-100 rounded-lg p-1 border border-slate-200 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition-all">
             <textarea
               ref={textareaRef}
               value={inputQuery}
@@ -182,7 +182,7 @@ export default function ChatPanel({
             <motion.button
               onClick={handleSubmit}
               disabled={isLoading || !inputQuery.trim()}
-              className="bg-blue-600 hover:bg-blue-700 text-white p-1.5 rounded disabled:opacity-60 disabled:cursor-not-allowed transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 flex-shrink-0"
+              className="bg-blue-600 hover:bg-blue-700 text-white p-1.5 rounded disabled:opacity-60 disabled:cursor-not-allowed transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 flex-shrink-0 flex items-center justify-center"
               whileHover={{ scale: isLoading ? 1 : 1.05 }}
               whileTap={{ scale: isLoading ? 1 : 0.95 }}
               aria-label="Send query"
@@ -191,11 +191,19 @@ export default function ChatPanel({
             </motion.button>
           </div>
           <p className="text-xs pt-3 text-gray-400 mt-1 text-center">
-            Press <kbd className="px-1 py-0.5 text-xs font-semibold text-gray-700 bg-gray-200 border border-gray-300 rounded">Enter</kbd> to send, <kbd className="px-1 py-0.5 text-xs font-semibold text-gray-700 bg-gray-200 border border-gray-300 rounded">Shift+Enter</kbd> for new line
+            Press{' '}
+            <kbd className="px-1 py-0.5 text-xs font-semibold text-gray-700 bg-gray-200 border border-gray-300 rounded">
+              Enter
+            </kbd>{' '}
+            to send,{' '}
+            <kbd className="px-1 py-0.5 text-xs font-semibold text-gray-700 bg-gray-200 border border-gray-300 rounded">
+              Shift+Enter
+            </kbd>{' '}
+            for new line
           </p>
         </div>
       </motion.div>
-    )
+    );
   }
 
   // Original full-size layout
