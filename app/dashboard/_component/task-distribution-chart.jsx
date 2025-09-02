@@ -27,38 +27,88 @@ const chartConfig = {
 
 export function TaskDistributionChart() {
   return (
-    <Card className="flex flex-col h-full">
-      <CardHeader>
-        <CardTitle>Task Distribution</CardTitle>
-      </CardHeader>
-      <CardContent className="flex-1 pb-0">
-        <ChartContainer config={chartConfig} className="mx-auto aspect-square max-h-[250px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-              <Pie data={data} dataKey="value" nameKey="name" innerRadius={50} strokeWidth={5} animationDuration={900}>
-                {data.map((entry) => (
-                  <Cell key={entry.name} fill={entry.color} />
-                ))}
-              </Pie>
-              <Legend
-                content={({ payload }) => {
-                  return (
-                    <ul className="flex flex-wrap gap-x-4 gap-y-1 justify-center pt-4">
-                      {payload.map((entry) => (
-                        <li key={entry.value} className="flex items-center gap-2 text-sm font-medium">
-                          <span className="h-2 w-2 rounded-full " style={{ backgroundColor: entry.color }} />
-                          <span className="text-muted-foreground">{entry.value}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  )
-                }}
-              />
-            </PieChart>
-          </ResponsiveContainer>
-        </ChartContainer>
-      </CardContent>
-    </Card>
-  )
+    <>
+      {/* <Card className="flex flex-col h-full">
+        <CardHeader>
+          <CardTitle>Task Distribution</CardTitle>
+        </CardHeader>
+        <CardContent className="flex-1 pb-0">
+          <ChartContainer config={chartConfig} className="mx-auto aspect-square max-h-[250px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
+                <Pie
+                  data={data}
+                  dataKey="value"
+                  nameKey="name"
+                  innerRadius={50}
+                  strokeWidth={5}
+                  animationDuration={900}
+                >
+                  {data.map((entry) => (
+                    <Cell key={entry.name} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Legend
+                  content={({ payload }) => {
+                    return (
+                      <ul className="flex flex-wrap gap-x-4 gap-y-1 justify-center pt-4">
+                        {payload.map((entry) => (
+                          <li key={entry.value} className="flex items-center gap-2 text-sm font-medium">
+                            <span className="h-2 w-2 rounded-full " style={{ backgroundColor: entry.color }} />
+                            <span className="text-muted-foreground">{entry.value}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    );
+                  }}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+          </ChartContainer>
+        </CardContent>
+      </Card> */}
+
+      <div className="rounded-2xl border border-gray-200 bg-white p-4 sm:p-6">
+        <h2 className="text-lg font-semibold">Task Distribution</h2>
+        <div className="mt-6 flex items-start gap-6">
+          <CardContent className="flex-1 pb-0">
+            <ChartContainer config={chartConfig} className="mx-auto aspect-square max-h-[250px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
+                  <Pie
+                    data={data}
+                    dataKey="value"
+                    nameKey="name"
+                    innerRadius={50}
+                    strokeWidth={5}
+                    animationDuration={900}
+                  >
+                    {data.map((entry) => (
+                      <Cell key={entry.name} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Legend
+                    content={({ payload }) => {
+                      return (
+                        <ul className="flex flex-wrap gap-x-4 gap-y-1 justify-center pt-4">
+                          {payload.map((entry) => (
+                            <li key={entry.value} className="flex items-center gap-2 text-sm font-medium">
+                              <span className="h-2 w-2 rounded-full " style={{ backgroundColor: entry.color }} />
+                              <span className="text-muted-foreground">{entry.value}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      );
+                    }}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            </ChartContainer>
+          </CardContent>
+        </div>
+      </div>
+    </>
+  );
 }

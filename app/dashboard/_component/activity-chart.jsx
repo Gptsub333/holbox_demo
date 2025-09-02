@@ -15,22 +15,23 @@ const data = [
 
 const chartConfig = {
   active: {
-    label: "Active",
-    color: "#3B82F6", // blue-300 in hex,
+    label: 'Active',
+    color: '#3B82F6', // blue-300 in hex,
   },
   idle: {
-    label: "Idle",
-     color: "#3B82F6", // yellow-200 in hex
+    label: 'Idle',
+    color: '#55A34A', // yellow-200 in hex
   },
   failed: {
-    label: "Failed",
-    color: "#F87171", // red-200 in hex
+    label: 'Failed',
+    color: '#F87171', // red-200 in hex
   },
-}
+};
 
 export function ActivityChart() {
   return (
-    <Card>
+    <>
+      {/* <Card>
       <CardHeader>
         <CardTitle>Agent Activity Over Time</CardTitle>
       </CardHeader>
@@ -97,6 +98,74 @@ export function ActivityChart() {
           </ResponsiveContainer>
         </ChartContainer>
       </CardContent>
-    </Card>
-  )
+    </Card> */}
+
+      <div className="rounded-2xl border border-gray-200 bg-white p-4 sm:p-6">
+        <h2 className="text-lg font-semibold">Agent Leaderboard</h2>
+        <ul className="mt-4 space-y-3">
+          <ChartContainer config={chartConfig} className="h-[280px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart
+                data={data}
+                margin={{
+                  top: 10,
+                  right: 20,
+                  left: 10,
+                  bottom: 0,
+                }}
+              >
+                <defs>
+                  <linearGradient id="colorActive" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="var(--color-active)" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="var(--color-active)" stopOpacity={0} />
+                  </linearGradient>
+                  <linearGradient id="colorIdle" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="var(--color-idle)" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="var(--color-idle)" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid vertical={false} strokeDasharray="3 3" />
+                <XAxis
+                  dataKey="time"
+                  stroke="hsl(var(--muted-foreground))"
+                  tickLine={false}
+                  axisLine={false}
+                  tickMargin={8}
+                  fontSize={12}
+                />
+                <YAxis
+                  stroke="hsl(var(--muted-foreground))"
+                  tickLine={false}
+                  axisLine={false}
+                  tickMargin={8}
+                  fontSize={12}
+                  tickCount={6}
+                />
+                <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="dot" />} />
+                <Area
+                  type="monotone"
+                  dataKey="active"
+                  strokeWidth={2}
+                  stroke="var(--color-active)"
+                  fillOpacity={1}
+                  fill="url(#colorActive)"
+                  animationDuration={900}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="idle"
+                  strokeWidth={2}
+                  stroke="var(--color-idle)"
+                  fillOpacity={1}
+                  fill="url(#colorIdle)"
+                  animationDuration={900}
+                  animationDelay={200}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </ChartContainer>
+        </ul>
+      </div>
+    </>
+  );
 }
