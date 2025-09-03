@@ -4,7 +4,7 @@ import { Upload } from "lucide-react";
 
 const UploadButton = ({ onClick }) => {
   return (
-    <div className="fixed top-[calc(5rem)] right-10 flex flex-col items-end space-y-4">
+    <div className="fixed md:top-[calc(5rem)] md:right-10 flex flex-col items-end space-y-4 top-[20px] right-[20px]">
       <motion.button
         onClick={onClick}
         className="flex items-center space-x-1 rounded-lg bg-blue-600 text-white shadow-lg hover:bg-blue-700 transition-colors"
