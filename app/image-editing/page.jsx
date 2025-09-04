@@ -59,7 +59,7 @@ export default function ImageEditingPage() {
       formData.append('image', selectedImage)
       formData.append('query', query)
 
-      const response = await fetch(`${BACKEND_URL}/image-editing`, {
+      const response = await fetch(`${BACKEND_URL}/image_editing/edit/`, {
         method: "POST",
         headers: {
           "Authorization": token
