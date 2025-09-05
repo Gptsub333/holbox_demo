@@ -29,7 +29,8 @@ import {
   ScanFace,
   Activity,
   BrainCircuit,
-  Landmark
+  Landmark,
+  ImageIcon
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { motion, AnimatePresence } from "framer-motion"
@@ -43,12 +44,6 @@ const features = [
     description: 'Transcribe medical audio and get answers',
   },
 
-  {
-    name: 'AI Image Editor',
-    href: '/ai-image-editor',
-    icon: Wand2,
-    description: 'Edit images using natural language prompts',
-  },
 
   {
     name: 'Face Detection By Video',
@@ -127,6 +122,18 @@ const features = [
   { name: 'Text to Image', href: '/text-to-image', icon: Wand2, description: 'Generate images from text descriptions' },
   { name: 'Text to Video', href: '/text-to-video', icon: Video, description: 'Generate video from text descriptions' },
   { name: 'EDA', href: '/eda', icon: BrainCircuit, description: 'Exploratory Data Analysis of data your .csv' },
+    {
+    name: 'Image Editing',
+    href: '/image-editing',
+    icon: Wand2,
+    description: 'Edit images with AI using text queries',
+  },
+   {
+    name: 'Image Editing',
+    href: '/ai-image-editor',
+    icon: Wand2,
+    description: 'Edit images with AI using text queries',
+  },
 ];
 
 // Upcoming features data

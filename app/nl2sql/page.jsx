@@ -84,10 +84,13 @@ const GeneratedQueryDisplayWithCopy = ({ sqlQuery }) => {
           <button
             onClick={() => copyToClipboard(sqlQuery)}
             className={`flex items-center px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-200 ${
+            
               isCopied
+             
                 ? 'bg-green-100 text-green-700 border border-green-200'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200 border border-gray-200'
-            }`}
+               
+              : 'bg-gray-100 text-gray-600 hover:bg-gray-200 border border-gray-200'
+          }`}
             title="Copy to clipboard"
           >
             {isCopied ? (
@@ -229,25 +232,43 @@ export default function NL2SQLPage() {
     <div className="min-h-screen bg-slate-50 text-gray-800">
       <NL2SQLHeader />
 
-      <motion.main
+      {/* <motion.main
         className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      > */}
+      <motion.main
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
       >
         {/* Main Content Grid */}
-        <div
+        {/* <div
+         
           className="
               flex flex-col-reverse
               lg:grid lg:grid-cols-6 lg:gap-6
-              lg:min-h-[calc(100vh-200px)]
+              h-[calc(100vh-200px)]
             "
+        > */}
+        <div
+          className="
+      flex flex-col-reverse
+      gap-6
+      lg:grid lg:grid-cols-6 lg:gap-6
+    "
         >
           {/* Left Side - Results Area */}
           <div className="lg:col-span-4 space-y-6 flex flex-col">
             {isLoading && (
+              // <motion.div
+              //   className="flex flex-col items-center justify-center text-gray-500 bg-white p-8 rounded-xl shadow-lg border border-gray-200 flex-1"
+              //   variants={itemVariants}
+              // >
               <motion.div
-                className="flex flex-col items-center justify-center text-gray-500 bg-white p-8 rounded-xl shadow-lg border border-gray-200 flex-1 mt-[10px] md:mt-[10px] lg:mt-0"
+                className="flex flex-wrap gap-2 bg-white p-2 rounded-lg shadow-sm border border-gray-200 w-full mt-[10px] md:mt-[10px] lg:mt-0"
                 variants={itemVariants}
               >
                 <Loader2 className="w-8 h-8 animate-spin text-blue-600 mb-3" />
@@ -287,13 +308,20 @@ export default function NL2SQLPage() {
                 >
                   {/* Toggle Buttons */}
                   <motion.div
+                   
                     className="flex space-x-2 bg-white p-2 rounded-lg shadow-sm border border-gray-200 lg:w-fit"
+                   
                     variants={itemVariants}
+                  
                   >
                     <button
                       onClick={() => setActiveView('table')}
                       className={`flex items-center px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                        activeView === 'table' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'
+                        
+                        activeView === 'table'
+                          ? 'bg-blue-600 text-white'
+                          : 'text-gray-600 hover:bg-gray-100'
+                      
                       }`}
                     >
                       <Table className="w-4 h-4 mr-2" />
@@ -302,7 +330,11 @@ export default function NL2SQLPage() {
                     <button
                       onClick={() => setActiveView('chart')}
                       className={`flex items-center px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                        activeView === 'chart' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'
+                        
+                        activeView === 'chart'
+                          ? 'bg-blue-600 text-white'
+                          : 'text-gray-600 hover:bg-gray-100'
+                      
                       }`}
                     >
                       <BarChart3 className="w-4 h-4 mr-2" />
@@ -311,7 +343,11 @@ export default function NL2SQLPage() {
                     <button
                       onClick={() => setActiveView('json')}
                       className={`flex items-center px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                        activeView === 'json' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'
+                        
+                        activeView === 'json'
+                          ? 'bg-blue-600 text-white'
+                          : 'text-gray-600 hover:bg-gray-100'
+                      
                       }`}
                     >
                       <Code2 className="w-4 h-4 mr-2" />
@@ -320,7 +356,10 @@ export default function NL2SQLPage() {
                   </motion.div>
 
                   {/* Data Display Area */}
-                  <motion.div className="flex-1 min-h-0" variants={itemVariants}>
+                  <motion.div
+                    className="flex-1 min-h-0"
+                    variants={itemVariants}
+                  >
                     <AnimatePresence mode="wait">
                       {activeView === 'table' ? (
                         <motion.div
@@ -331,10 +370,14 @@ export default function NL2SQLPage() {
                           className="h-full"
                         >
                           {/* SCROLLABLE, BORDERED TABLE AREA */}
-                          <div className="h-[400px] w-full border border-gray-200 rounded-xl bg-white overflow-x-auto overflow-y-auto p-4">
+                          {/* <div className="h-[400px] w-full border border-gray-200 rounded-xl bg-white overflow-x-auto overflow-y-auto p-4"> */}
+                          <div className="w-full max-h-[60vh] md:max-h-[400px] border border-gray-200 rounded-xl bg-white overflow-auto p-4">
                             {/* Center horizontally with mx-auto if the table is small */}
                             <div className="h-full overflow-x-auto overflow-y-auto items-center justify-center">
-                              <ResultsTable data={apiResponse.answer.data} id="results-table" />
+                              <ResultsTable
+                                data={apiResponse.answer.data}
+                                id="results-table"
+                              />
                             </div>
                           </div>
                         </motion.div>
@@ -349,8 +392,12 @@ export default function NL2SQLPage() {
                           <ResultsChart
                             chartType={apiResponse.answer.best_chart}
                             data={apiResponse.answer.data}
-                            xAxisKey={apiResponse.answer.selected_columns.x_axis}
-                            yAxisKey={apiResponse.answer.selected_columns.y_axis}
+                            xAxisKey={
+                              apiResponse.answer.selected_columns.x_axis
+                            }
+                            yAxisKey={
+                              apiResponse.answer.selected_columns.y_axis
+                            }
                           />
                         </motion.div>
                       ) : (
@@ -377,8 +424,12 @@ export default function NL2SQLPage() {
                 variants={itemVariants}
               >
                 <DatabaseZap size={40} className="mx-auto mb-3 text-gray-300" />
-                <p className="text-md font-medium">Welcome to the NL2SQL Converter</p>
-                <p className="text-xs">Enter a natural language query to get started.</p>
+                <p className="text-md font-medium">
+                  Welcome to the NL2SQL Converter
+                </p>
+                <p className="text-xs">
+                  Enter a natural language query to get started.
+                </p>
               </motion.div>
             )}
 
@@ -393,7 +444,9 @@ export default function NL2SQLPage() {
                   exit={{ opacity: 0 }}
                 >
                   <motion.div variants={itemVariants} className="relative">
-                    <GeneratedQueryDisplayWithCopy sqlQuery={apiResponse.answer.generated_sql} />
+                    <GeneratedQueryDisplayWithCopy
+                      sqlQuery={apiResponse.answer.generated_sql}
+                    />
                   </motion.div>
                 </motion.div>
               )}
@@ -401,7 +454,8 @@ export default function NL2SQLPage() {
           </div>
 
           {/* Right Side - Chat Panel */}
-          <div className="lg:col-span-2 flex flex-col space-y-4 ">
+          {/* <div className="lg:col-span-2 flex flex-col space-y-4 max-w-md"> */}
+           <div className="lg:col-span-2 flex flex-col space-y-4  w-full">
             <motion.button
               onClick={() => setShowChatHistory(!showChatHistory)}
               className="flex items-center justify-center px-4 py-2 bg-white rounded-lg shadow-sm border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors"
@@ -422,7 +476,9 @@ export default function NL2SQLPage() {
                   animate={{ opacity: 1, height: 'auto' }}
                   exit={{ opacity: 0, height: 0 }}
                 >
-                  <h3 className="text-sm font-semibold text-gray-800 mb-3">Previous Queries</h3>
+                  <h3 className="text-sm font-semibold text-gray-800 mb-3">
+                    Previous Queries
+                  </h3>
                   {queryHistory.length === 0 ? (
                     <p className="text-xs text-gray-500">No previous queries</p>
                   ) : (
@@ -433,9 +489,15 @@ export default function NL2SQLPage() {
                           onClick={() => handleHistoryItemClick(item)}
                           className="p-2 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors"
                         >
-                          <p className="text-xs font-medium text-gray-800 truncate">{item.query}</p>
-                          <p className="text-xs text-gray-500">{item.timestamp}</p>
-                          {item.error && <p className="text-xs text-red-500">Error occurred</p>}
+                          <p className="text-xs font-medium text-gray-800 truncate">
+                            {item.query}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {item.timestamp}
+                          </p>
+                          {item.error && <p className="text-xs text-red-500">
+                              Error occurred
+                            </p>}
                         </div>
                       ))}
                     </div>
