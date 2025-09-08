@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Paperclip, Upload, Send, CheckCircle, Search, ChevronUp } from "lucide-react"
 import ReactMarkdown from "react-markdown"
 
+const companyName = process.env.NEXT_PUBLIC_COMPANY_NAME
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://127.0.0.1:8000"
 const API_PATH = "/company-chatbot/ask"
@@ -217,7 +218,7 @@ export default function OmniAgent() {
                     <OmniLogo />
                   </div>
                   <h1 className="text-2xl md:text-4xl font-bold text-gray-900 mb-4 text-balance">
-                    Welcome to Holbox AI Your Agentic AI agent Awaits.
+                    Welcome to {companyName} Your  AI agent Awaits.
                   </h1>
                   <p className="text-gray-600 text-base md:text-lg text-balance">
                     Discover smarter conversations, automated insights, and limitless creativity — all in one dashboard.
