@@ -86,22 +86,7 @@ export function AppLayout({ children }) {
       <FloatingSearch isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
 
 
-      {/* Debug info */}
-      <div
-        style={{
-          position: "fixed",
-          bottom: "10px",
-          right: "10px",
-          backgroundColor: "rgba(0,0,0,0.7)",
-          color: "white",
-          padding: "5px 10px",
-          borderRadius: "5px",
-          fontSize: "12px",
-          zIndex: 9999,
-        }}
-      >
-        Width: {typeof window !== "undefined" ? window.innerWidth : "N/A"}px
-      </div>
+      
     </div>
   )
 }

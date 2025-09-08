@@ -153,7 +153,7 @@ export default function PDFSummarizerPage() {
         onUpload={handleUploadPDF}
       />
 
-      {/* Summarize button */}
+      {/* Summarize button
       <motion.div className="mt-4 text-center">
         <button
           onClick={handleSummarize}
@@ -166,7 +166,7 @@ export default function PDFSummarizerPage() {
         >
           {isUploading ? "Processing..." : "Summarize PDF"}
         </button>
-      </motion.div>
+      </motion.div> */}
 
       {/* Show summary modal */}
       <SummaryInterface
