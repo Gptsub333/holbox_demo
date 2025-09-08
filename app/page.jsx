@@ -3,7 +3,7 @@
 import { ArrowRight, CheckCircle, Search } from "lucide-react"
 import { GradientButton } from "@/components/ui/gradient-button"
 import { Stethoscope, FileText, User, Bot, Shirt } from "lucide-react"
-import { motion } from "framer-motion"
+ import { motion } from "framer-motion"
 
 
 
