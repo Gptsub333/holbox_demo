@@ -1,13 +1,15 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Sidebar } from "@/components/sidebar"
+import Sidebar from "@/components/sidebar"
 import { StandaloneMobileMenu } from "@/components/standalone-mobile-menu"
-import { ModernChatbot } from "@/components/modern-chatbot"
 import { FloatingSearch } from "@/components/floating-search"
 import { PanelLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { useRouter } from "next/navigation"
+
+
 
 export function AppLayout({ children }) {
   const [isSearchOpen, setIsSearchOpen] = useState(false)
@@ -15,6 +17,19 @@ export function AppLayout({ children }) {
   const [isDesktopSidebarOpen, setIsDesktopSidebarOpen] = useState(true)
   const [activeChatbot, setActiveChatbot] = useState({ name: "AI Assistant", id: "general" })
   const [mounted, setMounted] = useState(false)
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
+  const router = useRouter()
+
+  const handleViewChange = (view) => {
+    const map = {
+      dashboard: "/dashboard",
+      works: "/works",
+      general: "/general",
+      money: "/money",
+    }
+    router.push(map[view] ?? "/")
+    setIsMobileSidebarOpen(false)
+  }
 
   // Set mounted state after component mounts to prevent hydration issues
   useEffect(() => {
@@ -46,51 +61,22 @@ export function AppLayout({ children }) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-200 p-0 sm:p-2 md:p-4">
-      <div className="flex h-[calc(100vh-2rem)] overflow-hidden rounded-xl bg-white shadow-sm">
-        {/* Desktop sidebar */}
-        <div
-          className={cn(
-            "hidden md:block relative rounded-l-xl overflow-hidden",
-            "transition-all duration-300 ease-in-out",
-            "bg-gray-200 shadow-inner",
-            isDesktopSidebarOpen ? "w-56" : "w-0",
-          )}
-        >
-          <Sidebar
-            isDesktopOpen={isDesktopSidebarOpen}
-            onDesktopToggle={() => setIsDesktopSidebarOpen(!isDesktopSidebarOpen)}
-            onOpenSearch={() => setIsSearchOpen(true)}
-            onOpenChat={(chatbot) => {
-              setActiveChatbot(chatbot)
-              setIsModernChatOpen(true)
-            }}
-          />
-        </div>
+    <div className="min-h-screen bg-white">
 
-        {/* Desktop sidebar toggle */}
-        <div className="hidden md:block fixed bottom-4 left-4 z-30">
-          <Button
-            variant="outline"
-            size="icon"
-            className="bg-white shadow-md border-gray-200 rounded-full"
-            onClick={() => setIsDesktopSidebarOpen(!isDesktopSidebarOpen)}
-          >
-            <PanelLeft className="h-4 w-4" />
-            <span className="sr-only">Toggle sidebar</span>
-          </Button>
-        </div>
+      {/* New fixed, icon-only Sidebar */}
+      <Sidebar
+       onOpenSearch={() => setIsSearchOpen(true)}
+        onViewChange={handleViewChange}
+        isMobileOpen={isMobileSidebarOpen}
+        onMobileToggle={setIsMobileSidebarOpen}
 
-        {/* Main content area */}
-        <div className="flex-1 flex flex-col bg-gray-200 rounded-r-xl overflow-hidden">
-          <div className="flex-1 h-full px-3 py-0">
-            <div className="rounded-xl bg-white border border-gray-100 shadow-sm p-4 md:p-6 h-full overflow-auto mt-0">
-              {/* Add padding on mobile to account for the fixed sidebar toggle */}
-              <div className="md:hidden h-8 mb-4"></div>
-              {children}
-            </div>
-          </div>
-        </div>
+      />
+
+      {/* Main wrapper shifts right on md+ to make space for fixed w-16 sidebar */}
+      <div className="md:pl-16">
+        <main className="min-h-screen bg-white">
+          {children}
+        </main>
       </div>
 
       {/* Standalone Mobile Menu */}
@@ -98,7 +84,7 @@ export function AppLayout({ children }) {
 
       {/* Floating components */}
       <FloatingSearch isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
-      <ModernChatbot isOpen={isModernChatOpen} onClose={() => setIsModernChatOpen(false)} title={activeChatbot.name} />
+
 
       {/* Debug info */}
       <div
