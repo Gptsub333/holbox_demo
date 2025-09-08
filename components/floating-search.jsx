@@ -121,7 +121,7 @@ const features = [
   { name: 'PII Masker', href: '/pii-redactor', icon: FileX, description: 'Remove PII from input text securely' },
   { name: 'Text to Image', href: '/text-to-image', icon: Wand2, description: 'Generate images from text descriptions' },
   { name: 'Text to Video', href: '/text-to-video', icon: Video, description: 'Generate video from text descriptions' },
-  { name: 'EDA', href: '/eda', icon: BrainCircuit, description: 'Exploratory Data Analysis of data your .csv' },
+  
   { name: "Proffesional Headshot", href: "/ai-professional-headshot", icon: ImageIcon, description: "Generate polished, professional-looking headshots instantly with AI." },
    {
     name: 'Image Editing',
@@ -129,10 +129,12 @@ const features = [
     icon: Wand2,
     description: 'Edit images with AI using text queries',
   },
+  
 ];
 
 // Upcoming features data
 const upcomingFeatures = [
+  { name: 'EDA', href: '/eda', icon: BrainCircuit, description: 'Exploratory Data Analysis of data your .csv' },
   { name: "ConciergeAI", href: "/concierge-ai", icon: User, description: "AI assistant for business inquiries" },
   {
     name: "PDF Extractor",
