@@ -34,6 +34,7 @@ const features = [
   { name: "PII Extractor", href: "/pii-extractor", icon: UserX, description: "Extract personal information" },
   { name: "PII Redactor", href: "/pii-redactor", icon: FileX, description: "Remove personal information" },
   { name: "Image Editing", href: "/image-editing", icon: ImageIcon, description: "Edit images with AI using text queries" },
+  { name: "Proffesional Headshot", href: "/ai-professional-headshot", icon: ImageIcon, description: "Generate polished, professional-looking headshots instantly with AI." },
 ]
 
 export function SearchPanel({ onClose }) {
