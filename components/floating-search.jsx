@@ -122,12 +122,7 @@ const features = [
   { name: 'Text to Image', href: '/text-to-image', icon: Wand2, description: 'Generate images from text descriptions' },
   { name: 'Text to Video', href: '/text-to-video', icon: Video, description: 'Generate video from text descriptions' },
   { name: 'EDA', href: '/eda', icon: BrainCircuit, description: 'Exploratory Data Analysis of data your .csv' },
-    {
-    name: 'Image Editing',
-    href: '/image-editing',
-    icon: Wand2,
-    description: 'Edit images with AI using text queries',
-  },
+  { name: "Proffesional Headshot", href: "/ai-professional-headshot", icon: ImageIcon, description: "Generate polished, professional-looking headshots instantly with AI." },
    {
     name: 'Image Editing',
     href: '/ai-image-editor',
