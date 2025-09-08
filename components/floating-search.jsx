@@ -30,6 +30,7 @@ import {
   Activity,
   BrainCircuit,
   Landmark,
+  ImageIcon
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
@@ -37,38 +38,39 @@ import { motion, AnimatePresence } from "framer-motion";
 // Feature data with icons
 const features = [
   {
-    name: "Health Scribe",
-    href: "/health-scribe",
+    name: 'Health Scribe',
+    href: '/health-scribe',
     icon: Stethoscope,
-    description: "Transcribe medical audio and get answers",
+    description: 'Transcribe medical audio and get answers',
   },
 
   {
-    name: "Face Detection By Video",
-    href: "/face-recognition",
+    name: 'Face Detection By Video',
+    href: '/face-recognition',
     icon: User,
-    description: "Real-time detection and identification",
+    description: 'Real-time detection and identification',
   },
 
   {
-    name: "Face Detection By Image", // New Feature
-    href: "/face-detection",
+    name: 'Face Detection By Image', // New Feature
+    href: '/face-detection',
     icon: ScanFace || User, // Use ScanFace, fallback to User
-    description: "Detect and recognize faces from images",
+    description: 'Detect and recognize faces from images',
   },
+
 
   // { name: "PDF Extractor", href: "/pdf-extractor", icon: FileText, description: "Upload PDFs and chat for insights" },
   {
-    name: "DDx Assistant",
-    href: "/ddx-assistant",
+    name: 'DDx Assistant',
+    href: '/ddx-assistant',
     icon: Clipboard,
-    description: "Differential diagnosis from symptoms",
+    description: 'Differential diagnosis from symptoms',
   },
   {
-    name: "PII Extractor",
-    href: "/pii-extractor",
+    name: 'PII Extractor',
+    href: '/pii-extractor',
     icon: UserX,
-    description: "Detect and extract personal information",
+    description: 'Detect and extract personal information',
   },
 
   {
@@ -164,6 +166,7 @@ const features = [
 
 // Upcoming features data
 const upcomingFeatures = [
+  { name: 'EDA', href: '/eda', icon: BrainCircuit, description: 'Exploratory Data Analysis of data your .csv' },
   {
     name: "ConciergeAI",
     href: "/concierge-ai",

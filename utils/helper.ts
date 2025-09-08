@@ -19,6 +19,12 @@ const helpers = {
       return 'Invalid file type. Only MP3, WAV, M4A, WEBM, and OGG files are allowed.'
   },
 
+  checkImageFileType: function (file: File | null) {
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif']
+    if (file && !allowedTypes.includes(file.type))
+      return 'Invalid file type. Only JPG, JPEG, PNG, WEBP, and GIF files are allowed.'
+  },
+
   fileSize:
     (maximumSize = 52428800, sizeInMB = '50MB') =>
       (file: File) =>

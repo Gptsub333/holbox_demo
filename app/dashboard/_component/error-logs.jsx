@@ -54,9 +54,41 @@ const getSeverityVariant = (severity) => {
   }
 }
 
+const logs = [
+  {
+    id: 1,
+    service: 'Face-Rekognition',
+    severity: 'high',
+    message: 'Connection timeout to external API',
+    time: '2 minutes ago',
+  },
+  {
+    id: 2,
+    service: 'Scrape-Worker',
+    severity: 'medium',
+    message: 'Rate limited by target domain',
+    time: '8 minutes ago',
+  },
+  {
+    id: 1,
+    service: 'Face-Rekognition',
+    severity: 'high',
+    message: 'Connection timeout to external API',
+    time: '2 minutes ago',
+  },
+  {
+    id: 2,
+    service: 'Scrape-Worker',
+    severity: 'medium',
+    message: 'Rate limited by target domain',
+    time: '8 minutes ago',
+  },
+];
+
 export function ErrorLogs() {
   return (
-    <Card>
+    <>
+      {/* <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <AlertCircle className="h-5 w-5" />
@@ -88,6 +120,27 @@ export function ErrorLogs() {
           </div>
         </ScrollArea>
       </CardContent>
-    </Card>
-  )
+    </Card> */}
+      <div className="rounded-2xl border border-gray-200 bg-white p-4 sm:p-6">
+        <div className="flex items-center gap-2">
+          <span className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-gray-300 text-xs">
+            !
+          </span>
+          <h2 className="text-lg font-semibold">Recent Error Logs</h2>
+        </div>
+        <div className="mt-4 space-y-3 h-[350px] overflow-auto scrollbar-hide">
+          {logs.map((l, idx) => (
+            <article key={idx + 1} className="rounded-xl border border-gray-100 bg-gray-50 p-4">
+              <div className="flex flex-wrap items-center gap-2 text-xs text-gray-700">
+                <span className="rounded-full bg-gray-200 px-2 py-0.5 font-semibold">{l.service}</span>
+                <span className="rounded-full bg-rose-100 px-2 py-0.5 text-rose-700">{l.severity}</span>
+              </div>
+              <p className="mt-2 text-sm font-medium">{l.message}</p>
+              <p className="mt-1 text-xs text-gray-600">{l.time}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </>
+  );
 }

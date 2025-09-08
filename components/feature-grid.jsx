@@ -1,7 +1,7 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import { Database, Stethoscope, User, Video, FileText, Shirt, Car, Mic, Clipboard, UserX, FileX } from "lucide-react"
+import { Database, Stethoscope, User, Video, FileText, Shirt, Car, Mic, Clipboard, UserX, FileX, ImageIcon } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { FeatureIcon } from "@/components/feature-icons"
 
@@ -43,6 +43,7 @@ const features = [
     description: "Detect and extract personal information",
   },
   { name: "PII Redactor", href: "/pii-redactor", icon: FileX, description: "Remove PII from input text securely" },
+  { name: "Proffesional Headshot", href: "/ai-professional-headshot", icon: ImageIcon, description: "Generate polished, professional-looking headshots instantly with AI." },
   
 ]
 
