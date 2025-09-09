@@ -44,7 +44,6 @@ const features = [
     description: 'Transcribe medical audio and get answers',
   },
 
-
   {
     name: 'Face Detection By Video',
     href: '/face-recognition',
@@ -122,15 +121,21 @@ const features = [
   { name: 'Text to Image', href: '/text-to-image', icon: Wand2, description: 'Generate images from text descriptions' },
   { name: 'Text to Video', href: '/text-to-video', icon: Video, description: 'Generate video from text descriptions' },
   { name: 'EDA', href: '/eda', icon: BrainCircuit, description: 'Exploratory Data Analysis of data your .csv' },
-    {
+  {
     name: 'Image Editing',
     href: '/image-editing',
     icon: Wand2,
     description: 'Edit images with AI using text queries',
   },
-   {
+  {
     name: 'Image Editing',
     href: '/ai-image-editor',
+    icon: Wand2,
+    description: 'Edit images with AI using text queries',
+  },
+  {
+    name: 'Medical Code Extractor',
+    href: '/medical-code-extractor',
     icon: Wand2,
     description: 'Edit images with AI using text queries',
   },
