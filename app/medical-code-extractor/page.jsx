@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { BarChart3 } from 'lucide-react';
 import Header from '../medical-code-extractor/_components/header';
@@ -20,6 +20,8 @@ export default function MedicalCodeExtractor() {
   const [extractionResult, setExtractionResult] = useState('');
   const [error, setError] = useState(null);
   const [transcribeProgress, setTranscribeProgress] = useState(0);
+  const abortRef = useRef(null);
+
   // Handle file selection
   const handleFileSelect = (file) => {
     if (!file) return;
@@ -84,9 +86,13 @@ export default function MedicalCodeExtractor() {
         formData.append('file', mockFile);
       }
 
+      const controller = new AbortController();
+      abortRef.current = () => controller.abort(); // replace cancel function
+
       const response = await fetch(`${BACKEND_URL}/extract-medical-coding`, {
         method: 'POST',
         body: formData,
+        signal: controller.signal,
       });
 
       if (!response.ok) {
@@ -123,12 +129,15 @@ export default function MedicalCodeExtractor() {
         // For demo purposes, use mock data
       }
     } catch (error) {
-      console.error('Error extracting codes:', error);
-      setError('Error processing document: ' + error.message);
-      // For demo purposes, show mock data even on error
-      setExtractionResult(
-        'Sample extraction completed. This is a demo showing how medical codes would be extracted from your document.'
-      );
+      if (error.name === 'AbortError') {
+        setError('You cancelled the process.');
+      } else {
+        setError('Error processing document: ' + error.message);
+        // Optional: keep your demo mock data for errors
+        setExtractionResult(
+          'Sample extraction completed. This is a demo showing how medical codes would be extracted from your document.'
+        );
+      }
     } finally {
       setIsProcessing(false);
     }
@@ -136,6 +145,10 @@ export default function MedicalCodeExtractor() {
 
   // Clear file
   const clearFile = () => {
+    if (abortRef.current) {
+      abortRef.current(); // cancel upload or transcription
+    }
+
     setSelectedFile(null);
     setFilePreview(null);
     setExtractionResult('');
