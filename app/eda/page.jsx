@@ -1,65 +1,70 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { toast } from "sonner"
-import DatasetSelector from "./_components/dataset-selector"
-import Query from "./_components/query"
-import Visualize from "./_components/visualize"
-import Header from "./_components/header"
+import { useState } from "react";
+import { toast } from "sonner";
+import DatasetSelector from "./_components/dataset-selector";
+import Query from "./_components/query";
+import Visualize from "./_components/visualize";
+import Header from "./_components/header";
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://127.0.0.1:8000"
+
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://127.0.0.1:8000";
 
 export default function EdaPage() {
-  const [selectedFile, setSelectedFile] = useState(null)  // Store the actual file object
-  const [uploadedFile, setUploadedFile] = useState(false) // Shows Query/Visualize
-  const [isFileSelected, setIsFileSelected] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)  // Query spinner
-  const [vizLoading, setVizLoading] = useState(null) // Which viz is loading
-  const [query, setQuery] = useState("") // User query input
-  const [queryResult, setQueryResult] = useState(null) // Initialize queryResult state
-  const [visualizations, setVisualizations] = useState({}) // Store visualizations
-  const [error, setError] = useState(null)
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [uploadedFile, setUploadedFile] = useState(false);
+  const [isFileSelected, setIsFileSelected] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [vizLoading, setVizLoading] = useState(null);
+  const [query, setQuery] = useState("");
+  const [queryResult, setQueryResult] = useState(null);
+  const [visualizations, setVisualizations] = useState({});
+  const [error, setError] = useState(null);
+  const [sessionId, setSessionId] = useState(null); // Store sessionId
+  
 
   // ---- Query ----
   const handleQuery = async () => {
     if (!query || !selectedFile) {
-      toast.error("Pick a CSV and enter a question.")
-      return
+      toast.error("Pick a CSV and enter a question.");
+      return;
     }
 
-    setIsLoading(true)
-    setError(null)
-    setQueryResult(null)
+    setIsLoading(true);
+    setError(null);
+    setQueryResult(null);
 
-    const formData = new FormData()
-    formData.append("file", selectedFile)
-    formData.append("question", query)
+    const formData = new FormData();
+    formData.append("question", query);
+    formData.append("session_id", sessionId); // Include sessionId
 
     try {
-      const res = await fetch(`${BACKEND_URL}/qa`, { method: "POST", body: formData })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data?.detail || data?.error || "Query failed")
-      setQueryResult(data)
+      const res = await fetch(`${BACKEND_URL}/eda/qa`, {
+        method: "POST",
+        body: formData,
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.detail || data?.error || "Query failed");
+      setQueryResult(data);
     } catch (e) {
-      setError(e.message)
-      toast.error(e.message)
+      setError(e.message);
+      toast.error(e.message);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
-  // ---- Visualize (per-endpoint) ----
+  // ---- Visualize ----
   const handleVisualize = async (type, column) => {
     if (!selectedFile) {
-      setError("No file selected.")
-      toast.error("No file selected.")
-      return
+      setError("No file selected.");
+      toast.error("No file selected.");
+      return;
     }
 
-    // column required for dist/time/cat
     if ((type === "dist" || type === "time" || type === "cat") && !column) {
-      toast.error("Column is required for this chart.")
-      return
+      toast.error("Column is required for this chart.");
+      return;
     }
 
     const endpoints = {
@@ -67,34 +72,37 @@ export default function EdaPage() {
       time: "/time",
       corr: "/correlation",
       cat: "/categorical",
-    }
+    };
 
-    const formData = new FormData()
-    formData.append("file", selectedFile)
-    if (column) formData.append("column", column)
+    const formData = new FormData();
+    formData.append("file", selectedFile);
+    if (column) formData.append("column", column);
+    formData.append("session_id", sessionId); // Include sessionId
 
-    setVizLoading(type)
-    setError(null)
+    setVizLoading(type);
+    setError(null);
 
     try {
-      const res = await fetch(`${BACKEND_URL}${endpoints[type]}`, { method: "POST", body: formData })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data?.detail || data?.error || `Failed to get ${type} graph`)
+      const res = await fetch(`${BACKEND_URL}/eda${endpoints[type]}`, {
+        method: "POST",
+        body: formData,
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.detail || data?.error || `Failed to get ${type} graph`);
 
-      // Backend returns { graphs: string | string[] }
-      const graphs = Array.isArray(data.graphs) ? data.graphs : [data.graphs]
-      setVisualizations((prev) => ({ ...prev, [type]: graphs }))
+      const graphs = Array.isArray(data.graphs) ? data.graphs : [data.graphs];
+      setVisualizations((prev) => ({ ...prev, [type]: graphs }));
     } catch (e) {
-      setError(e.message)
-      toast.error(e.message)
+      setError(e.message);
+      toast.error(e.message);
     } finally {
-      setVizLoading(null)
+      setVizLoading(null);
     }
-  }
+  };
 
   return (
     <div className="bg-gray-50 min-h-screen">
-      <main className="container mx-auto p-4 md:p-8">
+      <main className="py-10 container mx-auto px-4 md:px-8">
         <Header />
 
         <DatasetSelector
@@ -104,6 +112,8 @@ export default function EdaPage() {
           setUploadedFile={setUploadedFile}
           isLoading={isLoading}
           setIsFileSelected={setIsFileSelected}
+          setSessionId={setSessionId} // Pass the setSessionId function
+          setIsLoading={setIsLoading}
         />
 
         {isFileSelected && (
@@ -130,5 +140,5 @@ export default function EdaPage() {
         )}
       </main>
     </div>
-  )
+  );
 }

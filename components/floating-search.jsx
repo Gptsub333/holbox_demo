@@ -162,17 +162,15 @@ const features = [
     icon: BookOpen,
     description: "Automated medical coding for healthcare documentation",
   },
+
+  { name: "ConciergeAI", href: "/concierge-ai", icon: User, description: "AI assistant for business inquiries" },
+  
+
 ];
 
 // Upcoming features data
 const upcomingFeatures = [
-  { name: 'EDA', href: '/eda', icon: BrainCircuit, description: 'Exploratory Data Analysis of data your .csv' },
-  {
-    name: "ConciergeAI",
-    href: "/concierge-ai",
-    icon: User,
-    description: "AI assistant for business inquiries",
-  },
+
   {
     name: "PDF Extractor",
     href: "/pdf-extractor",
