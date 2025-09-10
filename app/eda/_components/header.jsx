@@ -7,11 +7,11 @@ export default function Header() {
   const contextName = "Demo"
 
   return (
-    <header className="bg-white mb-10 border-b">
+    <header className=" mb-10">
       <div className="container mx-auto  px-4 md:px-8">
         <div className="flex items-center justify-between h-16">
           <div  className="flex items-center gap-2 text-xl font-semibold text-gray-800">
-            <BrainCircuit className="h-7 w-7 text-blue-600" />
+            <div className="bg-gray-200 rounded-full p-3"><BrainCircuit className="h-7 w-7 text-blue-600" /></div>
             <span>EDA  {contextName}
            <br></br>
             <p>Analysis of your data</p></span>

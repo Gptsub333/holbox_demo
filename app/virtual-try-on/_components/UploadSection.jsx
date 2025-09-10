@@ -1,11 +1,11 @@
 import { motion } from "framer-motion";
-import { 
-  Camera, 
-  Upload, 
-  Shirt, 
-  User, 
-  RefreshCcw, 
-  X, 
+import {
+  Camera,
+  Upload,
+  Shirt,
+  User,
+  RefreshCcw,
+  X,
   AlertTriangle,
   CheckCircle,
   Clock,
@@ -26,7 +26,9 @@ export default function UploadSection({
   onGarmentUpload,
   onRemoveModel,
   onRemoveGarment,
-  onProcess
+  onProcess,
+  garmentType,
+  setGarmentType
 }) {
   const getStatusColor = () => {
     switch (status) {
@@ -58,7 +60,7 @@ export default function UploadSection({
             <p className="text-sm text-gray-600">Upload your images or use samples</p>
           </div>
         </div>
-        
+
         {status && (
           <div className={`flex items-center space-x-2 text-sm ${getStatusColor()}`}>
             {getStatusIcon()}
@@ -184,6 +186,23 @@ export default function UploadSection({
             />
           </div>
         </div>
+
+        {/* Garment Type Input */}
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-3">
+            Garment Type
+          </label>
+          <input
+            type="text"
+            value={garmentType}
+            onChange={(e) => setGarmentType(e.target.value)}
+            placeholder="e.g., tshirt, pant, watch, ring, necklace"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm bg-white/80 backdrop-blur-sm"
+          />
+          <p className="text-xs text-gray-500 mt-2">
+            Specify the type of garment or accessory (tshirt, pant, watch, ring, necklace, etc.)
+          </p>
+        </div>
       </div>
 
       {/* Progress Bar (shown during processing) */}
@@ -211,7 +230,7 @@ export default function UploadSection({
       {/* Generate Button */}
       <motion.button
         onClick={onProcess}
-        disabled={!modelImage || !garmentImage || isProcessing}
+        disabled={!modelImage || !garmentImage || !garmentType.trim() || isProcessing}
         className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 flex items-center justify-center space-x-3 shadow-lg hover:shadow-xl"
         whileHover={{ scale: isProcessing ? 1 : 1.02, y: -2 }}
         whileTap={{ scale: 0.98 }}
@@ -242,13 +261,14 @@ export default function UploadSection({
           </div>
           <div>
             <h4 className="text-sm font-semibold text-gray-800 mb-1">
-              💡 Pro Tips
+              Pro Tips
             </h4>
             <ul className="text-xs text-gray-600 space-y-1">
               <li>• Use well-lit, clear images for best results</li>
               <li>• Model should face forward with arms at sides</li>
               <li>• Garment should be displayed flat or on hanger</li>
-              <li>• Processing takes 30-60 seconds</li>
+              <li>• Be specific with garment type (tshirt, pant, watch, etc.)</li>
+              <li>• Processing happens instantly with new API</li>
             </ul>
           </div>
         </div>
