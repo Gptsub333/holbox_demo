@@ -17,7 +17,6 @@ export default function VirtualTryOnPage() {
   const [modelImagePreview, setModelImagePreview] = useState(null);
   const [garmentImagePreview, setGarmentImagePreview] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [jobId, setJobId] = useState(null);
   const [result, setResult] = useState(null);
   const [status, setStatus] = useState(null);
   const [progress, setProgress] = useState(0);
@@ -25,21 +24,7 @@ export default function VirtualTryOnPage() {
   const modelInputRef = useRef(null);
   const garmentInputRef = useRef(null);
   const { sessionToken } = useAuthContext(); // Get the session token from the context
-
-
-
-  const convertToBase64 = (file) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => {
-        resolve(reader.result);
-      };
-      reader.onerror = (error) => {
-        reject(error);
-      };
-    });
-  };
+  const [garmentType, setGarmentType] = useState("");
 
   const handleModelUpload = async (e) => {
     const file = e.target.files?.[0];
@@ -75,43 +60,42 @@ export default function VirtualTryOnPage() {
     }
   };
 
-const handleSampleSelect = (sample) => {
-  // Check if both model and garment images are already set
-  const isModelImageSet = modelImage !== null;
-  const isGarmentImageSet = garmentImage !== null;
+  const handleSampleSelect = (sample) => {
+    // Check if both model and garment images are already set
+    const isModelImageSet = modelImage !== null;
+    const isGarmentImageSet = garmentImage !== null;
+    setGarmentType(sample.category); 
 
-  // If both images are not set, set both model and garment
-  if (!isModelImageSet && !isGarmentImageSet) {
-    setModelImagePreview(sample.model);
-    setGarmentImagePreview(sample.garment);
-
-    fetchImageAsFile(sample.model).then((file) => setModelImage(file));
-    fetchImageAsFile(sample.garment).then((file) => setGarmentImage(file));
-  } else {
-    // If model image is missing, set it
-    if (!isModelImageSet) {
-      setModelImagePreview(sample.model);
-      fetchImageAsFile(sample.model).then((file) => setModelImage(file));
-    }
-
-    // If garment image is missing, set it
-    if (!isGarmentImageSet) {
-      setGarmentImagePreview(sample.garment);
-      fetchImageAsFile(sample.garment).then((file) => setGarmentImage(file));
-    }
-
-    // If both images are already set, replace both
-    if (isModelImageSet && isGarmentImageSet) {
+    // If both images are not set, set both model and garment
+    if (!isModelImageSet && !isGarmentImageSet) {
       setModelImagePreview(sample.model);
       setGarmentImagePreview(sample.garment);
 
       fetchImageAsFile(sample.model).then((file) => setModelImage(file));
       fetchImageAsFile(sample.garment).then((file) => setGarmentImage(file));
+    } else {
+      // If model image is missing, set it
+      if (!isModelImageSet) {
+        setModelImagePreview(sample.model);
+        fetchImageAsFile(sample.model).then((file) => setModelImage(file));
+      }
+
+      // If garment image is missing, set it
+      if (!isGarmentImageSet) {
+        setGarmentImagePreview(sample.garment);
+        fetchImageAsFile(sample.garment).then((file) => setGarmentImage(file));
+      }
+
+      // If both images are already set, replace both
+      if (isModelImageSet && isGarmentImageSet) {
+        setModelImagePreview(sample.model);
+        setGarmentImagePreview(sample.garment);
+
+        fetchImageAsFile(sample.model).then((file) => setModelImage(file));
+        fetchImageAsFile(sample.garment).then((file) => setGarmentImage(file));
+      }
     }
-  }
-};
-
-
+  };
 
   const fetchImageAsFile = async (url) => {
     const response = await fetch(url, {
@@ -123,75 +107,12 @@ const handleSampleSelect = (sample) => {
     return new File([blob], 'sample.jpg', { type: blob.type });
   };
 
-  const pollJobStatus = async (jobId) => {
-    try {
-      const response = await fetch(`${BACKEND_URL}/virtual-tryon/status/${jobId}`, {
-        headers: {
-          "ngrok-skip-browser-warning": "true",
-          "Authorization": `Bearer ${sessionToken}`, // Pass the Bearer token from the context
-        }
-      });
-      
-      if (!response.ok) {
-        throw new Error(`Status check failed: ${response.status} ${response.statusText}`);
-      }
-      
-      const text = await response.text();
-      
-      let data;
-      try {
-        data = JSON.parse(text);
-      } catch (parseError) {
-        setIsProcessing(false);
-        setStatus("failed");
-        return;
-      }
-      
-      setStatus(data.status);
-
-      if (data.status === "completed") {
-        if (data.output && data.output.length > 0) {
-          setResult(data.output[0]);
-          setProgress(100);
-          setShowResultModal(true);
-        } else {
-          setStatus("failed");
-        }
-        setIsProcessing(false);
-        
-      } else if (data.status === "failed") {
-        setIsProcessing(false);
-        setStatus("failed");
-        
-        alert("Virtual try-on failed. This could be due to:\n" +
-          "• Image format/size issues\n" + 
-          "• Backend processing error\n" +
-          "• AI model limitations\n" +
-          "Check console for details.");
-        
-      } else if (data.status === "processing" || data.status === "pending") {
-        setProgress((prev) => {
-          const newProgress = Math.min(prev + 5, 90);
-          return newProgress;
-        });
-        
-        setTimeout(() => pollJobStatus(jobId), 3000);
-        
-      } else {
-        setTimeout(() => pollJobStatus(jobId), 3000);
-      }
-      
-    } catch (error) {
-      setIsProcessing(false);
-      setStatus("failed");
-    }
-  };
-
   const handleProcess = async () => {
-    if (!modelImage || !garmentImage) {
+    if (!modelImage || !garmentImage || !garmentType) {
+      alert("Please upload both images and provide a garment type.");
       return;
     }
-
+  
     // Validate image types
     const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
     if (!validTypes.includes(modelImage.type)) {
@@ -202,7 +123,7 @@ const handleSampleSelect = (sample) => {
       alert(`Invalid garment image type: ${garmentImage.type}. Please use JPG, PNG, or WebP.`);
       return;
     }
-
+  
     // Check file sizes (limit to 10MB each)
     const maxSize = 10 * 1024 * 1024; // 10MB
     if (modelImage.size > maxSize) {
@@ -213,56 +134,86 @@ const handleSampleSelect = (sample) => {
       alert(`Garment image too large: ${(garmentImage.size / 1024 / 1024).toFixed(1)}MB. Please use images under 10MB.`);
       return;
     }
-    
+  
     setIsProcessing(true);
     setProgress(10);
     setResult(null);
     setStatus("processing");
-
+  
     try {
-      const modelBase64 = await convertToBase64(modelImage);
-      const garmentBase64 = await convertToBase64(garmentImage);
+      // Create FormData for multipart/form-data request
+      const formData = new FormData();
+      formData.append('person_image', modelImage);
+      formData.append('garment_image', garmentImage);
+      formData.append('garment_type', garmentType);
 
-      const requestBody = {
-        model_image: modelBase64,
-        garment_image: garmentBase64,
-        category: "tops"
-      };
+      setProgress(30);
 
-      const response = await fetch(`${BACKEND_URL}/virtual-tryon/run`, {
+      const response = await fetch(`${BACKEND_URL}/try_on`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
           "ngrok-skip-browser-warning": "true",
-          "Authorization": `Bearer ${sessionToken}`, // Pass the Bearer token from the context
+          // Don't set Content-Type header when using FormData - browser will set it automatically with boundary
         },
-        body: JSON.stringify(requestBody),
+        body: formData,
       });
+
+      setProgress(70);
 
       if (!response.ok) {
         const errorText = await response.text();
-        throw new Error(`API error: ${response.status} ${response.statusText}`);
+        throw new Error(`API error: ${response.status} ${response.statusText} - ${errorText}`);
       }
 
-      const responseText = await response.text();
-      const data = JSON.parse(responseText);
-
-      if (!data.id) {
-        throw new Error("No job ID returned from API");
+      // Check if response is an image
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.startsWith('image/')) {
+        // Response is an image - create blob URL
+        const imageBlob = await response.blob();
+        const imageUrl = URL.createObjectURL(imageBlob);
+        
+        setResult(imageUrl);
+        setStatus("completed");
+        setProgress(100);
+        setShowResultModal(true);
+      } else {
+        // Response might be JSON with image URL or base64
+        const responseText = await response.text();
+        let data;
+        
+        try {
+          data = JSON.parse(responseText);
+          // Handle different possible response formats
+          if (data.image_url) {
+            setResult(data.image_url);
+          } else if (data.result) {
+            setResult(data.result);
+          } else if (data.output) {
+            setResult(data.output);
+          } else {
+            throw new Error("No image data found in response");
+          }
+        } catch (parseError) {
+          // If it's not JSON, treat as direct image URL or base64
+          setResult(responseText);
+        }
+        
+        setStatus("completed");
+        setProgress(100);
+        setShowResultModal(true);
       }
 
-      setJobId(data.id);
-      setProgress(30);
-      
-      pollJobStatus(data.id);
-      
+      setIsProcessing(false);
+
     } catch (error) {
       setIsProcessing(false);
       setStatus("failed");
+      setProgress(0);
       alert(`Processing failed: ${error.message}`);
+      console.error('Processing error:', error);
     }
   };
-
+  
   return (
     <div className="min-h-screen bg-gray-50 py-4 sm:py-6">
       <motion.div
@@ -325,6 +276,8 @@ const handleSampleSelect = (sample) => {
               onRemoveModel={removeModelImage}
               onRemoveGarment={removeGarmentImage}
               onProcess={handleProcess}
+              garmentType={garmentType}
+              setGarmentType={setGarmentType}
             />
           </motion.div>
         </div>

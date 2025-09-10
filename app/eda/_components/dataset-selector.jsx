@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Loader2, UploadCloud } from "lucide-react"
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Loader2, UploadCloud } from "lucide-react";
 
 export default function DatasetSelector({
   selectedFile,
@@ -13,51 +13,81 @@ export default function DatasetSelector({
   setUploadedFile,
   isLoading,
   setIsFileSelected,
+  setSessionId, // Add this prop to set the session_id in the parent
+  setIsLoading
 }) {
   const sampleFiles = [
     { label: "Sample 1", file: "sample1.csv" },
     { label: "Heart Disease", file: "heart.csv" },
     { label: "Customers", file: "customers.csv" },
-  ]
+  ];
 
-  // Handle file upload and update the uploadedFile state
-  const handleFileChange = (e) => {
-    const file = e.target.files[0]
-    if (file && file.name.endsWith(".csv")) {
-      setSelectedFile(file)  // Update the selectedFile state
-      setUploadedFile(true)   // Show the query section
-      setIsFileSelected(true)  // Set the file selection state to true
-    } else {
-      setUploadedFile(false)  // Reset if invalid file is chosen
-      setIsFileSelected(false) // Hide query section
+  // Upload the file to the backend API
+  const uploadFile = async (file) => {
+    setIsFileSelected(false); // Reset file selected flag
+    setIsLoading(true); // Start loading indicator
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/eda/upload`, {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.detail || "File upload failed");
+
+      console.log("File uploaded successfully:", data);
+
+      // Set the session_id received from the response
+      const sessionId = data.session_id;
+      setSessionId(sessionId); // Pass the session_id to the parent
+
+      setUploadedFile(true);
+      setIsFileSelected(true);
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      setUploadedFile(false);
+      setIsFileSelected(false);
+    } finally {
+      setIsLoading(false); // Stop loading indicator
     }
-  }
+  };
 
-  // Handle sample file selection and update the uploadedFile state
+  // Handle file change event and upload
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file && file.name.endsWith(".csv")) {
+      setSelectedFile(file);
+      uploadFile(file);  // Call the uploadFile function when a file is selected
+    } else {
+      setUploadedFile(false);
+      setIsFileSelected(false);
+    }
+  };
+
+  // Handle sample file selection and trigger upload
   const handleSampleChange = async (value) => {
-    const selectedSample = sampleFiles.find(sample => sample.file === value)
+    const selectedSample = sampleFiles.find(sample => sample.file === value);
     if (selectedSample) {
       try {
-        // Fetch the file from the public folder as a Blob
-        const response = await fetch(`/${selectedSample.file}`)
-        if (!response.ok) throw new Error(`Failed to fetch file: ${selectedSample.file}`)
-        
-        const blob = await response.blob()
-        
-        // Convert the Blob to a File object
-        const file = new File([blob], selectedSample.file, { type: "text/csv" })
-        
-        // Set the file in the state and show the query section
-        setSelectedFile(file)
-        setUploadedFile(true)
-        setIsFileSelected(true)
+        const response = await fetch(`/${selectedSample.file}`);
+        if (!response.ok) throw new Error(`Failed to fetch file: ${selectedSample.file}`);
+
+        const blob = await response.blob();
+        const file = new File([blob], selectedSample.file, { type: "text/csv" });
+
+        setSelectedFile(file);
+        uploadFile(file);  // Trigger the file upload API for the sample
       } catch (error) {
-        console.error("Error fetching sample file:", error)
-        setUploadedFile(false)
-        setIsFileSelected(false)
+        console.error("Error fetching sample file:", error);
+        setUploadedFile(false);
+        setIsFileSelected(false);
       }
     }
-  }
+  };
 
   return (
     <Card className="mb-8 bg-white border border-gray-200 rounded-xl shadow-sm">
@@ -69,12 +99,11 @@ export default function DatasetSelector({
       </CardHeader>
       <CardContent>
         <div className="flex flex-col sm:flex-row gap-4 w-full">
-
           {/* Dropdown for selecting sample files */}
           <div className="w-full sm:w-[48%]">
-            <Select 
-              onValueChange={handleSampleChange} 
-              value={selectedFile ? selectedFile.name : ""} 
+            <Select
+              onValueChange={handleSampleChange}
+              value={selectedFile ? selectedFile.name : ""}
               className="w-full h-12 px-4 border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition text-gray-800 font-medium"
             >
               <SelectTrigger className="w-full h-full">
@@ -105,8 +134,14 @@ export default function DatasetSelector({
           </div>
         </div>
 
-        {/* Removed the "Selected for upload" info text */}
+        {/* Show loading spinner when the file is being uploaded */}
+        {isLoading && (
+          <div className="mt-4 text-center">
+            <Loader2 className="animate-spin h-6 w-6 text-blue-500" />
+            <p className="text-sm text-gray-500 mt-2">Uploading...</p>
+          </div>
+        )}
       </CardContent>
     </Card>
-  )
+  );
 }
