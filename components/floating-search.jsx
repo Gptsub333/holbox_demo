@@ -278,7 +278,7 @@ export function FloatingSearch({ isOpen, onClose }) {
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -325,7 +325,7 @@ export function FloatingSearch({ isOpen, onClose }) {
                   className={cn(
                     'w-full pl-8 pr-4 py-1.5 rounded-lg text-xs',
                     'bg-gray-900 border border-gray-700',
-                    'text-gray-100 placeholder-gray-400 mono-font',
+                    'text-gray-100 placeholder-gray-400',
                     'focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent'
                   )}
                   value={query}
