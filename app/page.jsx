@@ -218,7 +218,8 @@ export default function OmniAgent() {
                     <OmniLogo />
                   </div>
                   <h1 className="text-2xl md:text-4xl font-bold text-gray-900 mb-4 text-balance">
-                    Welcome to {companyName} Your  AI agent Awaits.
+                    Welcome To {companyName},<br />
+                    Your  AI Agent Awaits.
                   </h1>
                   <p className="text-gray-600 text-base md:text-lg text-balance">
                     Discover smarter conversations, automated insights, and limitless creativity — all in one dashboard.
