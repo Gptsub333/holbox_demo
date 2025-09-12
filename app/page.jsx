@@ -210,22 +210,22 @@ export default function OmniAgent() {
           <div className="flex-1 overflow-y-auto">
             <div className="max-w-4xl mx-auto p-4 md:p-8">
               <section className="flex flex-col justify-center mt-[150px]">
-                <div className="text-center mb-4 md:mb-8">
+                <div className="text-center mb-5 md:mb-8">
                   <div className="mb-6 flex justify-center">
                     <OmniLogo />
                   </div>
                   <h1 className="text-2xl md:text-4xl font-bold text-gray-900 mb-4 text-balance">
                     Welcome to {companyName} Your AI agent Awaits.
                   </h1>
-                  <p className="text-gray-600 text-base md:text-lg text-balance">
+                  <p className="text-gray-600 text-base md:text-base text-balance">
                     Discover smarter conversations, automated insights, and limitless creativity — all in one dashboard.
                     Let's set you up in just a few steps.
                   </p>
                 </div>
 
-                <div className="mb-8 md:mb-12">
+                <div className="mb-8 md:mb-12 mt-4">
                   <div className="relative max-w-2xl mx-auto">
-                    <div className="bg-gray-50 rounded-xl border border-gray-200 p-3 focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500">
+                    <div className="bg-gray-100 rounded-xl border border-gray-200 p-3 focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500 ">
                       <div className="flex items-center gap-3 mb-3">
                         <Search className="w-5 h-5 ml-[10px] text-gray-400 flex-shrink-0" />
                         <textarea
