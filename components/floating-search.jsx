@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
-import { usePathname } from "next/navigation";
+import { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 
 import {
   X,
@@ -29,11 +29,11 @@ import {
   ScanFace,
   Activity,
   BrainCircuit,
-  Landmark,,
-  ImageIcon
-} from "lucide-react";
-import { cn } from "@/lib/utils";
-import { motion, AnimatePresence } from "framer-motion";
+  Landmark,
+  ImageIcon,
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { motion, AnimatePresence } from 'framer-motion';
 
 // Feature data with icons
 const features = [
@@ -127,21 +127,26 @@ const features = [
     description:
       " Upload your bank statement to instantly identify and list all merchants.",
   },
+  { name: 'Virtual Try-On', href: '/virtual-try-on', icon: Shirt, description: 'Try garments on models using images' },
+  { name: 'PII Masker', href: '/pii-redactor', icon: FileX, description: 'Remove PII from input text securely' },
+  { name: 'Text to Image', href: '/text-to-image', icon: Wand2, description: 'Generate images from text descriptions' },
+  { name: 'Text to Video', href: '/text-to-video', icon: Video, description: 'Generate video from text descriptions' },
+  { name: 'EDA', href: '/eda', icon: BrainCircuit, description: 'Exploratory Data Analysis of data your .csv' },
   {
-    name: "Virtual Try-On",
-    href: "/virtual-try-on",
-    icon: Shirt,
-    description: "Try garments on models using images",
+    name: 'Image Editing',
+    href: '/image-editing',
+    icon: Wand2,
+    description: 'Edit images with AI using text queries',
   },
   {
-    name: "PII Masker",
-    href: "/pii-redactor",
-    icon: FileX,
-    description: "Remove PII from input text securely",
+    name: 'Proffesional Headshot',
+    href: '/ai-professional-headshot',
+    icon: ImageIcon,
+    description: 'Generate polished, professional-looking headshots instantly with AI.',
   },
   {
-    name: "Text to Image",
-    href: "/text-to-image",
+    name: 'Image Editing',
+    href: '/ai-image-editor',
     icon: Wand2,
     description: "Generate images from text descriptions",
   },
@@ -158,77 +163,51 @@ const features = [
     description: "Exploratory Data Analysis of data your .csv",
   },
   {
-    name: "Medical Claim Verifier",
-    href: "/medical-claim-verifier",
-    icon: BookOpen,
-    description: "Frontend requirements for uploading and verifying medical claims against insurance policies.",
+    name: 'Medical Code Extractor',
+    href: '/medical-code-extractor',
+    icon: Wand2,
+    description: 'Edit images with AI using text queries',
   },
 ];
 
 // Upcoming features data
 const upcomingFeatures = [
+  { name: 'EDA', href: '/eda', icon: BrainCircuit, description: 'Exploratory Data Analysis of data your .csv' },
+  { name: 'ConciergeAI', href: '/concierge-ai', icon: User, description: 'AI assistant for business inquiries' },
   {
-    name: "ConciergeAI",
-    href: "/concierge-ai",
-    icon: User,
-    description: "AI assistant for business inquiries",
-  },
-  {
-    name: "PDF Extractor",
-    href: "/pdf-extractor",
+    name: 'PDF Extractor',
+    href: '/pdf-extractor',
     icon: FileText,
-    description: "Detect and extract personal information",
+    description: 'Detect and extract personal information',
   },
-  {
-    name: "Voice-Agent",
-    href: "/voice-agent",
-    icon: Mic,
-    description: "Voice-enabled booking and health assistant",
-  },
+  { name: 'Voice-Agent', href: '/voice-agent', icon: Mic, description: 'Voice-enabled booking and health assistant' },
 
   {
-    name: "Video Compliance",
-    href: "/video-compliance",
+    name: 'Video Compliance',
+    href: '/video-compliance',
     icon: Video,
-    description: "Analyze videos for safety and compliance",
+    description: 'Analyze videos for safety and compliance',
   },
 
-  {
-    name: "Traffic Chatbot",
-    href: "/traffic-chatbot",
-    icon: Car,
-    description: "AI assistant for traffic conditions",
-  },
+  { name: 'Traffic Chatbot', href: '/traffic-chatbot', icon: Car, description: 'AI assistant for traffic conditions' },
 
+  { name: 'Enterprise Search', icon: FileSearch, description: 'Advanced search across all enterprise data' },
+  { name: 'Structured Extraction', icon: Layers, description: 'Extract structured data from unstructured content' },
   {
-    name: "Enterprise Search",
-    icon: FileSearch,
-    description: "Advanced search across all enterprise data",
-  },
-  {
-    name: "Structured Extraction",
-    icon: Layers,
-    description: "Extract structured data from unstructured content",
-  },
-  {
-    name: "AI Meeting Insights",
+    name: 'AI Meeting Insights',
     icon: CalendarClock,
-    description: "Get insights and summaries from meeting recordings",
+    description: 'Get insights and summaries from meeting recordings',
   },
 
-  { name: "ICD Coding", icon: BookOpen, description: "Automated medical coding for healthcare documentation" },
-  {
-    name: "Medical Copilot",
-    icon: StethoscopeIcon,
-    description: "AI assistant for medical professionals",
-  },
+  { name: 'ICD Coding', icon: BookOpen, description: 'Automated medical coding for healthcare documentation' },
+  { name: 'Medical Copilot', icon: StethoscopeIcon, description: 'AI assistant for medical professionals' },
 ];
 
 export function FloatingSearch({ isOpen, onClose }) {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState('');
   const [filteredFeatures, setFilteredFeatures] = useState(features);
   const [filteredUpcoming, setFilteredUpcoming] = useState(upcomingFeatures);
-  const [activeTab, setActiveTab] = useState("all");
+  const [activeTab, setActiveTab] = useState('all');
   const router = useRouter();
   const inputRef = useRef(null);
   const panelRef = useRef(null);
@@ -243,27 +222,27 @@ export function FloatingSearch({ isOpen, onClose }) {
       }, 100);
 
       // Reset search when opening
-      setQuery("");
+      setQuery('');
       setFilteredFeatures(features);
       setFilteredUpcoming(upcomingFeatures);
-      setActiveTab("all");
+      setActiveTab('all');
 
       // Prevent body scroll when modal is open
-      document.body.style.overflow = "hidden";
+      document.body.style.overflow = 'hidden';
     } else {
       // Re-enable body scroll when modal is closed
-      document.body.style.overflow = "auto";
+      document.body.style.overflow = 'auto';
     }
 
     return () => {
-      document.body.style.overflow = "auto";
+      document.body.style.overflow = 'auto';
     };
   }, [isOpen]);
 
   useEffect(() => {
     // Add escape key listener to close the panel
     const handleEscape = (e) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === 'Escape') onClose();
     };
 
     // Add click outside listener
@@ -274,13 +253,13 @@ export function FloatingSearch({ isOpen, onClose }) {
     };
 
     if (isOpen) {
-      window.addEventListener("keydown", handleEscape);
-      document.addEventListener("mousedown", handleClickOutside);
+      window.addEventListener('keydown', handleEscape);
+      document.addEventListener('mousedown', handleClickOutside);
     }
 
     return () => {
-      window.removeEventListener("keydown", handleEscape);
-      document.removeEventListener("mousedown", handleClickOutside);
+      window.removeEventListener('keydown', handleEscape);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [isOpen, onClose]);
 
@@ -312,7 +291,7 @@ export function FloatingSearch({ isOpen, onClose }) {
   };
 
   const handleUpcomingClick = (name) => {
-    router.push("/upcoming");
+    router.push('/upcoming');
     onClose();
   };
 
@@ -322,7 +301,7 @@ export function FloatingSearch({ isOpen, onClose }) {
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -331,16 +310,16 @@ export function FloatingSearch({ isOpen, onClose }) {
           <motion.div
             ref={panelRef}
             className={cn(
-              "w-[95%] sm:w-full max-w-4xl bg-[#0f0f11] rounded-xl border border-gray-800 shadow-xl",
-              "overflow-hidden",
-              "mx-auto" // Centered horizontally
+              'w-[95%] sm:w-full max-w-4xl bg-[#0f0f11] rounded-xl border border-gray-800 shadow-xl',
+              'overflow-hidden',
+              'mx-auto' // Centered horizontally
             )}
-            style={{ maxHeight: "90vh" }}
+            style={{ maxHeight: '90vh' }}
             initial={{ scale: 0.9, opacity: 0, y: 20 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.9, opacity: 0, y: 20 }}
             transition={{
-              type: "spring",
+              type: 'spring',
               damping: 25,
               stiffness: 300,
               duration: 0.3,
@@ -369,10 +348,10 @@ export function FloatingSearch({ isOpen, onClose }) {
                   type="text"
                   placeholder="Search applications..."
                   className={cn(
-                    "w-full pl-8 pr-4 py-1.5 rounded-lg text-xs",
-                    "bg-gray-900 border border-gray-700",
-                    "text-gray-100 placeholder-gray-400 mono-font",
-                    "focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+                    'w-full pl-8 pr-4 py-1.5 rounded-lg text-xs',
+                    'bg-gray-900 border border-gray-700',
+                    'text-gray-100 placeholder-gray-400',
+                    'focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent'
                   )}
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
@@ -382,34 +361,34 @@ export function FloatingSearch({ isOpen, onClose }) {
               <div className="flex flex-wrap gap-1.5">
                 <button
                   className={cn(
-                    "px-2.5 py-0.5 text-[10px] rounded-md",
-                    activeTab === "all"
-                      ? "bg-blue-900 text-blue-100 font-medium"
-                      : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+                    'px-2.5 py-0.5 text-[10px] rounded-md',
+                    activeTab === 'all'
+                      ? 'bg-blue-900 text-blue-100 font-medium'
+                      : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
                   )}
-                  onClick={() => setActiveTab("all")}
+                  onClick={() => setActiveTab('all')}
                 >
                   All
                 </button>
                 <button
                   className={cn(
-                    "px-2.5 py-0.5 text-[10px] rounded-md",
-                    activeTab === "features"
-                      ? "bg-blue-900 text-blue-100 font-medium"
-                      : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+                    'px-2.5 py-0.5 text-[10px] rounded-md',
+                    activeTab === 'features'
+                      ? 'bg-blue-900 text-blue-100 font-medium'
+                      : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
                   )}
-                  onClick={() => setActiveTab("features")}
+                  onClick={() => setActiveTab('features')}
                 >
                   Features
                 </button>
                 <button
                   className={cn(
-                    "px-2.5 py-0.5 text-[10px] rounded-md",
-                    activeTab === "upcoming"
-                      ? "bg-blue-900 text-blue-100 font-medium"
-                      : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+                    'px-2.5 py-0.5 text-[10px] rounded-md',
+                    activeTab === 'upcoming'
+                      ? 'bg-blue-900 text-blue-100 font-medium'
+                      : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
                   )}
-                  onClick={() => setActiveTab("upcoming")}
+                  onClick={() => setActiveTab('upcoming')}
                 >
                   Upcoming
                 </button>
@@ -420,136 +399,125 @@ export function FloatingSearch({ isOpen, onClose }) {
               ref={contentRef}
               className="p-4 sm:p-5 overflow-y-auto custom-scrollbar"
               style={{
-                maxHeight: "calc(90vh - 100px)",
-                overflowY: "auto",
-                overflowX: "hidden",
+                maxHeight: 'calc(90vh - 100px)',
+                overflowY: 'auto',
+                overflowX: 'hidden',
               }}
             >
               {/* Current Features Section */}
-              {(activeTab === "all" || activeTab === "features") &&
-                filteredFeatures.length > 0 && (
-                  <div className="mb-8">
-                    {activeTab === "all" && (
-                      <h3 className="text-xs font-medium text-gray-200 mb-3 subheading-font">
-                        Available Features
-                      </h3>
-                    )}
-                    <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-                      {filteredFeatures.map((feature, index) => (
-                        <motion.button
-                          key={feature.href}
-                          onClick={() => handleFeatureClick(feature.href)}
+              {(activeTab === 'all' || activeTab === 'features') && filteredFeatures.length > 0 && (
+                <div className="mb-8">
+                  {activeTab === 'all' && (
+                    <h3 className="text-xs font-medium text-gray-200 mb-3 subheading-font">Available Features</h3>
+                  )}
+                  <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+                    {filteredFeatures.map((feature, index) => (
+                      <motion.button
+                        key={feature.href}
+                        onClick={() => handleFeatureClick(feature.href)}
+                        className={cn(
+                          'group',
+                          pathname === feature.href
+                            ? 'bg-gray-900 border-blue-900 text-blue-600'
+                            : 'bg-gray-900 text-gray-200'
+                        )}
+                        initial={{ opacity: pathname === feature.href ? 1 : 0, y: pathname === feature.href ? 0 : 20 }} // Apply initial animation based on active state
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{
+                          duration: 0.3,
+                          delay: index * 0.05,
+                          ease: [0.25, 0.1, 0.25, 1.0],
+                        }}
+                      >
+                        <div
                           className={cn(
-                            "group",
+                            'flex flex-col items-center p-3 sm:p-4 rounded-md',
+                            'transition-all duration-300',
                             pathname === feature.href
-                              ? "bg-gray-900 border-blue-900 text-blue-600"
-                              : "bg-gray-900 text-gray-200"
+                              ? 'border-blue-500 shadow-md scale-105'
+                              : 'border-gray-700 group-hover:border-blue-500 group-hover:shadow-[0_0_12px_rgba(37,99,235,0.5)]'
                           )}
-                          initial={{
-                            opacity: pathname === feature.href ? 1 : 0,
-                            y: pathname === feature.href ? 0 : 20,
-                          }} // Apply initial animation based on active state
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{
-                            duration: 0.3,
-                            delay: index * 0.05,
-                            ease: [0.25, 0.1, 0.25, 1.0],
-                          }}
                         >
-                          <div
-                            className={cn(
-                              "flex flex-col items-center p-3 sm:p-4 rounded-md",
-                              "transition-all duration-300",
-                              pathname === feature.href
-                                ? "border-blue-500 shadow-md scale-105"
-                                : "border-gray-700 group-hover:border-blue-500 group-hover:shadow-[0_0_12px_rgba(37,99,235,0.5)]"
-                            )}
-                          >
-                            <div className="flex items-center justify-center w-full mb-2.5">
-                              <div className="relative w-8 h-8 sm:w-10 sm:h-10 transition-all duration-300 transform group-hover:-translate-y-3">
-                                <div className="absolute inset-0 rounded-md bg-gray-800 border border-gray-700 flex items-center justify-center group-hover:border-blue-500 group-hover:shadow-[0_0_12px_rgba(37,99,235,0.5)] transition-all duration-300">
-                                  <feature.icon className="h-4 w-4 sm:h-5 sm:w-5 text-gray-300 group-hover:text-blue-400 transition-colors duration-300" />
-                                </div>
+                          <div className="flex items-center justify-center w-full mb-2.5">
+                            <div className="relative w-8 h-8 sm:w-10 sm:h-10 transition-all duration-300 transform group-hover:-translate-y-3">
+                              <div className="absolute inset-0 rounded-md bg-gray-800 border border-gray-700 flex items-center justify-center group-hover:border-blue-500 group-hover:shadow-[0_0_12px_rgba(37,99,235,0.5)] transition-all duration-300">
+                                <feature.icon className="h-4 w-4 sm:h-5 sm:w-5 text-gray-300 group-hover:text-blue-400 transition-colors duration-300" />
                               </div>
                             </div>
-                            <span className="text-xs sm:text-sm font-medium text-gray-200 text-center subheading-font group-hover:text-white transition-colors duration-300 w-full mt-2">
-                              {feature.name}
-                            </span>
-                            <span className="text-[10px] sm:text-xs text-gray-400 text-center mt-1.5 para-font group-hover:text-gray-300 transition-colors duration-300 w-full">
-                              {feature.description}
-                            </span>
                           </div>
-                        </motion.button>
-                      ))}
-                    </div>
+                          <span className="text-xs sm:text-sm font-medium text-gray-200 text-center subheading-font group-hover:text-white transition-colors duration-300 w-full mt-2">
+                            {feature.name}
+                          </span>
+                          <span className="text-[10px] sm:text-xs text-gray-400 text-center mt-1.5 para-font group-hover:text-gray-300 transition-colors duration-300 w-full">
+                            {feature.description}
+                          </span>
+                        </div>
+                      </motion.button>
+                    ))}
                   </div>
-                )}
+                </div>
+              )}
 
               {/* Upcoming Features Section */}
-              {(activeTab === "all" || activeTab === "upcoming") &&
-                filteredUpcoming.length > 0 && (
-                  <div className="mb-8">
-                    <h3 className="text-xs font-medium text-gray-200 mb-3 subheading-font">
-                      Upcoming Features
-                    </h3>
-                    <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-                      {filteredUpcoming.map((feature, index) => (
-                        <motion.button
-                          key={index}
-                          className="group"
-                          onClick={() => handleUpcomingClick(feature.name)}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{
-                            duration: 0.3,
-                            delay: index * 0.05 + 0.2,
-                            ease: [0.25, 0.1, 0.25, 1.0],
-                          }}
-                          whileHover={{
-                            scale: 1.03,
-                            transition: { duration: 0.2 },
-                          }}
+              {(activeTab === 'all' || activeTab === 'upcoming') && filteredUpcoming.length > 0 && (
+                <div className="mb-8">
+                  <h3 className="text-xs font-medium text-gray-200 mb-3 subheading-font">Upcoming Features</h3>
+                  <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+                    {filteredUpcoming.map((feature, index) => (
+                      <motion.button
+                        key={index}
+                        className="group"
+                        onClick={() => handleUpcomingClick(feature.name)}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{
+                          duration: 0.3,
+                          delay: index * 0.05 + 0.2,
+                          ease: [0.25, 0.1, 0.25, 1.0],
+                        }}
+                        whileHover={{
+                          scale: 1.03,
+                          transition: { duration: 0.2 },
+                        }}
+                      >
+                        <div
+                          className={cn(
+                            'flex flex-col items-center p-3 sm:p-4 rounded-md',
+                            'bg-gray-900 border border-gray-700 border-dashed',
+                            'transition-all duration-300',
+                            'group-hover:border-blue-500 group-hover:shadow-md group-hover:shadow-blue-900/20',
+                            'h-auto min-h-[100px] sm:min-h-[110px]', // Increased height
+                            'w-full' // Full width
+                          )}
                         >
-                          <div
-                            className={cn(
-                              "flex flex-col items-center p-3 sm:p-4 rounded-md",
-                              "bg-gray-900 border border-gray-700 border-dashed",
-                              "transition-all duration-300",
-                              "group-hover:border-blue-500 group-hover:shadow-md group-hover:shadow-blue-900/20",
-                              "h-auto min-h-[100px] sm:min-h-[110px]", // Increased height
-                              "w-full" // Full width
-                            )}
-                          >
-                            <div className="flex items-center justify-center w-full mb-2.5">
-                              <div className="relative w-8 h-8 sm:w-10 sm:h-10 transition-all duration-300 transform group-hover:-translate-y-3">
-                                <div className="absolute inset-0 rounded-md bg-gray-800 border border-gray-700 flex items-center justify-center group-hover:border-blue-500 group-hover:shadow-[0_0_12px_rgba(37,99,235,0.5)] transition-all duration-300">
-                                  <feature.icon className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 group-hover:text-blue-400 transition-colors duration-300" />
-                                </div>
-                                <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-5 h-1 rounded-full bg-transparent group-hover:bg-blue-500/30 transition-all duration-300 blur-sm"></div>
+                          <div className="flex items-center justify-center w-full mb-2.5">
+                            <div className="relative w-8 h-8 sm:w-10 sm:h-10 transition-all duration-300 transform group-hover:-translate-y-3">
+                              <div className="absolute inset-0 rounded-md bg-gray-800 border border-gray-700 flex items-center justify-center group-hover:border-blue-500 group-hover:shadow-[0_0_12px_rgba(37,99,235,0.5)] transition-all duration-300">
+                                <feature.icon className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 group-hover:text-blue-400 transition-colors duration-300" />
                               </div>
+                              <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-5 h-1 rounded-full bg-transparent group-hover:bg-blue-500/30 transition-all duration-300 blur-sm"></div>
                             </div>
-                            <span className="text-xs sm:text-sm font-medium text-gray-200 text-center subheading-font group-hover:text-white transition-colors duration-300 w-full mt-2">
-                              {feature.name}
-                            </span>
-                            <span className="text-[10px] sm:text-xs text-gray-500 text-center mt-1.5 para-font group-hover:text-gray-400 transition-colors duration-300 w-full">
-                              {feature.description}
-                            </span>
-                            <span className="text-[9px] sm:text-[10px] text-blue-400 mt-1.5 font-medium group-hover:text-blue-300 mono-font">
-                              Coming Soon
-                            </span>
                           </div>
-                        </motion.button>
-                      ))}
-                    </div>
+                          <span className="text-xs sm:text-sm font-medium text-gray-200 text-center subheading-font group-hover:text-white transition-colors duration-300 w-full mt-2">
+                            {feature.name}
+                          </span>
+                          <span className="text-[10px] sm:text-xs text-gray-500 text-center mt-1.5 para-font group-hover:text-gray-400 transition-colors duration-300 w-full">
+                            {feature.description}
+                          </span>
+                          <span className="text-[9px] sm:text-[10px] text-blue-400 mt-1.5 font-medium group-hover:text-blue-300 mono-font">
+                            Coming Soon
+                          </span>
+                        </div>
+                      </motion.button>
+                    ))}
                   </div>
-                )}
+                </div>
+              )}
 
               {/* No Results State */}
-              {((activeTab === "features" && filteredFeatures.length === 0) ||
-                (activeTab === "upcoming" && filteredUpcoming.length === 0) ||
-                (activeTab === "all" &&
-                  filteredFeatures.length === 0 &&
-                  filteredUpcoming.length === 0)) && (
+              {((activeTab === 'features' && filteredFeatures.length === 0) ||
+                (activeTab === 'upcoming' && filteredUpcoming.length === 0) ||
+                (activeTab === 'all' && filteredFeatures.length === 0 && filteredUpcoming.length === 0)) && (
                 <motion.div
                   className="flex flex-col items-center justify-center py-8 sm:py-12"
                   initial={{ opacity: 0 }}
@@ -559,9 +527,7 @@ export function FloatingSearch({ isOpen, onClose }) {
                   <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-800 flex items-center justify-center mb-3 sm:mb-4">
                     <Search className="h-5 w-5 sm:h-6 sm:w-6 text-gray-400" />
                   </div>
-                  <h3 className="text-sm font-medium text-gray-200 mb-2 subheading-font">
-                    No results found
-                  </h3>
+                  <h3 className="text-sm font-medium text-gray-200 mb-2 subheading-font">No results found</h3>
                   <p className="text-gray-400 text-center text-xs para-font">
                     We couldn't find any applications matching "{query}"
                   </p>

@@ -2,6 +2,9 @@
 import "./globals.css";
 import ClientProviders from "../components/ClientProviders"; // plain import!
 import { Toaster } from "@/components/ui/sonner"
+import { Neuton } from 'next/font/google';
+
+const neuton = Neuton({ subsets: ['latin'], weight: ['200', '300', '400', '700', '800'], display: 'swap' });
 
 export const metadata = {
   title: "Agentic AI Demo Interface",
@@ -15,10 +18,10 @@ export default async function RootLayout({ children }) {
 
   return (
     <html lang="en">
-      <body>
+      <body className={neuton.className}>
         <ClientProviders>
           {children}
-           <Toaster />   
+          <Toaster />
         </ClientProviders>
       </body>
     </html>
