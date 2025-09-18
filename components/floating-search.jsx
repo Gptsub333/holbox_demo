@@ -158,10 +158,10 @@ const features = [
     description: "Exploratory Data Analysis of data your .csv",
   },
   {
-    name: "ICD Coding",
-    href: "/icd-coding",
+    name: "Medical Claim Verifier",
+    href: "/medical-claim-verifier",
     icon: BookOpen,
-    description: "Automated medical coding for healthcare documentation",
+    description: "Frontend requirements for uploading and verifying medical claims against insurance policies.",
   },
 ];
 
@@ -216,7 +216,7 @@ const upcomingFeatures = [
     description: "Get insights and summaries from meeting recordings",
   },
 
-  // { name: "ICD Coding", icon: BookOpen, description: "Automated medical coding for healthcare documentation" },
+  { name: "ICD Coding", icon: BookOpen, description: "Automated medical coding for healthcare documentation" },
   {
     name: "Medical Copilot",
     icon: StethoscopeIcon,
