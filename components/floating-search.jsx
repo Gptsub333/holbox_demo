@@ -31,6 +31,7 @@ import {
   BrainCircuit,
   Landmark,
   ImageIcon,
+  
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -167,6 +168,12 @@ const features = [
     href: '/medical-code-extractor',
     icon: Wand2,
     description: 'Edit images with AI using text queries',
+  },
+  {
+    name: 'Medical Claim Verifier',
+    href: '/medical-claim-verifier',
+    icon: FileText,
+    description: 'Medical claim verification against insurance policies.',
   },
 ];
 

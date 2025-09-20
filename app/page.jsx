@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Paperclip, Upload, Send, CheckCircle, Search, ChevronUp, ArrowRight, Globe, Globe } from 'lucide-react';
+import { Paperclip, Upload, Send, CheckCircle, Search, ChevronUp, ArrowRight, Globe } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 
 const companyName = process.env.NEXT_PUBLIC_COMPANY_NAME;

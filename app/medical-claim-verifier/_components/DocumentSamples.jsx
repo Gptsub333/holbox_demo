@@ -6,11 +6,12 @@ export default function DocumentSamples({
   documents,
   selectDocument,
   activeDocumentId,
+  nameDisplay
 }) {
   return (
     <div className="rounded-xl border bg-white p-6 shadow-md">
       <h2 className="mb-4 text-xl font-semibold heading-font">
-        Sample Documents
+        {nameDisplay}
       </h2>
       <div className="space-y-4">
         {documents.map((doc) => {
