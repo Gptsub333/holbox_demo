@@ -46,11 +46,11 @@ const SampleImages = ({ handleSampleSelect }) => {
             className="border border-gray-200 rounded-lg p-4 cursor-pointer hover:shadow-md transition-all duration-200 hover:border-purple-300 group relative"
             onClick={() => handleSampleSelect(sample)}
           >
-            <div className="relative overflow-hidden rounded-md mb-3">
+            <div className="relative overflow-hidden rounded-md mb-3 aspect-square">
               <img
                 src={sample.thumbnail}
                 alt={sample.title}
-                className="w-full h-32 object-cover transition-transform duration-300 group-hover:scale-105"
+                className="w-full max-h-full object-cover transition-transform duration-300 group-hover:scale-105"
               />
               {/* Hover overlay with sample prompts */}
               

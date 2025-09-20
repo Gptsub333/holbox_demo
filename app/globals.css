@@ -5,9 +5,12 @@
 @layer base {
   :root {
     /* Font families - updating to premium fonts */
-    --heading-font-family: "Suisse", "SF Pro Display", system-ui, sans-serif;
+    /* --heading-font-family: "Suisse", "SF Pro Display", system-ui, sans-serif;
     --subheading-font-family: "Suisse", "SF Pro Text", system-ui, sans-serif;
-    --para-font-family: "Suisse", "SF Pro Text", system-ui, sans-serif;
+    --para-font-family: "Suisse", "SF Pro Text", system-ui, sans-serif; */
+    --heading-font-family: "Neuton", Georgia, "Times New Roman", serif;
+    --subheading-font-family: "Neuton", Georgia, "Times New Roman", serif;
+    --para-font-family: "Neuton", Georgia, "Times New Roman", serif;
     --mono-font-family: "Söhne Mono", "SFMono-Regular", Consolas, monospace;
     --numbers-font-family: "Geist Numbers", "SF Mono", monospace;
 

@@ -10,6 +10,11 @@ const constants = {
       inBytes: 10 * 1024 * 1024,
       inMB: '10MB',
       maxSize: 10
+    },
+    medicalCodeExtractor: {
+      inBytes: 20 * 1024 * 1024,
+      inMB: '20MB',
+      maxSize: 20
     }
   },
 
