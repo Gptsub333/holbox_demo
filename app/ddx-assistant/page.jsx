@@ -1,7 +1,6 @@
 "use client";
 
-import { useAuthContext } from "../../context/AuthContext";  // Import the context
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import Header from "./_components/Header";
 import ClinicalSamples from "./_components/ClinicalSamples";
@@ -9,9 +8,10 @@ import SymptomForm from "./_components/SymptomForm";
 import InfoCard from "./_components/InfoCard";
 import DiagnosisPopup from "./_components/DiagnosisPopup";
 import { parseDiagnosisResponse } from "./_components/utils";
+import Cookies from "js-cookie"; // Import the js-cookie library
 
-// const BACKEND_URL = "http://0.0.0.0:8000/api/demo_backend_v2"; // Replace with your backend URL
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+
 export default function DDxAssistantPage() {
   const [symptoms, setSymptoms] = useState("");
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -20,28 +20,40 @@ export default function DDxAssistantPage() {
   const [activeSample, setActiveSample] = useState(null);
   const textareaRef = useRef(null);
 
-  const { sessionToken, isLoaded, isSignedIn } = useAuthContext();  // Get the session token from the context
+  // Function to get or create a session ID
+  const getSessionId = () => {
+    let sessionId = Cookies.get("session_id");
+    if (!sessionId) {
+      sessionId = generateSessionId();
+      Cookies.set("session_id", sessionId, { expires: 365 }); // Set cookie to expire in a year
+    }
+    return sessionId;
+  };
+
+  // Generate a simple session ID (you can replace this with a more complex method)
+  const generateSessionId = () => {
+    return "session_" + Math.random().toString(36).substr(2, 9);
+  };
+
+  useEffect(() => {
+    // Ensure the session ID is set when the component mounts
+    getSessionId();
+  }, []);
 
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!symptoms.trim()) return;
-    const token = "Bearer " + sessionToken;
 
     setIsLoading(true);
-
-    // Check if sessionToken is available before making the request
-    if (!sessionToken) {
-      console.error("Session token is not available");
-      return;
-    }
+    const sessionId = getSessionId(); // Get the session ID
 
     try {
       const response = await fetch(`${BACKEND_URL}/ddx`, {
         method: "POST",
         headers: {
-          "Authorization": token, // Send token in Authorization header
           "Content-Type": "application/json",
+          "Session-ID": sessionId, // Send the session ID in the request headers
         },
         body: JSON.stringify({
           question: symptoms,

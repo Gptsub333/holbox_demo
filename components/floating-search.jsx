@@ -139,18 +139,20 @@ const features = [
     icon: Wand2,
     description: 'Edit images with AI using text queries',
   },
+
   {
     name: 'Medical Code Extractor',
     href: '/medical-code-extractor',
     icon: Wand2,
     description: 'Edit images with AI using text queries',
   },
+  { name: "ConciergeAI", href: "/concierge-ai", icon: User, description: "AI assistant for business inquiries" },
+  { name: 'EDA', href: '/eda', icon: BrainCircuit, description: 'Exploratory Data Analysis of data your .csv' },
+
 ];
 
 // Upcoming features data
 const upcomingFeatures = [
-  { name: 'EDA', href: '/eda', icon: BrainCircuit, description: 'Exploratory Data Analysis of data your .csv' },
-  { name: 'ConciergeAI', href: '/concierge-ai', icon: User, description: 'AI assistant for business inquiries' },
   {
     name: 'PDF Extractor',
     href: '/pdf-extractor',

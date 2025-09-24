@@ -5,41 +5,41 @@ import { Play, Sparkles } from "lucide-react";
 const SAMPLE_DATA = [
   {
     id: 1,
-    name: "Classic Blue Top",
-    model: "/models/model1.jpg",
-    garment: "/garments/whitetshirt.jpg",
-    category: "T-Shirts",
+    name: "Classic White Tee",
+    model: "/models/model1.png",
+    garment: "/garments/whitetshirt.png",
+    category: "tshirt",
     description: "Perfect fit casual white t-shirt for everyday wear"
   },
   {
     id: 2,
-    name: "Shirt Style",
-    model: "/models/model2.jpg",
-    garment: "/garments/hoodie.jpg",
-    category: "Hoodies",
+    name: "Cozy Hoodie",
+    model: "/models/model2.png",
+    garment: "/garments/hoodie.png",
+    category: "hoodie",
     description: "Comfortable pullover hoodie for casual occasions"
   },
   {
     id: 3,
-    name: "Full Dress",
-    model: "/models/model3.jpg",
-    garment: "/garments/denim.jpg",
-    category: "Jackets",
+    name: "Denim Jacket",
+    model: "/models/model3.png",
+    garment: "/garments/denim.png",
+    category: "jacket",
     description: "Classic denim jacket for layered street style"
   },
   {
     id: 4,
-    name: "Mans Shirt",
-    model: "/models/model4.jpg",
-    garment: "/garments/poloshirt.jpg",
-    category: "Polo",
+    name: "Smart Polo",
+    model: "/models/model4.png",
+    garment: "/garments/poloshirt.png",
+    category: "polo",
     description: "Classic collar polo shirt for smart casual look"
   }
 ];
 
 export default function SampleGallery({ onSampleSelect }) {
   const [selectedSamples, setSelectedSamples] = useState([]);
-  const [hoveredSample, setHoveredSample] = useState(null);  // Declare the hoveredSample state
+  const [hoveredSample, setHoveredSample] = useState(null);
 
   const handleSampleClick = (sample) => {
     // Toggle the selected state of the clicked sample
@@ -125,7 +125,7 @@ export default function SampleGallery({ onSampleSelect }) {
                 <motion.div
                   className="absolute inset-0 bg-gradient-to-r from-purple-600/90 to-blue-600/90 flex items-center justify-center"
                   initial={{ opacity: 0 }}
-                  animate={{ opacity: hoveredSample === sample.id ? 1 : 0 }} // Use the hoveredSample state here
+                  animate={{ opacity: hoveredSample === sample.id ? 1 : 0 }}
                   transition={{ duration: 0.2 }}
                 >
                   <div className="text-center text-white">
@@ -140,7 +140,7 @@ export default function SampleGallery({ onSampleSelect }) {
                 <h3 className="font-medium text-gray-900 text-sm mb-1">
                   {sample.name}
                 </h3>
-                <p className="text-xs text-gray-500 mb-1">{sample.category}</p>
+                <p className="text-xs text-gray-500 mb-1 capitalize">{sample.category}</p>
                 <p className="text-xs text-gray-600 line-clamp-2">
                   {sample.description}
                 </p>
