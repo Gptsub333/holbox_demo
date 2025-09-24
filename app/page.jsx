@@ -37,9 +37,8 @@ const OmniLogo = () => (
 
 const TooltipLabel = ({ text, show }) => (
   <div
-    className={`absolute left-full ml-3 top-1/2 -translate-y-1/2 bg-gray-900 text-white px-3 py-2 rounded-md text-sm whitespace-nowrap z-[9999] transition-all duration-300 ease-out pointer-events-none ${
-      show ? 'opacity-100 translate-x-0 scale-100' : 'opacity-0 -translate-x-4 scale-95'
-    }`}
+    className={`absolute left-full ml-3 top-1/2 -translate-y-1/2 bg-gray-900 text-white px-3 py-2 rounded-md text-lg whitespace-nowrap z-[9999] transition-all duration-300 ease-out pointer-events-none ${show ? 'opacity-100 translate-x-0 scale-100' : 'opacity-0 -translate-x-4 scale-95'
+      }`}
     style={{ boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)' }}
   >
     {text}
@@ -79,21 +78,21 @@ export default function OmniAgent() {
         setActiveView('chat');
       }
       if (storedConvo) setConversationId(storedConvo);
-    } catch {}
+    } catch { }
   }, []);
 
   // Persist messages and conversationId
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
-    } catch {}
+    } catch { }
   }, [messages]);
 
   useEffect(() => {
     if (conversationId) {
       try {
         localStorage.setItem(STORAGE_CONVO_KEY, conversationId);
-      } catch {}
+      } catch { }
     }
   }, [conversationId]);
 
@@ -199,6 +198,10 @@ export default function OmniAgent() {
     }
   };
 
+  const handleWorldIconClick = () => {
+
+  }
+
   const handleMobileMessage = (message) => {
     setInputValue(message);
     handleSendMessage();
@@ -252,7 +255,7 @@ export default function OmniAgent() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="text-gray-500 hover:text-gray-700 hover:bg-gray-100 px-0 py-1 h-auto flex-shrink-0"
+                          className="text-gray-500 hover:text-gray-700 hover:bg-gray-100 px-0 text-[16px] py-1 h-auto flex-shrink-0"
                           onClick={handleAttachFile}
                           disabled={isLoading}
                         >
@@ -263,12 +266,12 @@ export default function OmniAgent() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="text-gray-500 hover:text-gray-700 hover:bg-gray-100 px-2 py-2 h-auto flex-shrink-0"
+                          className="text-gray-500 hover:text-gray-700 hover:bg-gray-100 text-[16px] px-2 py-2 h-auto flex-shrink-0"
                           onClick={handleWorldIconClick} // Update function name as required
                           disabled={isLoading}
                         >
                           <Globe className="w-4 h-4 md:mr-0" />
-                          <span className="hidden md:inline">Search</span>
+                          <span className="hidden lg:inline">Search</span>
                         </Button>
 
                         {/* Right-aligning the Send button */}
@@ -287,22 +290,22 @@ export default function OmniAgent() {
                         </Button>
                       </div>
 
-                    {attachedFiles.length > 0 && (
-                      <div className="mt-2">
-                        <div
-                          className={`flex gap-2 ${attachedFiles.length > 4 ? 'overflow-x-auto pb-2' : 'flex-wrap'}`}
-                        >
-                          {attachedFiles.map((file, index) => (
-                            <div
-                              key={index}
-                              className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm flex items-center gap-2 flex-shrink-0"
-                            >
-                              <span className="truncate max-w-[120px]">{file.name}</span>
-                              <button
-                                onClick={() => removeAttachedFile(index)}
-                                className="text-blue-600 hover:text-blue-800 hover:bg-blue-200 rounded-full w-4 h-4 flex items-center justify-center text-xs font-bold"
-
+                      {attachedFiles.length > 0 && (
+                        <div className="mt-2">
+                          <div
+                            className={`flex gap-2 ${attachedFiles.length > 4 ? 'overflow-x-auto pb-2' : 'flex-wrap'}`}
+                          >
+                            {attachedFiles.map((file, index) => (
+                              <div
+                                key={index}
+                                className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-lg flex items-center gap-2 flex-shrink-0"
                               >
+                                <span className="truncate max-w-[120px]">{file.name}</span>
+                                <button
+                                  onClick={() => removeAttachedFile(index)}
+                                  className="text-blue-600 hover:text-blue-800 hover:bg-blue-200 rounded-full w-4 h-4 flex items-center justify-center text-xs font-bold"
+
+                                />
                                 <span className="truncate max-w-[120px]">{file.name}</span>
                                 <button
                                   onClick={() => removeAttachedFile(index)}
@@ -334,9 +337,8 @@ export default function OmniAgent() {
               </section>
 
               <div
-                className={`transition-all duration-500 ease-in-out overflow-hidden ${
-                  showTemplates ? 'max-h-[2000px] opacity-100 mb-8 md:mb-12' : 'max-h-0 opacity-0 mb-0'
-                }`}
+                className={`transition-all duration-500 ease-in-out overflow-hidden ${showTemplates ? 'max-h-[2000px] opacity-100 mb-8 md:mb-12' : 'max-h-0 opacity-0 mb-0'
+                  }`}
               >
                 <div className="mt-4">
                   <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-6 md:mb-8 text-center">
@@ -358,7 +360,7 @@ export default function OmniAgent() {
                               <template.icon className="w-6 h-6 text-blue-600" />
                             </div>
                             <div className="flex-1">
-                              <p className="text-gray-700 text-sm leading-relaxed font-medium">{template.title}</p>
+                              <p className="text-gray-700 text-lg leading-relaxed font-medium">{template.title}</p>
                             </div>
                           </div>
                           <div className="mt-auto flex justify-end">
@@ -379,7 +381,7 @@ export default function OmniAgent() {
                     ))}
                   </div>
                   <div className="mt-8 text-center">
-                    <p className="text-gray-500 text-sm mb-4">Or try these popular templates:</p>
+                    <p className="text-gray-500 text-lg mb-4">Or try these popular templates:</p>
                     <div className="flex flex-wrap justify-center gap-2">
                       {[
                         'Create a project timeline',
@@ -419,7 +421,7 @@ export default function OmniAgent() {
                         <div className="flex justify-end">
                           <div className="max-w-xs lg:max-md">
                             <div className="bg-blue-600 text-white rounded-2xl px-4 py-2">
-                              <p className="text-sm break-words">{message.text}</p>
+                              <p className="text-lg break-words">{message.text}</p>
                             </div>
                             {message.attachedFiles && message.attachedFiles.length > 0 && (
                               <div className="mt-2 space-y-1">
@@ -441,7 +443,7 @@ export default function OmniAgent() {
                         <div>
                           <div className="flex items-start gap-3 mb-2">
                             <OmniLogo />
-                            <span className="text-sm font-medium text-gray-900">Omni Agent</span>
+                            <span className="text-lg font-medium text-gray-900">Omni Agent</span>
                           </div>
 
                           <div className="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm max-w-full">
@@ -458,7 +460,7 @@ export default function OmniAgent() {
                     <div className="animate-in fade-in-0 duration-300">
                       <div className="flex items-start gap-3 mb-2">
                         <OmniLogo />
-                        <span className="text-sm font-medium text-gray-900">Omni Agent</span>
+                        <span className="text-lg font-medium text-gray-900">Omni Agent</span>
                       </div>
                       <div className="bg-white border border-gray-200 rounded-2xl p-4 ml-11 shadow-sm">
                         <div className="flex items-center gap-2">
@@ -467,7 +469,7 @@ export default function OmniAgent() {
                             <div className="w-2 h-2 rounded-full animate-bounce [animation-delay:-0.15s] bg-blue-400"></div>
                             <div className="w-2 h-2 rounded-full animate-bounce bg-blue-400"></div>
                           </div>
-                          <span className="text-sm text-gray-500">Thinking...</span>
+                          <span className="text-lg text-gray-500">Thinking...</span>
                         </div>
                       </div>
                     </div>
@@ -479,9 +481,8 @@ export default function OmniAgent() {
             </div>
 
             <div
-              className={`sticky bottom-0 z-30 bg-gray-50/90 supports-[backdrop-filter]:backdrop-blur px-4 md:px-6 pb-2 md:pb-3 transition-all duration-300 ${
-                isSending ? 'animate-pulse' : ''
-              }`}
+              className={`sticky bottom-0 z-30 bg-gray-50/90 supports-[backdrop-filter]:backdrop-blur px-4 md:px-6 pb-2 md:pb-3 transition-all duration-300 ${isSending ? 'animate-pulse' : ''
+                }`}
             >
               <div className="mx-auto w-full max-w-3xl">
                 <div className="bg-gray-100 rounded-xl p-2 md:p-3">
@@ -491,7 +492,7 @@ export default function OmniAgent() {
                         {attachedFiles.map((file, index) => (
                           <div
                             key={index}
-                            className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm flex items-center gap-2 flex-shrink-0"
+                            className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-lg flex items-center gap-2 flex-shrink-0"
                           >
                             <span className="truncate max-w-[120px]">{file.name}</span>
                             <button
@@ -514,7 +515,7 @@ export default function OmniAgent() {
                       onChange={(e) => setInputValue(e.target.value)}
                       onKeyPress={handleKeyPress}
                       disabled={isLoading}
-                      className="border-0 focus:ring-0 bg-transparent flex-1 text-sm resize-none outline-none placeholder-gray-400 min-h-[20px] max-h-16 overflow-y-auto disabled:opacity-50"
+                      className="border-0 focus:ring-0 bg-transparent flex-1 text-lg resize-none outline-none placeholder-gray-400 min-h-[20px] max-h-16 overflow-y-auto disabled:opacity-50"
                       rows={1}
                       style={{ height: 'auto' }}
                       onInput={(e) => {
@@ -525,38 +526,40 @@ export default function OmniAgent() {
                     />
                     <Button
                       size="sm"
-                      className="bg-blue-600 hover:bg-blue-700 h-6 w-6 p-0 flex-shrink-0 rounded-lg disabled:opacity-50"
+                      className="bg-blue-600 hover:bg-blue-700 px-2 py-2 h-auto  rounded-full flex-shrink-0 ml-auto"
                       onClick={handleSendMessage}
                       disabled={isLoading}
                     >
+
                       {isLoading ? (
-                        <div className="w-3 h-3 border border-white border-t-transparent rounded-full animate-spin"></div>
+                        <div className="w-4 h-4 border border-white border-t-transparent rounded-full animate-spin"></div>
                       ) : (
-                        <Send className="w-3 h-3" />
+                        <Send className="w-4 h-4 rounded-full" />
                       )}
                     </Button>
                   </div>
+
 
                   <div className="flex items-center gap-2">
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="text-gray-500 hover:text-gray-700 hover:bg-gray-200 h-6 px-2 text-xs rounded-md disabled:opacity-50 flex-shrink-0"
+                      className="text-gray-500 hover:text-gray-700 hover:bg-gray-200 h-6 px-2 text-[16px] rounded-md disabled:opacity-50 flex-shrink-0"
                       onClick={handleAttachFile}
                       disabled={isLoading}
                     >
-                      <Paperclip className="w-3 h-3 md:mr-1" />
-                      <span className="hidden md:inline">Attach</span>
+                      <Paperclip className="w-3 h-3 md:mr-0" />
+                      <span className="hidden  md:inline ">Attach</span>
                     </Button>
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="text-gray-500 hover:text-gray-700 hover:bg-gray-200 h-6 px-2 text-xs rounded-md disabled:opacity-50 flex-shrink-0"
+                      className="text-gray-500 hover:text-gray-700 hover:bg-gray-200 h-6 px-2 text-[16px] rounded-md disabled:opacity-50 flex-shrink-0"
                       onClick={handleUploadMedia}
                       disabled={isLoading}
                     >
-                      <Upload className="w-3 h-3 md:mr-1" />
-                      <span className="hidden md:inline">Upload Media</span>
+                      <Globe className="w-4 h-4 md:mr-0" />
+                      <span className="hidden  md:inline">Search</span>
                     </Button>
                   </div>
                 </div>
