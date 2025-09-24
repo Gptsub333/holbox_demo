@@ -1,8 +1,8 @@
-"use client"
+'use client';
 
-import { useState, useEffect, useRef } from "react"
-import { useRouter } from "next/navigation"
-import { usePathname } from "next/navigation";
+import { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 
 import {
   X,
@@ -30,10 +30,10 @@ import {
   Activity,
   BrainCircuit,
   Landmark,
-  ImageIcon
-} from "lucide-react"
-import { cn } from "@/lib/utils"
-import { motion, AnimatePresence } from "framer-motion"
+  ImageIcon,
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { motion, AnimatePresence } from 'framer-motion';
 
 // Feature data with icons
 const features = [
@@ -43,7 +43,6 @@ const features = [
     icon: Stethoscope,
     description: 'Transcribe medical audio and get answers',
   },
-
 
   {
     name: 'Face Detection By Video',
@@ -121,114 +120,127 @@ const features = [
   { name: 'PII Masker', href: '/pii-redactor', icon: FileX, description: 'Remove PII from input text securely' },
   { name: 'Text to Image', href: '/text-to-image', icon: Wand2, description: 'Generate images from text descriptions' },
   { name: 'Text to Video', href: '/text-to-video', icon: Video, description: 'Generate video from text descriptions' },
-  
-  { name: "Proffesional Headshot", href: "/ai-professional-headshot", icon: ImageIcon, description: "Generate polished, professional-looking headshots instantly with AI." },
-   {
+  { name: 'EDA', href: '/eda', icon: BrainCircuit, description: 'Exploratory Data Analysis of data your .csv' },
+  {
+    name: 'Image Editing',
+    href: '/image-editing',
+    icon: Wand2,
+    description: 'Edit images with AI using text queries',
+  },
+  {
+    name: 'Proffesional Headshot',
+    href: '/ai-professional-headshot',
+    icon: ImageIcon,
+    description: 'Generate polished, professional-looking headshots instantly with AI.',
+  },
+  {
     name: 'Image Editing',
     href: '/ai-image-editor',
     icon: Wand2,
     description: 'Edit images with AI using text queries',
   },
+
+  {
+    name: 'Medical Code Extractor',
+    href: '/medical-code-extractor',
+    icon: Wand2,
+    description: 'Edit images with AI using text queries',
+  },
   { name: "ConciergeAI", href: "/concierge-ai", icon: User, description: "AI assistant for business inquiries" },
   { name: 'EDA', href: '/eda', icon: BrainCircuit, description: 'Exploratory Data Analysis of data your .csv' },
+
 ];
 
 // Upcoming features data
 const upcomingFeatures = [
-  
- 
   {
-    name: "PDF Extractor",
-    href: "/pdf-extractor",
+    name: 'PDF Extractor',
+    href: '/pdf-extractor',
     icon: FileText,
-    description: "Detect and extract personal information",
+    description: 'Detect and extract personal information',
   },
-{ name: "Voice-Agent", href: "/voice-agent", icon: Mic, description: "Voice-enabled booking and health assistant" },
+  { name: 'Voice-Agent', href: '/voice-agent', icon: Mic, description: 'Voice-enabled booking and health assistant' },
 
   {
-    name: "Video Compliance",
-    href: "/video-compliance",
+    name: 'Video Compliance',
+    href: '/video-compliance',
     icon: Video,
-    description: "Analyze videos for safety and compliance",
+    description: 'Analyze videos for safety and compliance',
   },
 
+  { name: 'Traffic Chatbot', href: '/traffic-chatbot', icon: Car, description: 'AI assistant for traffic conditions' },
 
-  { name: "Traffic Chatbot", href: "/traffic-chatbot", icon: Car, description: "AI assistant for traffic conditions" },
-
-
-
-
-  { name: "Enterprise Search", icon: FileSearch, description: "Advanced search across all enterprise data" },
-  { name: "Structured Extraction", icon: Layers, description: "Extract structured data from unstructured content" },
+  { name: 'Enterprise Search', icon: FileSearch, description: 'Advanced search across all enterprise data' },
+  { name: 'Structured Extraction', icon: Layers, description: 'Extract structured data from unstructured content' },
   {
-    name: "AI Meeting Insights",
+    name: 'AI Meeting Insights',
     icon: CalendarClock,
-    description: "Get insights and summaries from meeting recordings",
+    description: 'Get insights and summaries from meeting recordings',
   },
 
-  { name: "ICD Coding", icon: BookOpen, description: "Automated medical coding for healthcare documentation" },
-  { name: "Medical Copilot", icon: StethoscopeIcon, description: "AI assistant for medical professionals" },
-]
+  { name: 'ICD Coding', icon: BookOpen, description: 'Automated medical coding for healthcare documentation' },
+  { name: 'Medical Copilot', icon: StethoscopeIcon, description: 'AI assistant for medical professionals' },
+];
 
 export function FloatingSearch({ isOpen, onClose }) {
-  const [query, setQuery] = useState("")
-  const [filteredFeatures, setFilteredFeatures] = useState(features)
-  const [filteredUpcoming, setFilteredUpcoming] = useState(upcomingFeatures)
-  const [activeTab, setActiveTab] = useState("all")
-  const router = useRouter()
-  const inputRef = useRef(null)
-  const panelRef = useRef(null)
-  const contentRef = useRef(null)
-  const pathname = usePathname();  // Use this line to get the current path
+  const [query, setQuery] = useState('');
+  const [filteredFeatures, setFilteredFeatures] = useState(features);
+  const [filteredUpcoming, setFilteredUpcoming] = useState(upcomingFeatures);
+  const [activeTab, setActiveTab] = useState('all');
+  const router = useRouter();
+  const inputRef = useRef(null);
+  const panelRef = useRef(null);
+  const contentRef = useRef(null);
+  const pathname = usePathname(); // Use this line to get the current path
 
   useEffect(() => {
     if (isOpen) {
       // Focus the input when the panel opens
       setTimeout(() => {
-        inputRef.current?.focus()
-      }, 100)
+        inputRef.current?.focus();
+      }, 100);
 
       // Reset search when opening
-      setQuery("")
-      setFilteredFeatures(features)
-      setFilteredUpcoming(upcomingFeatures)
-      setActiveTab("all")
+      setQuery('');
+      setFilteredFeatures(features);
+      setFilteredUpcoming(upcomingFeatures);
+      setActiveTab('all');
 
       // Prevent body scroll when modal is open
-      document.body.style.overflow = "hidden"
+      document.body.style.overflow = 'hidden';
     } else {
       // Re-enable body scroll when modal is closed
-      document.body.style.overflow = "auto"
+      document.body.style.overflow = 'auto';
     }
 
     return () => {
-      document.body.style.overflow = "auto"
-    }
-  }, [isOpen])
+      document.body.style.overflow = 'auto';
+    };
+  }, [isOpen]);
 
   useEffect(() => {
     // Add escape key listener to close the panel
     const handleEscape = (e) => {
-      if (e.key === "Escape") onClose()
-    }
+      if (e.key === 'Escape') onClose();
+    };
 
     // Add click outside listener
     const handleClickOutside = (e) => {
       if (panelRef.current && !panelRef.current.contains(e.target)) {
-        onClose()
+        onClose();
       }
-    }
+    };
 
     if (isOpen) {
-      window.addEventListener("keydown", handleEscape)
-      document.addEventListener("mousedown", handleClickOutside)
+      window.addEventListener('keydown', handleEscape);
+      document.addEventListener('mousedown', handleClickOutside);
     }
 
     return () => {
-      window.removeEventListener("keydown", handleEscape)
-      document.removeEventListener("mousedown", handleClickOutside)
-    }
-  }, [isOpen, onClose])
+      window.removeEventListener('keydown', handleEscape);
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen, onClose]);
 
   // Filter features based on search query
   useEffect(() => {
@@ -236,39 +248,39 @@ export function FloatingSearch({ isOpen, onClose }) {
       const filtered = features.filter(
         (feature) =>
           feature.name.toLowerCase().includes(query.toLowerCase()) ||
-          feature.description.toLowerCase().includes(query.toLowerCase()),
-      )
-      setFilteredFeatures(filtered)
+          feature.description.toLowerCase().includes(query.toLowerCase())
+      );
+      setFilteredFeatures(filtered);
 
       const filteredUp = upcomingFeatures.filter(
         (feature) =>
           feature.name.toLowerCase().includes(query.toLowerCase()) ||
-          feature.description.toLowerCase().includes(query.toLowerCase()),
-      )
-      setFilteredUpcoming(filteredUp)
+          feature.description.toLowerCase().includes(query.toLowerCase())
+      );
+      setFilteredUpcoming(filteredUp);
     } else {
-      setFilteredFeatures(features)
-      setFilteredUpcoming(upcomingFeatures)
+      setFilteredFeatures(features);
+      setFilteredUpcoming(upcomingFeatures);
     }
-  }, [query])
+  }, [query]);
 
   const handleFeatureClick = (href) => {
-    router.push(href)
-    onClose()
-  }
+    router.push(href);
+    onClose();
+  };
 
   const handleUpcomingClick = (name) => {
-    router.push("/upcoming")
-    onClose()
-  }
+    router.push('/upcoming');
+    onClose();
+  };
 
-  if (!isOpen) return null
+  if (!isOpen) return null;
 
   return (
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -277,16 +289,16 @@ export function FloatingSearch({ isOpen, onClose }) {
           <motion.div
             ref={panelRef}
             className={cn(
-              "w-[95%] sm:w-full max-w-4xl bg-[#0f0f11] rounded-xl border border-gray-800 shadow-xl",
-              "overflow-hidden",
-              "mx-auto", // Centered horizontally
+              'w-[95%] sm:w-full max-w-4xl bg-[#0f0f11] rounded-xl border border-gray-800 shadow-xl',
+              'overflow-hidden',
+              'mx-auto' // Centered horizontally
             )}
-            style={{ maxHeight: "90vh" }}
+            style={{ maxHeight: '90vh' }}
             initial={{ scale: 0.9, opacity: 0, y: 20 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.9, opacity: 0, y: 20 }}
             transition={{
-              type: "spring",
+              type: 'spring',
               damping: 25,
               stiffness: 300,
               duration: 0.3,
@@ -313,10 +325,10 @@ export function FloatingSearch({ isOpen, onClose }) {
                   type="text"
                   placeholder="Search applications..."
                   className={cn(
-                    "w-full pl-8 pr-4 py-1.5 rounded-lg text-xs",
-                    "bg-gray-900 border border-gray-700",
-                    "text-gray-100 placeholder-gray-400 mono-font",
-                    "focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent",
+                    'w-full pl-8 pr-4 py-1.5 rounded-lg text-xs',
+                    'bg-gray-900 border border-gray-700',
+                    'text-gray-100 placeholder-gray-400',
+                    'focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent'
                   )}
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
@@ -326,36 +338,37 @@ export function FloatingSearch({ isOpen, onClose }) {
               <div className="flex flex-wrap gap-1.5">
                 <button
                   className={cn(
-                    "px-2.5 py-0.5 text-[10px] rounded-md",
-                    activeTab === "all"
-                      ? "bg-blue-900 text-blue-100 font-medium"
-                      : "bg-gray-800 text-gray-300 hover:bg-gray-700",
+                    'px-2.5 py-0.5 text-[10px] rounded-md',
+                    activeTab === 'all'
+                      ? 'bg-blue-900 text-blue-100 font-medium'
+                      : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
                   )}
-                  onClick={() => setActiveTab("all")}
+                  onClick={() => setActiveTab('all')}
                 >
                   All
                 </button>
                 <button
                   className={cn(
-                    "px-2.5 py-0.5 text-[10px] rounded-md",
-                    activeTab === "features" ? "bg-blue-900 text-blue-100 font-medium" : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+                    'px-2.5 py-0.5 text-[10px] rounded-md',
+                    activeTab === 'features'
+                      ? 'bg-blue-900 text-blue-100 font-medium'
+                      : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
                   )}
-                  onClick={() => setActiveTab("features")}
+                  onClick={() => setActiveTab('features')}
                 >
                   Features
                 </button>
                 <button
                   className={cn(
-                    "px-2.5 py-0.5 text-[10px] rounded-md",
-                    activeTab === "upcoming" ? "bg-blue-900 text-blue-100 font-medium" : "bg-gray-800 text-gray-300 hover:bg-gray-700"
-                    
+                    'px-2.5 py-0.5 text-[10px] rounded-md',
+                    activeTab === 'upcoming'
+                      ? 'bg-blue-900 text-blue-100 font-medium'
+                      : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
                   )}
-                  onClick={() => setActiveTab("upcoming")}
+                  onClick={() => setActiveTab('upcoming')}
                 >
                   Upcoming
                 </button>
-
-
               </div>
             </div>
 
@@ -363,15 +376,15 @@ export function FloatingSearch({ isOpen, onClose }) {
               ref={contentRef}
               className="p-4 sm:p-5 overflow-y-auto custom-scrollbar"
               style={{
-                maxHeight: "calc(90vh - 100px)",
-                overflowY: "auto",
-                overflowX: "hidden",
+                maxHeight: 'calc(90vh - 100px)',
+                overflowY: 'auto',
+                overflowX: 'hidden',
               }}
             >
               {/* Current Features Section */}
-              {(activeTab === "all" || activeTab === "features") && filteredFeatures.length > 0 && (
+              {(activeTab === 'all' || activeTab === 'features') && filteredFeatures.length > 0 && (
                 <div className="mb-8">
-                  {activeTab === "all" && (
+                  {activeTab === 'all' && (
                     <h3 className="text-xs font-medium text-gray-200 mb-3 subheading-font">Available Features</h3>
                   )}
                   <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
@@ -380,10 +393,10 @@ export function FloatingSearch({ isOpen, onClose }) {
                         key={feature.href}
                         onClick={() => handleFeatureClick(feature.href)}
                         className={cn(
-                          "group",
+                          'group',
                           pathname === feature.href
-                            ? "bg-gray-900 border-blue-900 text-blue-600"
-                            : "bg-gray-900 text-gray-200",
+                            ? 'bg-gray-900 border-blue-900 text-blue-600'
+                            : 'bg-gray-900 text-gray-200'
                         )}
                         initial={{ opacity: pathname === feature.href ? 1 : 0, y: pathname === feature.href ? 0 : 20 }} // Apply initial animation based on active state
                         animate={{ opacity: 1, y: 0 }}
@@ -395,9 +408,11 @@ export function FloatingSearch({ isOpen, onClose }) {
                       >
                         <div
                           className={cn(
-                            "flex flex-col items-center p-3 sm:p-4 rounded-md",
-                            "transition-all duration-300",
-                            pathname === feature.href ? "border-blue-500 shadow-md scale-105" : "border-gray-700 group-hover:border-blue-500 group-hover:shadow-[0_0_12px_rgba(37,99,235,0.5)]"
+                            'flex flex-col items-center p-3 sm:p-4 rounded-md',
+                            'transition-all duration-300',
+                            pathname === feature.href
+                              ? 'border-blue-500 shadow-md scale-105'
+                              : 'border-gray-700 group-hover:border-blue-500 group-hover:shadow-[0_0_12px_rgba(37,99,235,0.5)]'
                           )}
                         >
                           <div className="flex items-center justify-center w-full mb-2.5">
@@ -416,16 +431,12 @@ export function FloatingSearch({ isOpen, onClose }) {
                         </div>
                       </motion.button>
                     ))}
-
-
-
-
                   </div>
                 </div>
               )}
 
               {/* Upcoming Features Section */}
-              {(activeTab === "all" || activeTab === "upcoming") && filteredUpcoming.length > 0 && (
+              {(activeTab === 'all' || activeTab === 'upcoming') && filteredUpcoming.length > 0 && (
                 <div className="mb-8">
                   <h3 className="text-xs font-medium text-gray-200 mb-3 subheading-font">Upcoming Features</h3>
                   <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
@@ -448,12 +459,12 @@ export function FloatingSearch({ isOpen, onClose }) {
                       >
                         <div
                           className={cn(
-                            "flex flex-col items-center p-3 sm:p-4 rounded-md",
-                            "bg-gray-900 border border-gray-700 border-dashed",
-                            "transition-all duration-300",
-                            "group-hover:border-blue-500 group-hover:shadow-md group-hover:shadow-blue-900/20",
-                            "h-auto min-h-[100px] sm:min-h-[110px]", // Increased height
-                            "w-full", // Full width
+                            'flex flex-col items-center p-3 sm:p-4 rounded-md',
+                            'bg-gray-900 border border-gray-700 border-dashed',
+                            'transition-all duration-300',
+                            'group-hover:border-blue-500 group-hover:shadow-md group-hover:shadow-blue-900/20',
+                            'h-auto min-h-[100px] sm:min-h-[110px]', // Increased height
+                            'w-full' // Full width
                           )}
                         >
                           <div className="flex items-center justify-center w-full mb-2.5">
@@ -481,28 +492,28 @@ export function FloatingSearch({ isOpen, onClose }) {
               )}
 
               {/* No Results State */}
-              {((activeTab === "features" && filteredFeatures.length === 0) ||
-                (activeTab === "upcoming" && filteredUpcoming.length === 0) ||
-                (activeTab === "all" && filteredFeatures.length === 0 && filteredUpcoming.length === 0)) && (
-                  <motion.div
-                    className="flex flex-col items-center justify-center py-8 sm:py-12"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-800 flex items-center justify-center mb-3 sm:mb-4">
-                      <Search className="h-5 w-5 sm:h-6 sm:w-6 text-gray-400" />
-                    </div>
-                    <h3 className="text-sm font-medium text-gray-200 mb-2 subheading-font">No results found</h3>
-                    <p className="text-gray-400 text-center text-xs para-font">
-                      We couldn't find any applications matching "{query}"
-                    </p>
-                  </motion.div>
-                )}
+              {((activeTab === 'features' && filteredFeatures.length === 0) ||
+                (activeTab === 'upcoming' && filteredUpcoming.length === 0) ||
+                (activeTab === 'all' && filteredFeatures.length === 0 && filteredUpcoming.length === 0)) && (
+                <motion.div
+                  className="flex flex-col items-center justify-center py-8 sm:py-12"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-800 flex items-center justify-center mb-3 sm:mb-4">
+                    <Search className="h-5 w-5 sm:h-6 sm:w-6 text-gray-400" />
+                  </div>
+                  <h3 className="text-sm font-medium text-gray-200 mb-2 subheading-font">No results found</h3>
+                  <p className="text-gray-400 text-center text-xs para-font">
+                    We couldn't find any applications matching "{query}"
+                  </p>
+                </motion.div>
+              )}
             </div>
           </motion.div>
         </motion.div>
       )}
     </AnimatePresence>
-  )
+  );
 }

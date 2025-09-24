@@ -25,6 +25,20 @@ const helpers = {
       return 'Invalid file type. Only JPG, JPEG, PNG, WEBP, and GIF files are allowed.'
   },
 
+  checkMedicalExractorFileType: function (file: File | null) {
+    const allowedTypes = [
+      'application/pdf',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'text/plain',
+      'application/rtf',
+      'image/jpeg',
+      'image/png',
+    ]
+    if (file && !allowedTypes.includes(file.type))
+      return 'Invalid file type. Only PDF, DOC, DOCX, TXT, RTF, JPG, and PNG files are allowed.'
+  },
+
   fileSize:
     (maximumSize = 52428800, sizeInMB = '50MB') =>
       (file: File) =>
