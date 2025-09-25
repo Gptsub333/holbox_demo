@@ -11,8 +11,6 @@
 // import OrgNameHeader from "./OrgNameHeader"
 // import Loader from "@/components/Loader"; // Adjust the path according to your file structure
 
-
-
 // const chatbotTypes = [
 //   { name: "AI Assistant", id: "general" },
 //   { name: "Traffic Bot", id: "traffic" },
@@ -29,7 +27,6 @@
 // }) {
 //   const pathname = usePathname()
 //   const [activeChatbot, setActiveChatbot] = useState(chatbotTypes[0])
-
 
 //   // Close sidebar when clicking outside on mobile
 //   useEffect(() => {
@@ -117,7 +114,6 @@
 
 //   // const { user,isLoaded } = useUser();
 
-
 //   const [orgName, setOrgName] = useState("Holbox AI Demo"); // fallback for dev/local/test
 //   const [loading, setLoading] = useState(true);
 
@@ -147,10 +143,6 @@
 //   // }, []);
 //   // Fetch orgName from localStorage or set the default
 
-
-
-
-
 // //  const [email, setEmail] = useState(null);
 
 // //   const [userId, setUserId] = useState(null);
@@ -178,7 +170,6 @@
 // //     }
 // //   }, [isLoaded, user]);
 
-
 //   useEffect(() => {
 //     const savedOrgName = localStorage.getItem("orgName");
 //     if (savedOrgName) {
@@ -191,7 +182,6 @@
 //       setLoading(false);
 //     }
 //   }, []);
-
 
 //   return (
 //     <div className="flex flex-col h-full p-3 rounded-xl border border-gray-300 bg-white shadow-sm">
@@ -308,7 +298,6 @@
 //         </nav>
 //       </div>
 
-
 //         {/* <div className="flex items-center justify-center gap-2"> */}
 
 //        {/* <div className="flex items-center justify-center gap-2">
@@ -320,15 +309,14 @@
 //           </span>
 //           {user?.fullName === "GPT Subscription" && (
 //             <span className="text-[11px] font-semibold text-gray-600 -mt-0.5">
-//               Admin 
+//               Admin
 //             </span>
 //           )}
 //         </div>
 
-//       </div> 
+//       </div>
 
 //       </div>  */}
-
 
 //       {/* <div>
 
@@ -347,8 +335,6 @@
 //         <div>Loading user ID...</div>
 //       )}
 //     </div>  */}
-
-
 
 //       <div className="p-2.5 mt-auto">
 //         <div className="rounded-xl bg-white shadow-sm p-2.5">
@@ -389,51 +375,51 @@
 //   )
 // }
 
-"use client"
+'use client';
 
-import Link from "next/link"
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { BarChart3, Briefcase, Settings, DollarSign, Crown, Grid, LayoutDashboard, Share2, About } from "lucide-react"
+import Link from 'next/link';
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { BarChart3, Briefcase, Settings, DollarSign, Crown, Grid, LayoutDashboard, Share2, About } from 'lucide-react';
 
 const OmniLogo = () => (
   <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg flex items-center justify-center">
     <div className="w-4 h-4 bg-white rounded-sm transform rotate-45"></div>
   </div>
-)
+);
 
 const TooltipLabel = ({ text, show }) => (
   <div
     className={`absolute left-full ml-3 top-1/2 -translate-y-1/2 bg-gray-900 text-white px-3 py-2 rounded-md text-sm whitespace-nowrap z-[9999] transition-all duration-300 ease-out pointer-events-none ${
-      show ? "opacity-100 translate-x-0 scale-100" : "opacity-0 -translate-x-4 scale-95"
+      show ? 'opacity-100 translate-x-0 scale-100' : 'opacity-0 -translate-x-4 scale-95'
     }`}
     style={{
-      boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
     }}
   >
     {text}
     <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1 w-2 h-2 bg-gray-900 rotate-45"></div>
   </div>
-)
+);
 
 export default function Sidebar({ onViewChange, isMobileOpen, onMobileToggle, onOpenSearch }) {
-  const [hoveredItem, setHoveredItem] = useState(null)
+  const [hoveredItem, setHoveredItem] = useState(null);
 
   return (
     <div
       className={`fixed left-0 top-0 bottom-0 w-16 bg-white border-r border-gray-200 flex flex-col z-50 transition-transform duration-300 ease-in-out ${
-        isMobileOpen ? "translate-x-0" : "-translate-x-full"
+        isMobileOpen ? 'translate-x-0' : '-translate-x-full'
       } md:translate-x-0`}
     >
       {/* Header */}
       <Link href="/" className="p-4 border-b border-gray-200">
         <div
           className="relative flex items-center justify-center"
-          onMouseEnter={() => setHoveredItem("omni-agent")}
+          onMouseEnter={() => setHoveredItem('omni-agent')}
           onMouseLeave={() => setHoveredItem(null)}
         >
           <OmniLogo />
-          {hoveredItem === "omni-agent" && <TooltipLabel text="Agent AI" show={true} />}
+          {hoveredItem === 'omni-agent' && <TooltipLabel text="Agent AI" show={true} />}
         </div>
       </Link>
 
@@ -443,28 +429,35 @@ export default function Sidebar({ onViewChange, isMobileOpen, onMobileToggle, on
           <Link
             href="/dashboard"
             className="relative"
-            onMouseEnter={() => setHoveredItem("dashboards")}
+            onMouseEnter={() => setHoveredItem('dashboards')}
             onMouseLeave={() => setHoveredItem(null)}
           >
             <Button
               variant="ghost"
               className="w-full justify-center text-gray-700 hover:bg-gray-100 h-10"
               onClick={() => {
-                onViewChange?.("dashboard")
-                onMobileToggle?.(false)
+                onViewChange?.('dashboard');
+                onMobileToggle?.(false);
               }}
               href="/dashboard"
             >
               <BarChart3 href="/dashboard" className="w-5 h-5" />
             </Button>
-            {hoveredItem === "dashboards" && <TooltipLabel text="Dashboards" show={true} />}
+            {hoveredItem === 'dashboards' && <TooltipLabel text="Dashboards" show={true} />}
           </Link>
 
-          <div 
+          {/* <div 
             className="relative"
             onMouseEnter={() => setHoveredItem("Applications")}
             onMouseLeave={() => setHoveredItem(null)}
              onClick={onOpenSearch}
+          > */}
+
+          <Link
+            href="/applications"
+            className="relative"
+            onMouseEnter={() => setHoveredItem('Applications')}
+            onMouseLeave={() => setHoveredItem(null)}
           >
             <Button
               variant="ghost"
@@ -473,30 +466,30 @@ export default function Sidebar({ onViewChange, isMobileOpen, onMobileToggle, on
             >
               <Grid className="w-5 h-5" />
             </Button>
-            {hoveredItem === "Applications" && <TooltipLabel text="Applications" show={true} />}
-          </div>
+            {hoveredItem === 'Applications' && <TooltipLabel text="Applications" show={true} />}
+          </Link>
+          {/* </div> */}
 
           <Link
-             href="/upcoming"
+            href="/upcoming"
             className="relative"
-            onMouseEnter={() => setHoveredItem("Up Coming")}
+            onMouseEnter={() => setHoveredItem('Up Coming')}
             onMouseLeave={() => setHoveredItem(null)}
           >
             <Button
               variant="ghost"
               className="w-full justify-center text-gray-700 hover:bg-gray-100 h-10"
               onClick={() => onMobileToggle?.(false)}
-           
             >
               <Briefcase className="w-5 h-5" />
             </Button>
-            {hoveredItem === "Up Coming" && <TooltipLabel text="Up Coming" show={true} />}
+            {hoveredItem === 'Up Coming' && <TooltipLabel text="Up Coming" show={true} />}
           </Link>
 
           <Link
-           href="/connect-to"
+            href="/connect-to"
             className="relative"
-            onMouseEnter={() => setHoveredItem("ConnectTo")}
+            onMouseEnter={() => setHoveredItem('ConnectTo')}
             onMouseLeave={() => setHoveredItem(null)}
           >
             <Button
@@ -506,12 +499,12 @@ export default function Sidebar({ onViewChange, isMobileOpen, onMobileToggle, on
             >
               <Share2 className="w-5 h-5" />
             </Button>
-            {hoveredItem === "ConnectTo" && <TooltipLabel text="Connect To" show={true} />}
+            {hoveredItem === 'ConnectTo' && <TooltipLabel text="Connect To" show={true} />}
           </Link>
-            <Link
-           href="/about"
+          <Link
+            href="/about"
             className="relative"
-            onMouseEnter={() => setHoveredItem("about")}
+            onMouseEnter={() => setHoveredItem('about')}
             onMouseLeave={() => setHoveredItem(null)}
           >
             <Button
@@ -521,7 +514,7 @@ export default function Sidebar({ onViewChange, isMobileOpen, onMobileToggle, on
             >
               <LayoutDashboard className="w-5 h-5" />
             </Button>
-            {hoveredItem === "about" && <TooltipLabel text="About" show={true} />}
+            {hoveredItem === 'about' && <TooltipLabel text="About" show={true} />}
           </Link>
         </nav>
       </div>
@@ -530,7 +523,7 @@ export default function Sidebar({ onViewChange, isMobileOpen, onMobileToggle, on
       <div className="p-2 border-t border-gray-200">
         <div
           className="relative"
-          onMouseEnter={() => setHoveredItem("premium")}
+          onMouseEnter={() => setHoveredItem('premium')}
           onMouseLeave={() => setHoveredItem(null)}
         >
           <Button
@@ -539,10 +532,9 @@ export default function Sidebar({ onViewChange, isMobileOpen, onMobileToggle, on
           >
             <Crown className="w-5 h-5" />
           </Button>
-          {hoveredItem === "premium" && <TooltipLabel text="Premium Plan" show={true} />}
+          {hoveredItem === 'premium' && <TooltipLabel text="Premium Plan" show={true} />}
         </div>
       </div>
     </div>
-  )
+  );
 }
-
