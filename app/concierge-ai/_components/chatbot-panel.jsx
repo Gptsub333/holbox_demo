@@ -16,10 +16,7 @@ export default function ChatbotPanel({ messages, setMessages, input, setInput })
   // const { user, isLoaded } = useUser(); // Get user data from Clerk
   const user = { id: "local-user-1234" }; // Dummy user for local testing
   // Ensure the user is loaded before sending the API call
-  if (!isLoaded || !user) {
-    console.error("User data not loaded.");
-    return;
-  }
+
 
   // Scroll to the bottom of the messages when new messages are added
   const scrollToBottom = () => {

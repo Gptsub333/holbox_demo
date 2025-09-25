@@ -1,10 +1,10 @@
 'use client';
-
 import { useEffect, useState, useRef, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Paperclip, Upload, Send, CheckCircle, Search, ChevronUp, ArrowRight, Globe } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
+
 
 const companyName = process.env.NEXT_PUBLIC_COMPANY_NAME;
 
@@ -67,6 +67,7 @@ export default function OmniAgent() {
   const mediaInputRef = useRef(null);
   const messagesEndRef = useRef(null);
   const [isMobile, setIsMobile] = useState(false);
+
 
   // Load persisted state
   useEffect(() => {
@@ -203,6 +204,7 @@ export default function OmniAgent() {
     handleSendMessage();
   };
 
+
   return (
     <div className="h-screen bg-gray-50">
       <div className="flex flex-col h-full  ml-0">
@@ -215,6 +217,7 @@ export default function OmniAgent() {
                     <OmniLogo />
                   </div>
                   <h1 className="text-2xl md:text-4xl font-bold text-gray-900 mb-4 text-balance">
+
                     Welcome to {companyName} Your AI agent Awaits.
                   </h1>
                   <p className="text-gray-600 text-base md:text-base text-balance">
@@ -228,57 +231,61 @@ export default function OmniAgent() {
                     <div className="bg-gray-100 rounded-xl border border-gray-200 p-3 focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500 ">
                       <div className="flex items-center gap-3 mb-3">
                         <Search className="w-5 h-5 ml-[10px] text-gray-400 flex-shrink-0" />
+
                         <textarea
                           placeholder="Ask anything OmniAI..."
                           value={inputValue}
                           onChange={(e) => setInputValue(e.target.value)}
                           onKeyPress={handleKeyPress}
-                          className="border-0 focus:ring-0 bg-transparent flex-1 px-3 py-2 text-base resize-none outline-none placeholder-gray-400 min-h-[24px] max-h-32 overflow-y-auto"
+                          className="border-0 focus:ring-0 bg-transparent flex-1 px-1 py-1 text-base resize-none outline-none placeholder-gray-400 min-h-[24px] max-h-32 overflow-y-auto"
                           rows={1}
                           style={{ height: 'auto' }}
                           onInput={(e) => {
                             const target = e.target;
-                            target.style.height = 'auto';
-                            target.style.height = Math.min(target.scrollHeight, 128) + 'px';
+                            target.style.height = "auto";
+                            target.style.height = Math.min(target.scrollHeight, 128) + "px";
                           }}
                         />
-                        <Button
-                          size="sm"
-                          className="bg-blue-600 hover:bg-blue-700 px-3 py-2 h-auto flex-shrink-0"
-                          onClick={handleSendMessage}
-                          disabled={isLoading}
-                        >
-                          {isLoading ? (
-                            <div className="w-4 h-4 border border-white border-t-transparent rounded-full animate-spin"></div>
-                          ) : (
-                            <Send className="w-4 h-4" />
-                          )}
-                        </Button>
                       </div>
 
                       <div className="flex items-center gap-2">
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="text-gray-500 hover:text-gray-700 hover:bg-gray-100 px-3 py-2 h-auto flex-shrink-0"
+                          className="text-gray-500 hover:text-gray-700 hover:bg-gray-100 px-0 py-1 h-auto flex-shrink-0"
                           onClick={handleAttachFile}
                           disabled={isLoading}
                         >
-                          <Paperclip className="w-4 h-4 md:mr-1" />
+                          <Paperclip className="w-4 h-4 md:mr-0" />
                           <span className="hidden md:inline">Attach</span>
                         </Button>
+
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="text-gray-500 hover:text-gray-700 hover:bg-gray-100 px-3 py-2 h-auto flex-shrink-0"
-                          onClick={handleUploadMedia}
+                          className="text-gray-500 hover:text-gray-700 hover:bg-gray-100 px-2 py-2 h-auto flex-shrink-0"
+                          onClick={handleWorldIconClick} // Update function name as required
                           disabled={isLoading}
                         >
-                          <Globe className="w-4 h-4 md:mr-1" />
+                          <Globe className="w-4 h-4 md:mr-0" />
                           <span className="hidden md:inline">Search</span>
                         </Button>
+
+                        {/* Right-aligning the Send button */}
+                        <Button
+                          size="sm"
+                          className="bg-blue-600 hover:bg-blue-700 px-2 py-2 h-auto  rounded-full flex-shrink-0 ml-auto"
+                          onClick={handleSendMessage}
+                          disabled={isLoading}
+                        >
+
+                          {isLoading ? (
+                            <div className="w-4 h-4 border border-white border-t-transparent rounded-full animate-spin"></div>
+                          ) : (
+                            <Send className="w-4 h-4 rounded-full" />
+                          )}
+                        </Button>
                       </div>
-                    </div>
 
                     {attachedFiles.length > 0 && (
                       <div className="mt-2">
@@ -294,14 +301,21 @@ export default function OmniAgent() {
                               <button
                                 onClick={() => removeAttachedFile(index)}
                                 className="text-blue-600 hover:text-blue-800 hover:bg-blue-200 rounded-full w-4 h-4 flex items-center justify-center text-xs font-bold"
+
                               >
-                                ×
-                              </button>
-                            </div>
-                          ))}
+                                <span className="truncate max-w-[120px]">{file.name}</span>
+                                <button
+                                  onClick={() => removeAttachedFile(index)}
+                                  className="text-blue-600 hover:text-blue-800 hover:bg-blue-200 rounded-full w-4 h-4 flex items-center justify-center text-xs font-bold"
+                                >
+                                  ×
+                                </button>
+                              </div>
+                            ))}
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
+                    </div>
                   </div>
                 </div>
 

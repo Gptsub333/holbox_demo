@@ -11,24 +11,36 @@ export default function Query({ query, setQuery, onQuerySubmit, isLoading, query
     if (!query) return
     onQuerySubmit()
   }
+  // Function to render the formatted result
 
-  // Function to render JSON in a more readable way
-  const renderResult = (result) => {
-    if (typeof result === "object") {
-      return (
-        <div className="space-y-2">
-          {Object.entries(result).map(([key, value]) => (
-            <div key={key} className="flex items-center justify-between">
-              <span className="font-semibold text-gray-700">{key}:</span>
-              <span className="text-gray-600">{JSON.stringify(value)}</span>
-            </div>
-          ))}
-        </div>
-      )
-    }
-    return <p className="text-gray-600">{JSON.stringify(result)}</p>
-  }
 
+  // // Function to render JSON in a more readable way
+  // const renderResult = (result) => {
+  //   if (typeof result === "object") {
+  //     return (
+  //       <div className="space-y-2">
+  //         {Object.entries(result).map(([key, value]) => (
+  //           <div key={key} className="flex items-center justify-between">
+  //             <span className="font-semibold text-gray-700">{key}:</span>
+  //             <span className="text-gray-600">{JSON.stringify(value)}</span>
+  //           </div>
+  //         ))}
+  //       </div>
+  //     )
+  //   }
+  //   return <p className="text-gray-600">{JSON.stringify(result)}</p>
+  // }
+// Function to render the formatted result
+const renderResult = (answer) => {
+  // Replace \n\n with <br /> (for new lines)
+  let formattedAnswer = answer.replace(/\n\n/g, "<br /><br />");
+  
+  // Replace /" with <strong> (for bold text)
+  formattedAnswer = formattedAnswer.replace(/\/"/g, "<strong>").replace(/"\/\//g, "</strong>");
+
+  // Return the formatted result as HTML
+  return <div dangerouslySetInnerHTML={{ __html: formattedAnswer }} />;
+};
   return (
     <Card className="mb-8 bg-white border border-gray-200 rounded-xl shadow-sm">
       <CardHeader>
