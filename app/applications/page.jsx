@@ -357,19 +357,19 @@ export default function AIImageEditor() {
   // Filter features based on search and tab
   const { filteredActive, filteredUpcoming } = useMemo(() => {
     const searchLower = searchQuery.toLowerCase();
-    
-    const filteredActive = features.filter(feature => 
+
+    const filteredActive = features.filter(feature =>
       feature.name.toLowerCase().includes(searchLower) ||
       feature.description.toLowerCase().includes(searchLower) ||
       feature.category.toLowerCase().includes(searchLower)
     );
-    
+
     const filteredUpcoming = upcomingFeatures.filter(feature =>
       feature.name.toLowerCase().includes(searchLower) ||
       feature.description.toLowerCase().includes(searchLower) ||
       feature.category.toLowerCase().includes(searchLower)
     );
-    
+
     return { filteredActive, filteredUpcoming };
   }, [searchQuery]);
 
@@ -377,11 +377,10 @@ export default function AIImageEditor() {
     return Array.from({ length: 5 }, (_, i) => (
       <Star
         key={i}
-        className={`w-3 h-3 ${
-          i < Math.floor(rating) 
-            ? 'fill-yellow-400 text-yellow-400' 
+        className={`w-3 h-3 ${i < Math.floor(rating)
+            ? 'fill-yellow-400 text-yellow-400'
             : 'text-gray-300'
-        }`}
+          }`}
       />
     ));
   };
@@ -435,31 +434,28 @@ export default function AIImageEditor() {
                 <div className="flex items-baseline space-x-4">
                   <button
                     onClick={() => setActiveTab('all')}
-                    className={`px-3 py-2 rounded-md text-sm font-medium border-b-2 ${
-                      activeTab === 'all'
+                    className={`px-3 py-2 rounded-md text-sm font-medium border-b-2 ${activeTab === 'all'
                         ? 'text-blue-600 border-blue-600'
                         : 'text-gray-500 hover:text-gray-700 border-transparent'
-                    }`}
+                      }`}
                   >
                     All
                   </button>
                   <button
                     onClick={() => setActiveTab('features')}
-                    className={`px-3 py-2 rounded-md text-sm font-medium border-b-2 ${
-                      activeTab === 'features'
+                    className={`px-3 py-2 rounded-md text-sm font-medium border-b-2 ${activeTab === 'features'
                         ? 'text-blue-600 border-blue-600'
                         : 'text-gray-500 hover:text-gray-700 border-transparent'
-                    }`}
+                      }`}
                   >
                     Features
                   </button>
                   <button
                     onClick={() => setActiveTab('upcoming')}
-                    className={`px-3 py-2 rounded-md text-sm font-medium border-b-2 ${
-                      activeTab === 'upcoming'
+                    className={`px-3 py-2 rounded-md text-sm font-medium border-b-2 ${activeTab === 'upcoming'
                         ? 'text-blue-600 border-blue-600'
                         : 'text-gray-500 hover:text-gray-700 border-transparent'
-                    }`}
+                      }`}
                   >
                     Upcoming
                   </button>
@@ -480,17 +476,15 @@ export default function AIImageEditor() {
               <div className="flex items-center space-x-2">
                 <button
                   onClick={() => setViewMode('grid')}
-                  className={`p-2 rounded-lg ${
-                    viewMode === 'grid' ? 'bg-blue-100 text-blue-600' : 'text-gray-500 hover:text-gray-700'
-                  }`}
+                  className={`p-2 rounded-lg ${viewMode === 'grid' ? 'bg-blue-100 text-blue-600' : 'text-gray-500 hover:text-gray-700'
+                    }`}
                 >
                   <Grid3X3 className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => setViewMode('list')}
-                  className={`p-2 rounded-lg ${
-                    viewMode === 'list' ? 'bg-blue-100 text-blue-600' : 'text-gray-500 hover:text-gray-700'
-                  }`}
+                  className={`p-2 rounded-lg ${viewMode === 'list' ? 'bg-blue-100 text-blue-600' : 'text-gray-500 hover:text-gray-700'
+                    }`}
                 >
                   <List className="w-4 h-4" />
                 </button>
@@ -511,7 +505,7 @@ export default function AIImageEditor() {
               </h2>
               <span className="text-sm text-gray-500">{filteredActive.length} applications</span>
             </div>
-            
+
             <div className={`grid ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' : 'grid-cols-1'} gap-6`}>
               {filteredActive.map((app) => {
                 const IconComponent = app.icon;
@@ -548,11 +542,11 @@ export default function AIImageEditor() {
                           {app.tasks} tasks completed
                         </span>
                       </div>
-                        <Link href={app.href}> 
-                      <button className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-2.5 px-4 rounded-lg text-sm font-medium hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-sm hover:shadow-md transform hover:scale-105">
-                        Launch App
-                      </button>
-                        </Link>
+                      <Link href={app.href}>
+                        <button className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-2.5 px-4 rounded-lg text-sm font-medium hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-sm hover:shadow-md transform hover:scale-105">
+                          Launch App
+                        </button>
+                      </Link>
                     </div>
                   </div>
                 );
@@ -568,7 +562,7 @@ export default function AIImageEditor() {
               <h2 className="text-2xl font-bold text-gray-900">Upcoming Features</h2>
               <span className="text-sm text-gray-500">{filteredUpcoming.length} applications</span>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {filteredUpcoming.map((app, index) => {
                 const IconComponent = app.icon;
