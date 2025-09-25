@@ -163,24 +163,28 @@ const features = [
     icon: BrainCircuit,
     description: "Exploratory Data Analysis of data your .csv",
   },
+
   {
     name: 'Medical Code Extractor',
     href: '/medical-code-extractor',
     icon: Wand2,
     description: 'Edit images with AI using text queries',
   },
+
   {
     name: 'Medical Claim Verifier',
     href: '/medical-claim-verifier',
     icon: FileText,
     description: 'Medical claim verification against insurance policies.',
   },
+
+  { name: "ConciergeAI", href: "/concierge-ai", icon: User, description: "AI assistant for business inquiries" },
+  { name: 'EDA', href: '/eda', icon: BrainCircuit, description: 'Exploratory Data Analysis of data your .csv' },
+
 ];
 
 // Upcoming features data
 const upcomingFeatures = [
-  { name: 'EDA', href: '/eda', icon: BrainCircuit, description: 'Exploratory Data Analysis of data your .csv' },
-  { name: 'ConciergeAI', href: '/concierge-ai', icon: User, description: 'AI assistant for business inquiries' },
   {
     name: 'PDF Extractor',
     href: '/pdf-extractor',
