@@ -206,6 +206,8 @@ export default function OmniAgent() {
     setInputValue(message);
     handleSendMessage();
   };
+ 
+  
 
 
   return (
@@ -221,7 +223,9 @@ export default function OmniAgent() {
                   </div>
                   <h1 className="text-2xl md:text-4xl font-bold text-gray-900 mb-4 text-balance">
 
-                    Welcome to {companyName} Your AI agent Awaits.
+                    Welcome To {companyName},<br />
+                    Your AI Agent Awaits.
+
                   </h1>
                   <p className="text-gray-600 text-base md:text-base text-balance">
                     Discover smarter conversations, automated insights, and limitless creativity — all in one dashboard.
@@ -231,9 +235,11 @@ export default function OmniAgent() {
 
                 <div className="mb-8 md:mb-12 mt-4">
                   <div className="relative max-w-2xl mx-auto">
+
                     <div className="bg-gray-100 rounded-xl border border-gray-200 p-3 focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500 ">
                       <div className="flex items-center gap-3 mb-3">
                         <Search className="w-5 h-5 ml-[10px] text-gray-400 flex-shrink-0" />
+
 
                         <textarea
                           placeholder="Ask anything OmniAI..."
@@ -244,9 +250,11 @@ export default function OmniAgent() {
                           rows={1}
                           style={{ height: 'auto' }}
                           onInput={(e) => {
+
                             const target = e.target;
                             target.style.height = "auto";
                             target.style.height = Math.min(target.scrollHeight, 128) + "px";
+
                           }}
                         />
                       </div>
@@ -255,7 +263,9 @@ export default function OmniAgent() {
                         <Button
                           variant="ghost"
                           size="sm"
+
                           className="text-gray-500 hover:text-gray-700 hover:bg-gray-100 px-0 text-[16px] py-1 h-auto flex-shrink-0"
+
                           onClick={handleAttachFile}
                           disabled={isLoading}
                         >
@@ -266,6 +276,7 @@ export default function OmniAgent() {
                         <Button
                           variant="ghost"
                           size="sm"
+
                           className="text-gray-500 hover:text-gray-700 hover:bg-gray-100 text-[16px] px-2 py-2 h-auto flex-shrink-0"
                           onClick={handleWorldIconClick} // Update function name as required
                           disabled={isLoading}

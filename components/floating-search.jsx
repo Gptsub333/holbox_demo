@@ -31,6 +31,7 @@ import {
   BrainCircuit,
   Landmark,
   ImageIcon,
+  
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -51,12 +52,14 @@ const features = [
     description: 'Real-time detection and identification',
   },
 
+
   {
     name: 'Face Detection By Image', // New Feature
     href: '/face-detection',
     icon: ScanFace || User, // Use ScanFace, fallback to User
     description: 'Detect and recognize faces from images',
   },
+
 
   // { name: "PDF Extractor", href: "/pdf-extractor", icon: FileText, description: "Upload PDFs and chat for insights" },
   {
@@ -72,49 +75,58 @@ const features = [
     description: 'Detect and extract personal information',
   },
 
-  { name: 'NL2SQL', href: '/nl2sql', icon: Database, description: 'SQL queries using AI with instant results' },
   {
-    name: 'Summarizer',
-    href: '/summarizer',
+    name: "NL2SQL",
+    href: "/nl2sql",
+    icon: Database,
+    description: "SQL queries using AI with instant results",
+  },
+  {
+    name: "Summarizer",
+    href: "/summarizer",
     icon: FileDigit,
-    description: 'Automatically summarize long documents and content',
+    description: "Automatically summarize long documents and content",
   },
 
   {
-    name: 'calories-counter',
-    href: '/calories-counter',
+    name: "calories-counter",
+    href: "/calories-counter",
     icon: Activity,
-    description: 'Upload food images to get calorie counts and nutritional information',
+    description:
+      "Upload food images to get calorie counts and nutritional information",
   },
   {
-    name: 'x-ray-analysis',
-    href: '/x-ray-analysis',
+    name: "x-ray-analysis",
+    href: "/x-ray-analysis",
     icon: Stethoscope,
-    description: 'Analyze and report on X-ray images',
+    description: "Analyze and report on X-ray images",
   },
   {
-    name: 'Handwritten to Digital Text',
-    href: 'handtext2text',
+    name: "Handwritten to Digital Text",
+    href: "handtext2text",
     icon: FileText,
-    description: 'Easily convert images of handwritten notes into editable, digital text.',
+    description:
+      "Easily convert images of handwritten notes into editable, digital text.",
   },
   {
-    name: 'File System Manager Agent',
-    href: '/file-system-manager',
+    name: "File System Manager Agent",
+    href: "/file-system-manager",
     icon: FileSearch,
-    description: ' Ask questions about your S3, analyze S3 and know more about your data.',
+    description:
+      " Ask questions about your S3, analyze S3 and know more about your data.",
   },
   {
-    name: 'Image Search',
-    href: '/image-search',
+    name: "Image Search",
+    href: "/image-search",
     icon: FileSearch,
-    description: 'Search images using text or other images',
+    description: "Search images using text or other images",
   },
   {
-    name: 'Bank Statement Analyzer',
-    href: '/bank-statement-analyzer',
+    name: "Bank Statement Analyzer",
+    href: "/bank-statement-analyzer",
     icon: Landmark,
-    description: ' Upload your bank statement to instantly identify and list all merchants.',
+    description:
+      " Upload your bank statement to instantly identify and list all merchants.",
   },
   { name: 'Virtual Try-On', href: '/virtual-try-on', icon: Shirt, description: 'Try garments on models using images' },
   { name: 'PII Masker', href: '/pii-redactor', icon: FileX, description: 'Remove PII from input text securely' },
@@ -137,7 +149,19 @@ const features = [
     name: 'Image Editing',
     href: '/ai-image-editor',
     icon: Wand2,
-    description: 'Edit images with AI using text queries',
+    description: "Generate images from text descriptions",
+  },
+  {
+    name: "Text to Video",
+    href: "/text-to-video",
+    icon: Video,
+    description: "Generate video from text descriptions",
+  },
+  {
+    name: "EDA",
+    href: "/eda",
+    icon: BrainCircuit,
+    description: "Exploratory Data Analysis of data your .csv",
   },
 
   {
@@ -146,6 +170,14 @@ const features = [
     icon: Wand2,
     description: 'Edit images with AI using text queries',
   },
+
+  {
+    name: 'Medical Claim Verifier',
+    href: '/medical-claim-verifier',
+    icon: FileText,
+    description: 'Medical claim verification against insurance policies.',
+  },
+
   { name: "ConciergeAI", href: "/concierge-ai", icon: User, description: "AI assistant for business inquiries" },
   { name: 'EDA', href: '/eda', icon: BrainCircuit, description: 'Exploratory Data Analysis of data your .csv' },
 
@@ -306,7 +338,9 @@ export function FloatingSearch({ isOpen, onClose }) {
           >
             <div className="p-3 sm:p-4 border-b border-gray-800">
               <div className="flex items-center justify-between mb-3">
-                <h2 className="text-sm font-semibold text-gray-100 heading-font">Applications</h2>
+                <h2 className="text-sm font-semibold text-gray-100 heading-font">
+                  Applications
+                </h2>
                 <button
                   onClick={onClose}
                   className="p-1.5 rounded-full hover:bg-gray-800 transition-colors"
