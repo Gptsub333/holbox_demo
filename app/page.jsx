@@ -206,9 +206,8 @@ export default function OmniAgent() {
     setInputValue(message);
     handleSendMessage();
   };
-  const handleWorldIconClick = () => {
-
-  }
+ 
+  
 
 
   return (
