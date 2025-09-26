@@ -2,15 +2,24 @@
 import "./globals.css";
 import ClientProviders from "../components/ClientProviders"; // plain import!
 import { Toaster } from "@/components/ui/sonner"
-import { Neuton } from 'next/font/google';
+import { Space_Grotesk, Poppins, Inter, Roboto, Manrope } from 'next/font/google';
 
-const neuton = Neuton({ subsets: ['latin'], weight: ['200', '300', '400', '700', '800'], display: 'swap' });
+// Inter
+const inter = Inter({ subsets: ['latin'], weight: ['400', '500', '600', '700'], display: 'swap' });
+// // Poppins
+// const poppins = Poppins({ subsets: ['latin'], weight: ['300', '400', '500', '600', '700'], display: 'swap' });
+// // Roboto
+// const roboto = Roboto({ subsets: ['latin'], weight: ['400', '500', '700'], display: 'swap' });
+// // Manrope
+// const manrope = Manrope({ subsets: ['latin'], weight: ['400', '500', '600', '700'], display: 'swap' });
+// // Space Grotesk
+// const spaceGrotesk = Space_Grotesk({ subsets: ['latin'], weight: ['400', '500', '700'], display: 'swap' });
 
 export const metadata = {
-  title: "Agentic AI Demo Interface",
-  description: "Premium AI features showcase with modern design",
-  generator: "Holbox.ai.dev",
-  icons: "/holboxai.svg"
+  title: 'Agentic AI Demo Interface',
+  description: 'Premium AI features showcase with modern design',
+  generator: 'Holbox.ai.dev',
+  icons: '/holboxai.svg',
 };
 
 export default async function RootLayout({ children }) {
@@ -18,7 +27,7 @@ export default async function RootLayout({ children }) {
 
   return (
     <html lang="en">
-      <body className={neuton.className}>
+      <body className={inter.className}>
         <ClientProviders>
           {children}
           <Toaster />

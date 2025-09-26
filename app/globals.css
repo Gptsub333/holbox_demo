@@ -8,11 +8,36 @@
     /* --heading-font-family: "Suisse", "SF Pro Display", system-ui, sans-serif;
     --subheading-font-family: "Suisse", "SF Pro Text", system-ui, sans-serif;
     --para-font-family: "Suisse", "SF Pro Text", system-ui, sans-serif; */
-    --heading-font-family: "Neuton", Georgia, "Times New Roman", serif;
-    --subheading-font-family: "Neuton", Georgia, "Times New Roman", serif;
-    --para-font-family: "Neuton", Georgia, "Times New Roman", serif;
-    --mono-font-family: "Söhne Mono", "SFMono-Regular", Consolas, monospace;
-    --numbers-font-family: "Geist Numbers", "SF Mono", monospace;
+
+
+    /* Inter */
+    --heading-font-family: "Inter", sans-serif;
+    --subheading-font-family: "Inter", sans-serif;
+    --para-font-family: "Inter", sans-serif;
+
+    /* Poppins */
+    /* --heading-font-family: "Poppins", sans-serif;
+    --subheading-font-family: "Poppins", sans-serif;
+    --para-font-family: "Poppins", sans-serif; */
+
+    /* Roboto */  
+    /* --heading-font-family: "Roboto", sans-serif;
+    --subheading-font-family: "Roboto", sans-serif;
+    --para-font-family: "Roboto", sans-serif; */
+
+    /* Manrope */
+    /* --heading-font-family: "Manrope", sans-serif;
+    --subheading-font-family: "Manrope", sans-serif;
+    --para-font-family: "Manrope", sans-serif; */
+
+    /* Space Grotesk */
+    /* --heading-font-family: "Space Grotesk", sans-serif;
+    --subheading-font-family: "Space Grotesk", sans-serif;
+    --para-font-family: "Space Grotesk", sans-serif; */
+
+
+    --mono-font-family: 'Söhne Mono', 'SFMono-Regular', Consolas, monospace;
+    --numbers-font-family: 'Geist Numbers', 'SF Mono', monospace;
 
     /* Original variables */
     --background: 0 0% 100%;
@@ -224,7 +249,7 @@ img {
 @media (max-width: 640px) {
   button,
   a,
-  [role="button"] {
+  [role='button'] {
     min-height: 36px;
     min-width: 36px;
   }
@@ -358,7 +383,7 @@ img {
 }
 
 .icon-shadow::after {
-  content: "";
+  content: '';
   position: absolute;
   bottom: -2px;
   left: 50%;
@@ -383,7 +408,7 @@ img {
 }
 
 .premium-icon::after {
-  content: "";
+  content: '';
   position: absolute;
   inset: -4px;
   background: linear-gradient(135deg, rgba(37, 99, 235, 0.2), rgba(20, 184, 166, 0.05));
@@ -483,6 +508,10 @@ img {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

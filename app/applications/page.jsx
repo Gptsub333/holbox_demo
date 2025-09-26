@@ -1,6 +1,9 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
+import Header from './_components/Header';
+import Grid from './_components/Grid';
+import Upcoming from './_components/Upcoming';
 import {
   Search,
   Database,
@@ -16,25 +19,15 @@ import {
   FileX,
   FileDigit,
   Layers,
-  BookOpen,
   FileSearch,
-  Eye,
   CalendarClock,
   Wand2,
   ScanFace,
   Activity,
   BrainCircuit,
   Landmark,
-  Image,
-  Star,
-  Plus,
-  Filter,
-  Grid3X3,
-  List,
   ImageIcon,
 } from 'lucide-react';
-import { usePathname } from 'next/navigation';
-import Link from 'next/link';
 
 const features = [
   {
@@ -358,142 +351,39 @@ export default function AIImageEditor() {
   const { filteredActive, filteredUpcoming } = useMemo(() => {
     const searchLower = searchQuery.toLowerCase();
 
-    const filteredActive = features.filter(feature =>
-      feature.name.toLowerCase().includes(searchLower) ||
-      feature.description.toLowerCase().includes(searchLower) ||
-      feature.category.toLowerCase().includes(searchLower)
+    const filteredActive = features.filter(
+      (feature) =>
+        feature.name.toLowerCase().includes(searchLower) ||
+        feature.description.toLowerCase().includes(searchLower) ||
+        feature.category.toLowerCase().includes(searchLower)
     );
 
-    const filteredUpcoming = upcomingFeatures.filter(feature =>
-      feature.name.toLowerCase().includes(searchLower) ||
-      feature.description.toLowerCase().includes(searchLower) ||
-      feature.category.toLowerCase().includes(searchLower)
+    const filteredUpcoming = upcomingFeatures.filter(
+      (feature) =>
+        feature.name.toLowerCase().includes(searchLower) ||
+        feature.description.toLowerCase().includes(searchLower) ||
+        feature.category.toLowerCase().includes(searchLower)
     );
 
     return { filteredActive, filteredUpcoming };
   }, [searchQuery]);
 
-  const renderStars = (rating) => {
-    return Array.from({ length: 5 }, (_, i) => (
-      <Star
-        key={i}
-        className={`w-3 h-3 ${i < Math.floor(rating)
-            ? 'fill-yellow-400 text-yellow-400'
-            : 'text-gray-300'
-          }`}
-      />
-    ));
-  };
-
-  const getIconColor = (category) => {
-    const colors = {
-      healthcare: 'text-red-600',
-      ai: 'text-blue-600',
-      security: 'text-orange-600',
-      data: 'text-green-600',
-      productivity: 'text-purple-600',
-      health: 'text-pink-600',
-      search: 'text-indigo-600',
-      finance: 'text-emerald-600',
-      fashion: 'text-rose-600',
-      editing: 'text-cyan-600'
-    };
-    return colors[category] || 'text-gray-600';
-  };
-
-  const getBackgroundColor = (category) => {
-    const colors = {
-      healthcare: 'bg-red-100',
-      ai: 'bg-blue-100',
-      security: 'bg-orange-100',
-      data: 'bg-green-100',
-      productivity: 'bg-purple-100',
-      health: 'bg-pink-100',
-      search: 'bg-indigo-100',
-      finance: 'bg-emerald-100',
-      fashion: 'bg-rose-100',
-      editing: 'bg-cyan-100'
-    };
-    return colors[category] || 'bg-gray-100';
-  };
-
+ 
+  
   const shouldShowActive = activeTab === 'all' || activeTab === 'features';
   const shouldShowUpcoming = activeTab === 'all' || activeTab === 'upcoming';
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Navigation */}
-      <nav className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-8">
-              <div className="flex-shrink-0">
-                <h1 className="text-2xl font-bold text-gray-900">Applications</h1>
-              </div>
-              <div className="hidden md:block">
-                <div className="flex items-baseline space-x-4">
-                  <button
-                    onClick={() => setActiveTab('all')}
-                    className={`px-3 py-2 rounded-md text-sm font-medium border-b-2 ${activeTab === 'all'
-                        ? 'text-blue-600 border-blue-600'
-                        : 'text-gray-500 hover:text-gray-700 border-transparent'
-                      }`}
-                  >
-                    All
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('features')}
-                    className={`px-3 py-2 rounded-md text-sm font-medium border-b-2 ${activeTab === 'features'
-                        ? 'text-blue-600 border-blue-600'
-                        : 'text-gray-500 hover:text-gray-700 border-transparent'
-                      }`}
-                  >
-                    Features
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('upcoming')}
-                    className={`px-3 py-2 rounded-md text-sm font-medium border-b-2 ${activeTab === 'upcoming'
-                        ? 'text-blue-600 border-blue-600'
-                        : 'text-gray-500 hover:text-gray-700 border-transparent'
-                      }`}
-                  >
-                    Upcoming
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div className="flex items-center space-x-4">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Search applications..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="bg-gray-100 border-0 rounded-lg px-4 py-2 pl-10 text-sm w-64 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-              </div>
-              <div className="flex items-center space-x-2">
-                <button
-                  onClick={() => setViewMode('grid')}
-                  className={`p-2 rounded-lg ${viewMode === 'grid' ? 'bg-blue-100 text-blue-600' : 'text-gray-500 hover:text-gray-700'
-                    }`}
-                >
-                  <Grid3X3 className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => setViewMode('list')}
-                  className={`p-2 rounded-lg ${viewMode === 'list' ? 'bg-blue-100 text-blue-600' : 'text-gray-500 hover:text-gray-700'
-                    }`}
-                >
-                  <List className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </nav>
-
+      <Header
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        viewMode={viewMode}
+        setViewMode={setViewMode}
+      />
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Featured Applications Section */}
@@ -505,96 +395,11 @@ export default function AIImageEditor() {
               </h2>
               <span className="text-sm text-gray-500">{filteredActive.length} applications</span>
             </div>
-
-            <div className={`grid ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' : 'grid-cols-1'} gap-6`}>
-              {filteredActive.map((app) => {
-                const IconComponent = app.icon;
-                return (
-                  <div
-                    key={app.href}
-                    className="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer group"
-                  >
-                    <div className="p-6">
-                      <div className={`flex items-center justify-center w-12 h-12 ${getBackgroundColor(app.category)} rounded-lg mb-4 group-hover:scale-110 transition-transform duration-200`}>
-                        <IconComponent className={`${getIconColor(app.category)} text-xl w-6 h-6`} />
-                      </div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
-                        {app.name}
-                      </h3>
-                      <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                        {app.description}
-                      </p>
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="flex items-center space-x-2">
-                          <div className="flex">
-                            {renderStars(app.rating)}
-                          </div>
-                          <span className="text-xs text-gray-500">
-                            {app.rating} ({app.reviews.toLocaleString()})
-                          </span>
-                        </div>
-                        <span className="text-xs text-green-600 font-medium bg-green-50 px-2 py-1 rounded-full">
-                          Active
-                        </span>
-                      </div>
-                      <div className="mb-4">
-                        <span className="text-xs text-gray-500">
-                          {app.tasks} tasks completed
-                        </span>
-                      </div>
-                      <Link href={app.href}>
-                        <button className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-2.5 px-4 rounded-lg text-sm font-medium hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-sm hover:shadow-md transform hover:scale-105">
-                          Launch App
-                        </button>
-                      </Link>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+            <Grid filteredActive={filteredActive} viewMode={viewMode} />
           </section>
         )}
-
-        {/* Upcoming Features Section */}
         {shouldShowUpcoming && filteredUpcoming.length > 0 && (
-          <section>
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-900">Upcoming Features</h2>
-              <span className="text-sm text-gray-500">{filteredUpcoming.length} applications</span>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {filteredUpcoming.map((app, index) => {
-                const IconComponent = app.icon;
-                return (
-                  <div
-                    key={index}
-                    className="bg-white rounded-xl shadow-sm border border-gray-200 border-dashed opacity-80 hover:opacity-100 transition-all duration-300 hover:shadow-md cursor-pointer group"
-                  >
-                    <div className="p-6">
-                      <div className="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-lg mb-4 group-hover:bg-blue-50 transition-colors duration-200">
-                        <IconComponent className="text-gray-400 group-hover:text-blue-500 text-xl w-6 h-6 transition-colors duration-200" />
-                      </div>
-                      <h3 className="text-lg font-semibold text-gray-700 mb-2 group-hover:text-gray-900 transition-colors">
-                        {app.name}
-                      </h3>
-                      <p className="text-gray-500 text-sm mb-4 line-clamp-2">
-                        {app.description}
-                      </p>
-                      <div className="mb-4">
-                        <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full font-medium">
-                          Coming Soon
-                        </span>
-                      </div>
-                      <button disabled className="w-full bg-gray-200 text-gray-500 py-2.5 px-4 rounded-lg text-sm font-medium cursor-not-allowed">
-                        Not Available
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </section>
+          <Upcoming filteredUpcoming={filteredUpcoming} />
         )}
 
         {/* No Results State */}
@@ -610,7 +415,6 @@ export default function AIImageEditor() {
           </div>
         )}
       </main>
-
     </div>
   );
 }
