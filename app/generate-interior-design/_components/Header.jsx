@@ -1,6 +1,6 @@
 "use client";
 
-import { UserRound } from "lucide-react";
+import { Building } from "lucide-react";
 import { motion } from "framer-motion";
 
 export function Header() {
@@ -14,7 +14,7 @@ export function Header() {
       {/* Icon + Title Row */}
       <div className="flex items-center gap-3 mb-4">
         <div className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 flex items-center justify-center">
-          <UserRound className="h-6 w-6 text-white" />
+          <Building className="h-6 w-6 text-white" />
         </div>
         <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent tracking-tight">
           Generate Interior Design
