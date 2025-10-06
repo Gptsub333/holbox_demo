@@ -302,6 +302,17 @@ const features = [
     status: 'active',
     category: 'healthcare',
   },
+   {
+    name: 'Generate Video',
+    href: '/generate-video',
+    icon: Video,
+    description: 'Create a video from an image with custom prompts.',
+    rating: 4.9,
+    reviews: 2913,
+    tasks: '25.2K',
+    status: 'active',
+    category: 'ai',
+  },
 ];
 
 // Upcoming features data
