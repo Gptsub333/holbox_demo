@@ -17,6 +17,7 @@ const ImageUpload = ({
   zoom,
   handleFileSelect,
   setDragOver,
+  videoPropmp
 }) => {
   const handleDragOver = (e) => {
     e.preventDefault();
