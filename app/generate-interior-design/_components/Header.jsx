@@ -2,30 +2,25 @@
 
 import { Building } from "lucide-react";
 import { motion } from "framer-motion";
+import { FeatureIcon } from "@/components/feature-icons";
 
 export function Header() {
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: { y: 0, opacity: 1, transition: { duration: 0.5 } },
+  };
   return (
-    <motion.div
-      className="flex flex-col items-start text-left mb-12 pt-6"
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-    >
-      {/* Icon + Title Row */}
-      <div className="flex items-center gap-3 mb-4">
-        <div className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 flex items-center justify-center">
-          <Building className="h-6 w-6 text-white" />
-        </div>
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent tracking-tight">
+    <motion.div className="mb-8 flex items-center" variants={itemVariants}>
+      <FeatureIcon icon={Building} size="lg" gradient="blue" className="mr-4" />
+      <div>
+        <h1 className="text-3xl font-bold heading-font">
           Generate Interior Design
         </h1>
+        <p className="text-muted-foreground mt-1">
+          AI-generated interior concepts to match your mood, theme, or budget.
+          Your room, reimagined by AI.
+        </p>
       </div>
-
-      {/* Subtitle */}
-      <p className="text-gray-600 max-w-2xl text-lg leading-relaxed">
-        AI-generated interior concepts to match your mood, theme, or budget.
-        Your room, reimagined by AI
-      </p>
     </motion.div>
   );
 }
