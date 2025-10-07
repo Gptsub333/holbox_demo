@@ -7,7 +7,7 @@ import ImageUpload from "./_components/ImageUpload"
 import ImageResult from "./_components/ImageResult"
 import helpers from "@/utils/helper"
 import constants from "@/utils/constants"
-import { Header } from "./_components/header"
+import { Header } from "./_components/Header"
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL
 
