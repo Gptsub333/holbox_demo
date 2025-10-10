@@ -224,7 +224,7 @@ export default function VirtualTryOnPage() {
       >
         {/* Header - Updated to match PII Extractor style */}
         <motion.div
-          className="mb-8"
+          className="mt-[40px] sm:mt-0 mb-8"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}

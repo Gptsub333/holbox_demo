@@ -5,7 +5,7 @@ import { FileDigit } from "lucide-react"
 const HeaderSection = () => {
   return (
     <motion.div
-      className="flex items-center space-x-3 mb-6"
+      className="mt-[40px] sm:mt-0 flex items-center space-x-3 mb-6"
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}

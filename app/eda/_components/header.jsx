@@ -7,7 +7,7 @@ export default function Header() {
   const contextName = "Demo"
 
   return (
-    <header className=" mb-10">
+    <header className="mt-[30px] sm:mt-0 mb-10">
       <div className="container mx-auto  px-4 md:px-8">
         <div className="flex items-center justify-between h-16">
           <div  className="flex items-center gap-2 text-xl font-semibold text-gray-800">
