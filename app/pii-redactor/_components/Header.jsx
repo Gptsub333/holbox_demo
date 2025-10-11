@@ -11,7 +11,7 @@ export default function Header() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
     >
-      <div className="flex items-center space-x-3 mb-3">
+      <div className="mt-[40px] sm:mt-0 flex items-center space-x-3 mb-3">
         <motion.div
           className="relative"
           initial={{ scale: 0 }}

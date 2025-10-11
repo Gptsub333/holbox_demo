@@ -6,7 +6,7 @@ import { motion } from "framer-motion"
 export function Header() {
   return (
     <motion.div
-      className="flex flex-col items-start text-left mb-12 pt-6"
+      className="mt-[25px] sm:mt-0 flex flex-col items-start text-left mb-12 pt-6"
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
