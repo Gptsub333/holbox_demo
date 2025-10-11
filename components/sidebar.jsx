@@ -375,165 +375,257 @@
 //   )
 // }
 
+// 'use client';
+
+// import Link from 'next/link';
+// import { useState } from 'react';
+// import { Button } from '@/components/ui/button';
+// import { BarChart3, Briefcase, Settings, DollarSign, Crown, Grid, LayoutDashboard, Share2, About } from 'lucide-react';
+
+// const OmniLogo = () => (
+//   <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg flex items-center justify-center">
+//     <div className="w-4 h-4 bg-white rounded-sm transform rotate-45"></div>
+//   </div>
+// );
+
+// const TooltipLabel = ({ text, show }) => (
+//   <div
+//     className={`absolute left-full ml-3 top-1/2 -translate-y-1/2 bg-gray-900 text-white px-3 py-2 rounded-md text-sm whitespace-nowrap z-[9999] transition-all duration-300 ease-out pointer-events-none ${
+//       show ? 'opacity-100 translate-x-0 scale-100' : 'opacity-0 -translate-x-4 scale-95'
+//     }`}
+//     style={{
+//       boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+//     }}
+//   >
+//     {text}
+//     <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1 w-2 h-2 bg-gray-900 rotate-45"></div>
+//   </div>
+// );
+
+// export default function Sidebar({ onViewChange, isMobileOpen, onMobileToggle, onOpenSearch }) {
+//   const [hoveredItem, setHoveredItem] = useState(null);
+
+//   return (
+//     <div
+//       className={`fixed left-0 top-0 bottom-0 w-16 bg-white border-r border-gray-200 flex flex-col z-50 transition-transform duration-300 ease-in-out ${
+//         isMobileOpen ? 'translate-x-0' : '-translate-x-full'
+//       } md:translate-x-0`}
+//     >
+//       {/* Header */}
+//       <Link href="/" className="p-4 border-b border-gray-200">
+//         <div
+//           className="relative flex items-center justify-center"
+//           onMouseEnter={() => setHoveredItem('omni-agent')}
+//           onMouseLeave={() => setHoveredItem(null)}
+//         >
+//           <OmniLogo />
+//           {hoveredItem === 'omni-agent' && <TooltipLabel text="Agent AI" show={true} />}
+//         </div>
+//       </Link>
+
+//       {/* Navigation */}
+//       <div className="flex-1 py-4">
+//         <nav className="space-y-2 px-2">
+//           <Link
+//             href="/dashboard"
+//             className="relative"
+//             onMouseEnter={() => setHoveredItem('dashboards')}
+//             onMouseLeave={() => setHoveredItem(null)}
+//           >
+//             <Button
+//               variant="ghost"
+//               className="w-full justify-center text-gray-700 hover:bg-gray-100 h-10"
+//               onClick={() => {
+//                 onViewChange?.('dashboard');
+//                 onMobileToggle?.(false);
+//               }}
+//               href="/dashboard"
+//             >
+//               <BarChart3 href="/dashboard" className="w-5 h-5" />
+//             </Button>
+//             {hoveredItem === 'dashboards' && <TooltipLabel text="Dashboards" show={true} />}
+//           </Link>
+
+//           {/* <div 
+//             className="relative"
+//             onMouseEnter={() => setHoveredItem("Applications")}
+//             onMouseLeave={() => setHoveredItem(null)}
+//              onClick={onOpenSearch}
+//           > */}
+
+//           <Link
+//             href="/applications"
+//             className="relative"
+//             onMouseEnter={() => setHoveredItem('Applications')}
+//             onMouseLeave={() => setHoveredItem(null)}
+//           >
+//             <Button
+//               variant="ghost"
+//               className="w-full justify-center text-gray-700 hover:bg-gray-100 h-10"
+//               onClick={() => onMobileToggle?.(false)}
+//             >
+//               <Grid className="w-5 h-5" />
+//             </Button>
+//             {hoveredItem === 'Applications' && <TooltipLabel text="Applications" show={true} />}
+//           </Link>
+//           {/* </div> */}
+
+//           <Link
+//             href="/upcoming"
+//             className="relative"
+//             onMouseEnter={() => setHoveredItem('Up Coming')}
+//             onMouseLeave={() => setHoveredItem(null)}
+//           >
+//             <Button
+//               variant="ghost"
+//               className="w-full justify-center text-gray-700 hover:bg-gray-100 h-10"
+//               onClick={() => onMobileToggle?.(false)}
+//             >
+//               <Briefcase className="w-5 h-5" />
+//             </Button>
+//             {hoveredItem === 'Up Coming' && <TooltipLabel text="Up Coming" show={true} />}
+//           </Link>
+
+//           <Link
+//             href="/connect-to"
+//             className="relative"
+//             onMouseEnter={() => setHoveredItem('ConnectTo')}
+//             onMouseLeave={() => setHoveredItem(null)}
+//           >
+//             <Button
+//               variant="ghost"
+//               className="w-full justify-center text-gray-700 hover:bg-gray-100 h-10"
+//               onClick={() => onMobileToggle?.(false)}
+//             >
+//               <Share2 className="w-5 h-5" />
+//             </Button>
+//             {hoveredItem === 'ConnectTo' && <TooltipLabel text="Connect To" show={true} />}
+//           </Link>
+//           <Link
+//             href="/about"
+//             className="relative"
+//             onMouseEnter={() => setHoveredItem('about')}
+//             onMouseLeave={() => setHoveredItem(null)}
+//           >
+//             <Button
+//               variant="ghost"
+//               className="w-full justify-center text-gray-700 hover:bg-gray-100 h-10"
+//               onClick={() => onMobileToggle?.(false)}
+//             >
+//               <LayoutDashboard className="w-5 h-5" />
+//             </Button>
+//             {hoveredItem === 'about' && <TooltipLabel text="About" show={true} />}
+//           </Link>
+//         </nav>
+//       </div>
+
+//       {/* Premium Plan */}
+//       <div className="p-2 border-t border-gray-200">
+//         <div
+//           className="relative"
+//           onMouseEnter={() => setHoveredItem('premium')}
+//           onMouseLeave={() => setHoveredItem(null)}
+//         >
+//           <Button
+//             className="w-full justify-center bg-blue-600 hover:bg-blue-700 text-white h-10"
+//             onClick={() => onMobileToggle?.(false)}
+//           >
+//             <Crown className="w-5 h-5" />
+//           </Button>
+//           {hoveredItem === 'premium' && <TooltipLabel text="Premium Plan" show={true} />}
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
+
 'use client';
 
+import {
+  BarChart3,
+  Grid,
+  Briefcase,
+  Share2,
+  LayoutDashboard,
+  Crown,
+} from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { BarChart3, Briefcase, Settings, DollarSign, Crown, Grid, LayoutDashboard, Share2, About } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 
-const OmniLogo = () => (
-  <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg flex items-center justify-center">
-    <div className="w-4 h-4 bg-white rounded-sm transform rotate-45"></div>
-  </div>
-);
-
-const TooltipLabel = ({ text, show }) => (
-  <div
-    className={`absolute left-full ml-3 top-1/2 -translate-y-1/2 bg-gray-900 text-white px-3 py-2 rounded-md text-sm whitespace-nowrap z-[9999] transition-all duration-300 ease-out pointer-events-none ${
-      show ? 'opacity-100 translate-x-0 scale-100' : 'opacity-0 -translate-x-4 scale-95'
-    }`}
-    style={{
-      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-    }}
-  >
-    {text}
-    <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1 w-2 h-2 bg-gray-900 rotate-45"></div>
-  </div>
-);
-
-export default function Sidebar({ onViewChange, isMobileOpen, onMobileToggle, onOpenSearch }) {
+export default function Sidebar({ isMobileOpen }) {
   const [hoveredItem, setHoveredItem] = useState(null);
+  const pathname = usePathname();
+
+  const navItems = [
+    { href: '/dashboard', Icon: BarChart3, label: 'Dashboard' },
+    { href: '/applications', Icon: Grid, label: 'Applications' },
+    { href: '/upcoming', Icon: Briefcase, label: 'Upcoming' },
+    { href: '/connect-to', Icon: Share2, label: 'Connect To' },
+    { href: '/about', Icon: LayoutDashboard, label: 'About' },
+  ];
 
   return (
     <div
-      className={`fixed left-0 top-0 bottom-0 w-16 bg-white border-r border-gray-200 flex flex-col z-50 transition-transform duration-300 ease-in-out ${
-        isMobileOpen ? 'translate-x-0' : '-translate-x-full'
-      } md:translate-x-0`}
+      className={`fixed left-0 top-0 bottom-0 w-16 bg-white border-r border-gray-200 flex flex-col items-center py-4 z-50 transition-transform duration-300 ease-in-out ${
+        isMobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+      }`}
     >
-      {/* Header */}
-      <Link href="/" className="p-4 border-b border-gray-200">
-        <div
-          className="relative flex items-center justify-center"
-          onMouseEnter={() => setHoveredItem('omni-agent')}
-          onMouseLeave={() => setHoveredItem(null)}
-        >
-          <OmniLogo />
-          {hoveredItem === 'omni-agent' && <TooltipLabel text="Agent AI" show={true} />}
+      {/* Logo */}
+      <Link href="/">
+        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
+          <div className="w-4 h-4 bg-white rotate-45 rounded-sm" />
         </div>
       </Link>
 
-      {/* Navigation */}
-      <div className="flex-1 py-4">
-        <nav className="space-y-2 px-2">
-          <Link
-            href="/dashboard"
-            className="relative"
-            onMouseEnter={() => setHoveredItem('dashboards')}
-            onMouseLeave={() => setHoveredItem(null)}
-          >
-            <Button
-              variant="ghost"
-              className="w-full justify-center text-gray-700 hover:bg-gray-100 h-10"
-              onClick={() => {
-                onViewChange?.('dashboard');
-                onMobileToggle?.(false);
-              }}
-              href="/dashboard"
-            >
-              <BarChart3 href="/dashboard" className="w-5 h-5" />
-            </Button>
-            {hoveredItem === 'dashboards' && <TooltipLabel text="Dashboards" show={true} />}
-          </Link>
+      {/* Navigation Items */}
+      <div className="flex flex-col items-center space-y-4 mt-6">
+        {navItems.map(({ href, Icon, label }) => {
+          const isActive = pathname === href;
 
-          {/* <div 
-            className="relative"
-            onMouseEnter={() => setHoveredItem("Applications")}
-            onMouseLeave={() => setHoveredItem(null)}
-             onClick={onOpenSearch}
-          > */}
-
-          <Link
-            href="/applications"
-            className="relative"
-            onMouseEnter={() => setHoveredItem('Applications')}
-            onMouseLeave={() => setHoveredItem(null)}
-          >
-            <Button
-              variant="ghost"
-              className="w-full justify-center text-gray-700 hover:bg-gray-100 h-10"
-              onClick={() => onMobileToggle?.(false)}
-            >
-              <Grid className="w-5 h-5" />
-            </Button>
-            {hoveredItem === 'Applications' && <TooltipLabel text="Applications" show={true} />}
-          </Link>
-          {/* </div> */}
-
-          <Link
-            href="/upcoming"
-            className="relative"
-            onMouseEnter={() => setHoveredItem('Up Coming')}
-            onMouseLeave={() => setHoveredItem(null)}
-          >
-            <Button
-              variant="ghost"
-              className="w-full justify-center text-gray-700 hover:bg-gray-100 h-10"
-              onClick={() => onMobileToggle?.(false)}
-            >
-              <Briefcase className="w-5 h-5" />
-            </Button>
-            {hoveredItem === 'Up Coming' && <TooltipLabel text="Up Coming" show={true} />}
-          </Link>
-
-          <Link
-            href="/connect-to"
-            className="relative"
-            onMouseEnter={() => setHoveredItem('ConnectTo')}
-            onMouseLeave={() => setHoveredItem(null)}
-          >
-            <Button
-              variant="ghost"
-              className="w-full justify-center text-gray-700 hover:bg-gray-100 h-10"
-              onClick={() => onMobileToggle?.(false)}
-            >
-              <Share2 className="w-5 h-5" />
-            </Button>
-            {hoveredItem === 'ConnectTo' && <TooltipLabel text="Connect To" show={true} />}
-          </Link>
-          <Link
-            href="/about"
-            className="relative"
-            onMouseEnter={() => setHoveredItem('about')}
-            onMouseLeave={() => setHoveredItem(null)}
-          >
-            <Button
-              variant="ghost"
-              className="w-full justify-center text-gray-700 hover:bg-gray-100 h-10"
-              onClick={() => onMobileToggle?.(false)}
-            >
-              <LayoutDashboard className="w-5 h-5" />
-            </Button>
-            {hoveredItem === 'about' && <TooltipLabel text="About" show={true} />}
-          </Link>
-        </nav>
+          return (
+            <Link href={href} key={label}>
+              <div
+                onMouseEnter={() => setHoveredItem(label)}
+                onMouseLeave={() => setHoveredItem(null)}
+                className={`relative flex items-center justify-center w-12 h-12 rounded-lg transition-all duration-200 ${
+                  isActive
+                    ? 'bg-blue-100 text-blue-600 shadow-sm'
+                    : 'text-gray-600 hover:bg-gray-100'
+                }`}
+              >
+                <Icon className="w-5 h-5" />
+                {hoveredItem === label && (
+                  <div className="absolute left-14 z-50 bg-black text-white text-xs px-2 py-1 rounded shadow-md whitespace-nowrap">
+                    {label}
+                  </div>
+                )}
+              </div>
+            </Link>
+          );
+        })}
       </div>
 
-      {/* Premium Plan */}
-      <div className="p-2 border-t border-gray-200">
-        <div
-          className="relative"
-          onMouseEnter={() => setHoveredItem('premium')}
-          onMouseLeave={() => setHoveredItem(null)}
-        >
-          <Button
-            className="w-full justify-center bg-blue-600 hover:bg-blue-700 text-white h-10"
-            onClick={() => onMobileToggle?.(false)}
+      {/* Premium CTA */}
+      <div className="mt-auto mb-4">
+        <Link href="/premium">
+          <div
+            onMouseEnter={() => setHoveredItem('Premium Plan')}
+            onMouseLeave={() => setHoveredItem(null)}
+            className={`relative flex items-center justify-center w-12 h-12 rounded-lg transition-all duration-200 ${
+              pathname === '/premium'
+                ? 'bg-yellow-100 text-yellow-600 shadow-sm'
+                : 'text-gray-600 hover:bg-gray-100'
+            }`}
           >
             <Crown className="w-5 h-5" />
-          </Button>
-          {hoveredItem === 'premium' && <TooltipLabel text="Premium Plan" show={true} />}
-        </div>
+            {hoveredItem === 'Premium Plan' && (
+              <div className="absolute left-14 z-50 bg-black text-white text-xs px-2 py-1 rounded shadow-md whitespace-nowrap">
+                Premium Plan
+              </div>
+            )}
+          </div>
+        </Link>
       </div>
     </div>
   );

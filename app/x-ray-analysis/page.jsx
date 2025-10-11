@@ -179,7 +179,7 @@ const DesktopLayout = ({ xrayImages, selectedImage, handleImageClick, reportData
 
 const MobileLayout = ({ xrayImages, selectedImage, handleImageClick, reportData }) => (
   <div className="flex flex-col h-screen bg-gray-100 font-sans p-4">
-    <header className="mb-4">
+    <header className="mt-[60px] sm:mt-0 mb-4">
       <div className="flex items-center gap-3 mb-2">
         <Stethoscope className="w-8 h-8 text-blue-600" />
         <h1 className="text-xl font-bold text-gray-800">X-ray Analysis</h1>

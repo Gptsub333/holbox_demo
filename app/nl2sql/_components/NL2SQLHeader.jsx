@@ -6,7 +6,7 @@ import { motion } from "framer-motion"
 export default function NL2SQLHeader() {
   return (
     <motion.div
-      className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6"
+      className="mt-[40px] sm:mt-0 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6"
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}

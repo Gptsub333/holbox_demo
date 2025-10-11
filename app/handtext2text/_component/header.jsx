@@ -2,7 +2,7 @@ import { FileText } from "lucide-react"
 
 export default function Header() {
   return (
-    <header className="text-left mb-8">
+    <header className="mt-[40px] sm:mt-0 text-left mb-8">
       <div className="flex items-center gap-3 mb-2">
         <FileText className="h-7 w-7 text-blue-600" />
         <h1 className="text-xl font-bold text-gray-800">Handwritten to Digital Converter</h1>

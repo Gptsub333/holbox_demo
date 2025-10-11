@@ -84,7 +84,7 @@ export default function FileSystemManager() {
       >
         {/* Compact Header */}
         <motion.div
-          className="flex items-center mb-6"
+          className="mt-[50px] sm:mt-0 flex items-center mb-6"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.1 }}
