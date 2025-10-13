@@ -5,7 +5,7 @@ import { FileText } from 'lucide-react';
 const Header = () => {
   return (
     <motion.div
-      className="mb-8 flex items-center"
+      className="mt-[30px] sm:mt-0 mb-8 flex items-center"
       variants={{ hidden: { y: 20, opacity: 0 }, visible: { y: 0, opacity: 1, transition: { duration: 0.5 } } }}
     >
       {/* <FeatureIcon icon={Stethoscope} size="lg" gradient="blue" className="mr-4" /> */}

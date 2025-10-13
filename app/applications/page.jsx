@@ -47,6 +47,13 @@ import {
   ShieldCheck,
   Eye,
   AudioLines,
+  Star,
+  Plus,
+  Filter,
+  Grid3X3,
+  List,
+  ImageIcon,
+  Building
 } from 'lucide-react';
 
 import Link from 'next/link';
@@ -237,6 +244,39 @@ const applications = [
     likes: 41,
     author: 'Holbox Team',
     href: '/ai-professional-headshot',
+  },
+  {
+    name: 'Medical Claim Verifier',
+    href: '/medical-claim-verifier',
+    icon: FileText,
+    description: 'Medical claim verification against insurance policies.',
+    rating: 4.3,
+    reviews: 432,
+    tasks: '3.1K',
+    status: 'active',
+    category: 'healthcare',
+  },
+  {
+    name: 'Generate Interior Design',
+    href: '/generate-interior-design',
+    icon: Building,
+    description: 'Transform spaces with automated design suggestions.',
+    rating: 4.3,
+    reviews: 432,
+    tasks: '3.1K',
+    status: 'active',
+    category: 'healthcare',
+  },
+   {
+    name: 'Generate Video',
+    href: '/generate-video',
+    icon: Video,
+    description: 'Create a video from an image with custom prompts.',
+    rating: 4.9,
+    reviews: 2913,
+    tasks: '25.2K',
+    status: 'active',
+    category: 'ai',
   },
 ];
 

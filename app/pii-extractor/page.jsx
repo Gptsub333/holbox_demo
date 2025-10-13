@@ -109,7 +109,7 @@ export default function PIIExtractorPage() {
       >
         {/* Compact Header - Left Aligned */}
         <motion.div
-          className="flex items-center mb-6"
+          className="flex items-center mb-6 mt-[50px] sm:mt-0"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.1 }}
