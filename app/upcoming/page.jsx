@@ -41,7 +41,7 @@ export default function UpcomingPage() {
       <motion.div className="max-w-4xl mx-auto" variants={containerVariants}>
         <motion.div className="flex items-center mb-8" variants={itemVariants}>
           <GradientIcon icon={CalendarClock} size="md" className="mr-4" />
-          <GradientHeading className="text-3xl font-bold">Up Coming Features</GradientHeading>
+          <GradientHeading className="text-3xl font-bold">Upcoming Features</GradientHeading>
         </motion.div>
 
         <motion.div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-8" variants={itemVariants}>
