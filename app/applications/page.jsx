@@ -6,7 +6,6 @@ import {
   RefreshCw,
   ChevronDown,
   Grid3x3,
-  List,
   Shield,
   Building2,
   TrendingUp,
@@ -53,7 +52,7 @@ import {
   Grid3X3,
   List,
   ImageIcon,
-  Building
+  Building,
 } from 'lucide-react';
 
 import Link from 'next/link';
@@ -267,7 +266,7 @@ const applications = [
     status: 'active',
     category: 'healthcare',
   },
-   {
+  {
     name: 'Generate Video',
     href: '/generate-video',
     icon: Video,
@@ -454,7 +453,6 @@ export default function AgentMarketplace() {
             })}
           </div>
         </section>
-
         {/* Community Agents */}
         <section>
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Community Agents</h2>
@@ -501,7 +499,7 @@ export default function AgentMarketplace() {
                         <p className="text-sm text-gray-600 mb-4 line-clamp-2">{app.description}</p>
 
                         <div className="flex flex-wrap gap-2 mb-4">
-                          {app.tags.map((tag, idx) => (
+                          {app?.tags?.map((tag, idx) => (
                             <span key={idx} className="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded">
                               {tag}
                             </span>
@@ -560,7 +558,7 @@ export default function AgentMarketplace() {
 
                           <h4 className="text-sm font-semibold text-gray-700 mb-2">Tags</h4>
                           <div className="flex flex-wrap gap-2 mb-4">
-                            {app.tags.map((tag, idx) => (
+                            {app?.tags?.map((tag, idx) => (
                               <span
                                 key={idx}
                                 className="px-2 py-1 text-xs bg-white text-gray-700 rounded border border-gray-200"
@@ -585,8 +583,7 @@ export default function AgentMarketplace() {
             })}
           </div>
         </section>
-
-        {/* Upcoming Features */}
+        ;{/* Upcoming Features */}
         {filteredUpcoming.length > 0 && (
           <section className="mt-12">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Coming Soon</h2>
@@ -609,7 +606,7 @@ export default function AgentMarketplace() {
                       <p className="text-sm text-gray-500 mb-4 line-clamp-2">{app.description}</p>
 
                       <div className="flex flex-wrap gap-2 mb-4">
-                        {app.tags.map((tag, idx) => (
+                        {app?.tags?.map((tag, idx) => (
                           <span key={idx} className="px-2 py-1 text-xs bg-gray-100 text-gray-500 rounded">
                             {tag}
                           </span>
@@ -622,7 +619,6 @@ export default function AgentMarketplace() {
             </div>
           </section>
         )}
-
         {/* No Results */}
         {filteredApplications.length === 0 && filteredUpcoming.length === 0 && searchQuery && (
           <div className="flex flex-col items-center justify-center py-16">
