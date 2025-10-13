@@ -12,8 +12,9 @@ export function StandaloneMobileMenu() {
   useEffect(() => {
     // Create global variables to control floating components
     window.openMobileSearch = () => {
-      const event = new CustomEvent("openMobileSearch")
-      document.dispatchEvent(event)
+      // const event = new CustomEvent("openMobileSearch")
+      // document.dispatchEvent(event)
+      router.push('/applications');
     }
 
     window.openMobileChat = () => {
