@@ -66,7 +66,7 @@ const templateChats = [
   { title: "Can you summarize long documents?", icon: Paperclip },
   { title: "Can your system book appointments by voice?", icon: Upload },
   {
-    title: "Do have a feature to generate image based on the text",
+    title: "Do have a fDo you have a feature to generate images based on text?",
     icon: CheckCircle,
   },
 ];
@@ -86,6 +86,7 @@ export default function OmniAgent() {
   const messagesEndRef = useRef(null);
   const [isMobile, setIsMobile] = useState(false);
   const [enableSearch, setEnableSearch] = useState(false);
+  const [isSearchEnabled, setIsSearchEnabled] = useState(false)
 
   // Load persisted state
   useEffect(() => {
@@ -146,6 +147,7 @@ export default function OmniAgent() {
         question: text || "",
         user_id,
         enableSearch,
+        isSearchEnabled
       }),
     });
 
@@ -227,7 +229,9 @@ export default function OmniAgent() {
     }
   };
 
-  const handleWorldIconClick = () => {};
+  const handleWorldIconClick = () => {
+    setIsSearchEnabled(true)
+  };
 
   const handleMobileMessage = (message) => {
     setInputValue(message);
@@ -367,11 +371,18 @@ export default function OmniAgent() {
                     className="text-gray-500 hover:text-gray-700 hover:bg-gray-100 px-4 py-2 rounded-lg transition-all duration-200 flex items-center gap-2 mx-auto"
                   >
                     <span>Explore use cases</span>
-                    <ChevronUp
+                    {/* <ChevronUp
                       className={`w-4 h-4 transition-transform duration-200 ${
                         showTemplates ? "" : "rotate-180"
                       }`}
+                    /> */}
+
+                    <ChevronUp
+                      className={`w-4 h-4 transition-transform duration-200 ${
+                        showTemplates ? "rotate-180" : ""
+                      }`}
                     />
+
                   </Button>
                 </div>
               </section>
@@ -385,7 +396,7 @@ export default function OmniAgent() {
               >
                 <div className="mt-4">
                   <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-6 md:mb-8 text-center">
-                    Find Your Template Chats AI
+                    Find Your AI Template Chats
                   </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {templateChats.map((template, index) => (

@@ -140,7 +140,7 @@ const features = [
     description: 'Edit images with AI using text queries',
   },
   {
-    name: 'Proffesional Headshot',
+    name: 'Professional Headshot',
     href: '/ai-professional-headshot',
     icon: ImageIcon,
     description: 'Generate polished, professional-looking headshots instantly with AI.',
