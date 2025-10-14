@@ -541,14 +541,7 @@
 
 'use client';
 
-import {
-  BarChart3,
-  Grid,
-  Briefcase,
-  Share2,
-  LayoutDashboard,
-  Crown,
-} from 'lucide-react';
+import { LayoutDashboard, AppWindow, Clock, Plug, Info, Crown } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 import { usePathname } from 'next/navigation';
@@ -558,11 +551,11 @@ export default function Sidebar({ isMobileOpen }) {
   const pathname = usePathname();
 
   const navItems = [
-    { href: '/dashboard', Icon: BarChart3, label: 'Dashboard' },
-    { href: '/applications', Icon: Grid, label: 'Applications' },
-    { href: '/upcoming', Icon: Briefcase, label: 'Upcoming' },
-    { href: '/connect-to', Icon: Share2, label: 'Connect To' },
-    { href: '/about', Icon: LayoutDashboard, label: 'About' },
+    { href: '/dashboard', Icon: LayoutDashboard, label: 'Dashboard' },
+    { href: '/applications', Icon: AppWindow, label: 'Applications' },
+    { href: '/upcoming', Icon: Clock, label: 'Upcoming' },
+    { href: '/connect-to', Icon: Plug, label: 'Connect To' },
+    { href: '/about', Icon: Info, label: 'About' },
   ];
 
   return (
@@ -589,9 +582,7 @@ export default function Sidebar({ isMobileOpen }) {
                 onMouseEnter={() => setHoveredItem(label)}
                 onMouseLeave={() => setHoveredItem(null)}
                 className={`relative flex items-center justify-center w-12 h-12 rounded-lg transition-all duration-200 ${
-                  isActive
-                    ? 'bg-blue-100 text-blue-600 shadow-sm'
-                    : 'text-gray-600 hover:bg-gray-100'
+                  isActive ? 'bg-blue-100 text-blue-600 shadow-sm' : 'text-gray-600 hover:bg-gray-100'
                 }`}
               >
                 <Icon className="w-5 h-5" />
@@ -613,9 +604,7 @@ export default function Sidebar({ isMobileOpen }) {
             onMouseEnter={() => setHoveredItem('Premium Plan')}
             onMouseLeave={() => setHoveredItem(null)}
             className={`relative flex items-center justify-center w-12 h-12 rounded-lg transition-all duration-200 ${
-              pathname === '/premium'
-                ? 'bg-yellow-100 text-yellow-600 shadow-sm'
-                : 'text-gray-600 hover:bg-gray-100'
+              pathname === '/premium' ? 'bg-yellow-100 text-yellow-600 shadow-sm' : 'text-gray-600 hover:bg-gray-100'
             }`}
           >
             <Crown className="w-5 h-5" />

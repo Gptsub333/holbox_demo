@@ -245,6 +245,7 @@ const applications = [
     href: '/ai-professional-headshot',
   },
   {
+    id: 17,
     name: 'Medical Claim Verifier',
     href: '/medical-claim-verifier',
     icon: FileText,
@@ -254,8 +255,11 @@ const applications = [
     tasks: '3.1K',
     status: 'active',
     category: 'healthcare',
+    author: 'Holbox Team',
+    tags: ['AI', 'Photography'],
   },
   {
+    id: 18,
     name: 'Generate Interior Design',
     href: '/generate-interior-design',
     icon: Building,
@@ -265,8 +269,11 @@ const applications = [
     tasks: '3.1K',
     status: 'active',
     category: 'healthcare',
+    author: 'Holbox Team',
+    tags: ['AI', 'Photography'],
   },
   {
+    id: 19,
     name: 'Generate Video',
     href: '/generate-video',
     icon: Video,
@@ -276,6 +283,8 @@ const applications = [
     tasks: '25.2K',
     status: 'active',
     category: 'ai',
+    author: 'Holbox Team',
+    tags: ['AI', 'Photography'],
   },
 ];
 
