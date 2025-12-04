@@ -85,7 +85,7 @@ export default function PIIExtractorPage() {
           summary: parsed.Summary || "Some PII elements were extracted.",
         },
       };
-
+      console.log("Normalized API Response:", normalized);
       setApiResponse(normalized);
     } catch (error) {
       console.error("Error extracting PII:", error);

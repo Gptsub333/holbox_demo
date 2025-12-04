@@ -201,11 +201,6 @@ export default function FloatingPopup({ isOpen, onClose, response, isLoading }) 
                       <Calendar className="h-4 w-4 text-red-600" />,
                     )}
 
-                    {renderDataSection(
-                      "Social Security Numbers",
-                      response.extracted.socialSecurityNumbers,
-                      <CreditCard className="h-4 w-4 text-red-700" />,
-                    )}
                   </div>
 
                   {/* Summary */}

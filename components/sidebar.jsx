@@ -519,22 +519,6 @@ export default function Sidebar({ onViewChange, isMobileOpen, onMobileToggle, on
         </nav>
       </div>
 
-      {/* Premium Plan */}
-      <div className="p-2 border-t border-gray-200">
-        <div
-          className="relative"
-          onMouseEnter={() => setHoveredItem('premium')}
-          onMouseLeave={() => setHoveredItem(null)}
-        >
-          <Button
-            className="w-full justify-center bg-blue-600 hover:bg-blue-700 text-white h-10"
-            onClick={() => onMobileToggle?.(false)}
-          >
-            <Crown className="w-5 h-5" />
-          </Button>
-          {hoveredItem === 'premium' && <TooltipLabel text="Premium Plan" show={true} />}
-        </div>
-      </div>
     </div>
   );
 }
