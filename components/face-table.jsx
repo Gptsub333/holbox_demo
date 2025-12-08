@@ -111,7 +111,7 @@ export default function UsersTable() {
                   </td>
                 </motion.tr>
               )}
-              {users.map((user) => (
+              { users.map((user) => (
                 <motion.tr
                   key={user.face_id}
                   initial="hidden"
