@@ -36,26 +36,25 @@ export default function FloatingPopup({ isOpen, onClose, response, isLoading }) 
   }
 
   const renderDataSection = (title, data, icon) => {
+
     if (!data || (Array.isArray(data) && data.length === 0)) return null
 
     return (
       <div className="mb-4">
-        <div className="flex items-center space-x-2 mb-2">
-          {icon}
-          <h4 className="text-sm font-semibold text-gray-800">{title}</h4>
-        </div>
-        <div className="space-y-1">
-          {Array.isArray(data) ? (
-            data.map((item, index) => (
-              <div key={index} className="bg-gray-50 rounded-md px-3 py-2 text-sm text-gray-700">
-                {item}
-              </div>
-            ))
-          ) : (
-            <div className="bg-gray-50 rounded-md px-3 py-2 text-sm text-gray-700">{data}</div>
-          )}
-        </div>
+  <div className="flex items-center space-x-2 mb-2">
+    {icon}
+    <h4 className="text-sm font-semibold text-gray-800">{title}</h4>
+  </div>
+  <div className="space-y-1">
+    {Array.isArray(data) ? (
+      <div className="bg-gray-50 rounded-md px-3 py-2 text-sm text-gray-700 whitespace-pre-line">
+        {data.join('\n')}
       </div>
+    ) : (
+      <div className="bg-gray-50 rounded-md px-3 py-2 text-sm text-gray-700">{data}</div>
+    )}
+  </div>
+</div>
     )
   }
 
