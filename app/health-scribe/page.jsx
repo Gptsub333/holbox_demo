@@ -2,14 +2,14 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Stethoscope, Upload } from 'lucide-react';
+import { Stethoscope, Upload, AlertCircle, Loader2, Wand2, GitCompare, Eye, EyeOff } from 'lucide-react';
 import { FeatureIcon } from '@/components/feature-icons';
 
 import AudioSamples from './_components/AudioSamples';
 import TranscriptDisplay from './_components/TranscriptDisplay';
 import ChatModal from './_components/ChatModal';
 import UploadModal from './_components/UploadModal';
-import { useAuthContext } from '../../context/AuthContext'; // Import the context
+import { useAuthContext } from '../../context/AuthContext';
 import helpers from '@/utils/helper';
 import constants from '@/utils/constants';
 import { toast } from 'sonner';
@@ -38,7 +38,6 @@ const predefinedAudios = [
     id: '3',
     title: 'Sample data 3.mp3',
     url: 'https://s3.us-east-1.amazonaws.com/demo.holbox.ai/health_scribe/predefinedAudios/predefinedAudios3.mp3',
-    s3: 's3://dax-healthscribe-v2/predefinedAudios/predefinedAudios3.mp3',
     duration: '10:46',
     transcript:
       "This is a sample transcript for the third audio recording. The actual transcript will be generated when you click 'Transcribe Audio.",
@@ -62,12 +61,20 @@ export default function HealthScribePage() {
   const [currentQuestion, setCurrentQuestion] = useState('');
   const [isLoadingAnswer, setIsLoadingAnswer] = useState(false);
   const [sampleAudios, setSampleAudios] = useState(predefinedAudios);
-  const [formattedTranscript, setFormattedTranscript] = useState({});
+  const [formattedTranscript, setFormattedTranscript] = useState(null);
   const [playingAudioId, setPlayingAudioId] = useState(null);
-  const [audioProgress, setAudioProgress] = useState({}); // { audioId: secondsPlayed }
+  const [audioProgress, setAudioProgress] = useState({});
   const [uploadedAudios, setUploadedAudios] = useState([]);
-  const [displayedText, setDisplayedText] = useState('');
-  const [isGenerating, setIsGenerating] = useState(false);
+  const [isLoadingSample, setIsLoadingSample] = useState(false);
+  const [error, setError] = useState(null);
+  const [hasTranscriptionData, setHasTranscriptionData] = useState(false);
+  
+  // NEW STATES for transcript management
+  const [isRefining, setIsRefining] = useState(false);
+  const [originalTranscript, setOriginalTranscript] = useState(''); // Store original
+  const [refinedTranscript, setRefinedTranscript] = useState(''); // Store refined
+  const [showOriginal, setShowOriginal] = useState(false); // Toggle view
+  const [refinementHistory, setRefinementHistory] = useState([]); // Store all refinements
 
   // Get session token from context
   const { sessionToken, isLoaded, isSignedIn } = useAuthContext();
@@ -75,7 +82,7 @@ export default function HealthScribePage() {
 
   // === Refs ===
   const transcriptRef = useRef(null);
-  const audioRef = useRef(new Audio());
+  const audioRef = useRef(null);
   const fileInputRef = useRef(null);
   const chatContainerRef = useRef(null);
   const abortRef = useRef(null);
@@ -83,23 +90,25 @@ export default function HealthScribePage() {
 
   // === Effects ===
 
-  // Track progress and reset on ended
-
+  // Initialize audio element
   useEffect(() => {
-    if (!audioRef.current) {
+    if (typeof window !== 'undefined') {
       audioRef.current = new Audio();
     }
   }, []);
 
-  // Listen for audio time updates and ended event
+  // Listen for audio time updates
   useEffect(() => {
     const audioEl = audioRef.current;
+    if (!audioEl) return;
 
     const updateProgress = () => {
-      setAudioProgress((prev) => ({
-        ...prev,
-        [playingAudioId]: audioEl.currentTime,
-      }));
+      if (playingAudioId) {
+        setAudioProgress((prev) => ({
+          ...prev,
+          [playingAudioId]: audioEl.currentTime,
+        }));
+      }
     };
 
     const handleEnded = () => {
@@ -121,145 +130,235 @@ export default function HealthScribePage() {
     };
   }, [playingAudioId]);
 
+  // Parse transcript when it changes - now checks which transcript to parse
   useEffect(() => {
-    if (transcript) {
-      const formatted = formatTranscript(transcript);
+    const currentTranscript = showOriginal ? originalTranscript : refinedTranscript || transcript;
+    
+    if (currentTranscript) {
+      const formatted = formatTranscript(currentTranscript);
       setFormattedTranscript(formatted);
+      setHasTranscriptionData(true);
+    } else {
+      setFormattedTranscript(null);
+      setHasTranscriptionData(false);
     }
-  }, [transcript]);
+  }, [transcript, refinedTranscript, originalTranscript, showOriginal]);
 
+  // Auto-scroll transcript
   useEffect(() => {
-    if (transcriptRef.current) {
+    if (transcriptRef.current && formattedTranscript) {
       transcriptRef.current.scrollTop = transcriptRef.current.scrollHeight;
     }
   }, [formattedTranscript]);
 
-    useEffect(() => {
-      if (chatContainerRef.current) {
-        chatContainerRef.current.scrollTop =
-        chatContainerRef.current.scrollHeight;
-      }
-    }, [chatMessages]);
+  // Auto-scroll chat
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
+  }, [chatMessages]);
 
   // === Handlers ===
 
-  // Play or pause audio, ensure only one plays at a time
-  const onPlayPauseClick = (audio) => {
-    if (playingAudioId === audio.id) {
-      // Pause if clicking on the currently playing audio
-      audioRef.current.pause();
-      setPlayingAudioId(null);
-    } else {
-      // Play new audio
-      audioRef.current.pause(); // Pause previous if any
-      audioRef.current.src = audio.url;
-      audioRef.current.play();
-      setActiveAudio(audio);
-      setPlayingAudioId(audio.id);
-    }
-  };
-
-  // Play/Pause toggle handler for audios
+  // Play/Pause audio
   const togglePlay = async (audio) => {
-    const audioEl = audioRef.current;
-
     try {
+      const audioEl = audioRef.current;
+
       if (playingAudioId === audio.id) {
+        // Pause current audio
         audioEl.pause();
         setPlayingAudioId(null);
       } else {
+        // Stop any playing audio
+        if (playingAudioId) {
+          audioEl.pause();
+          audioEl.currentTime = 0;
+        }
+
+        // Play new audio
         audioEl.src = audio.url;
-        await audioEl.play(); // wait for play() promise to resolve
+        await audioEl.play();
         setPlayingAudioId(audio.id);
       }
     } catch (error) {
-      if (error.name !== 'AbortError') {
-        console.error('Audio play error:', error);
-      }
-      // Ignore AbortError since it's expected during rapid source changes
+      console.error('Audio play error:', error);
+      toast.error('Failed to play audio');
     }
   };
 
-
-    function formatTranscript(transcript) {
+  function formatTranscript(transcript) {
+    if (!transcript || typeof transcript !== 'string') {
       return {
         chiefComplaint: {
           title: 'Chief Complaint',
-          content: transcript.match(
-          /CHIEF_COMPLAINT:([\s\S]*?)(HISTORY_OF_PRESENT_ILLNESS:|$)/
-        ),
+          content: 'No transcript available',
         },
         historyOfPresentIllness: {
           title: 'History of Present Illness',
-          content: transcript.match(
-          /HISTORY_OF_PRESENT_ILLNESS:([\s\S]*?)(REVIEW_OF_SYSTEMS:|$)/
-        ),
+          content: 'No transcript available',
         },
         reviewOfSystems: {
           title: 'Review of Systems',
-          content: transcript.match(
-          /REVIEW_OF_SYSTEMS:([\s\S]*?)(PAST_MEDICAL_HISTORY:|$)/
-        ),
+          content: 'No transcript available',
         },
         pastMedicalHistory: {
           title: 'Past Medical History',
-          content: transcript.match(
-          /PAST_MEDICAL_HISTORY:([\s\S]*?)(ASSESSMENT:|$)/
-        ),
+          content: 'No transcript available',
         },
+        assessment: {
+          title: 'Assessment',
+          content: 'No transcript available',
+        }
       };
     }
 
-    const selectAudio = (audio) => {
-      setActiveAudio(audio);
-      setTranscript('');
-      setChatMessages([]);
+    // Helper function to extract content between section headers
+    const extractSection = (text, sectionName, nextSection = null) => {
+      // Create regex pattern
+      const escapedSection = sectionName.replace(/([.*+?^${}()|[\]\\])/g, '\\$1');
+      let pattern;
+
+      if (nextSection) {
+        const escapedNext = nextSection.replace(/([.*+?^${}()|[\]\\])/g, '\\$1');
+        pattern = new RegExp(`${escapedSection}:\\s*([\\s\\S]*?)(?=${escapedNext}:|$)`, 'i');
+      } else {
+        pattern = new RegExp(`${escapedSection}:\\s*([\\s\\S]*?)$`, 'i');
+      }
+
+      const match = text.match(pattern);
+      return match ? match[1].trim() : '';
     };
+
+    // Extract all sections
+    const sections = {
+      chiefComplaint: {
+        title: 'Chief Complaint',
+        content: extractSection(transcript, 'CHIEF_COMPLAINT', 'HISTORY_OF_PRESENT_ILLNESS'),
+      },
+      historyOfPresentIllness: {
+        title: 'History of Present Illness',
+        content: extractSection(transcript, 'HISTORY_OF_PRESENT_ILLNESS', 'REVIEW_OF_SYSTEMS'),
+      },
+      reviewOfSystems: {
+        title: 'Review of Systems',
+        content: extractSection(transcript, 'REVIEW_OF_SYSTEMS', 'PAST_MEDICAL_HISTORY'),
+      },
+      pastMedicalHistory: {
+        title: 'Past Medical History',
+        content: extractSection(transcript, 'PAST_MEDICAL_HISTORY', 'PAST_FAMILY_HISTORY'),
+      },
+      pastFamilyHistory: {
+        title: 'Past Family History',
+        content: extractSection(transcript, 'PAST_FAMILY_HISTORY', 'PAST_SOCIAL_HISTORY'),
+      },
+      pastSocialHistory: {
+        title: 'Past Social History',
+        content: extractSection(transcript, 'PAST_SOCIAL_HISTORY', 'PHYSICAL_EXAMINATION'),
+      },
+      physicalExamination: {
+        title: 'Physical Examination',
+        content: extractSection(transcript, 'PHYSICAL_EXAMINATION', 'DIAGNOSTIC_TESTING'),
+      },
+      diagnosticTesting: {
+        title: 'Diagnostic Testing',
+        content: extractSection(transcript, 'DIAGNOSTIC_TESTING', 'ASSESSMENT'),
+      },
+      assessment: {
+        title: 'Assessment',
+        content: extractSection(transcript, 'ASSESSMENT', 'PLAN'),
+      },
+      plan: {
+        title: 'Plan',
+        content: extractSection(transcript, 'PLAN'),
+      }
+    };
+
+    // Clean up empty sections
+    Object.keys(sections).forEach(key => {
+      if (!sections[key].content) {
+        sections[key].content = 'No information provided';
+      }
+    });
+
+    return sections;
+  }
+
+  const selectAudio = async (audio) => {
+    try {
+      setIsLoadingSample(true);
+      setError(null);
+      setActiveAudio(audio);
+      
+      // Store the transcript as original
+      if (audio.transcript && !audio.transcript.includes('sample transcript')) {
+        setOriginalTranscript(audio.transcript);
+        setTranscript(audio.transcript);
+        setRefinedTranscript(''); // Clear any previous refinement
+      } else {
+        setOriginalTranscript('');
+        setTranscript('');
+        setRefinedTranscript('');
+      }
+      
+      setChatMessages([]);
+      setHasTranscriptionData(false);
+      setShowOriginal(true); // Default to showing original
+
+      // If this is a sample audio with only placeholder transcript, clear it
+      if (audio.transcript && audio.transcript.includes('sample transcript')) {
+        setTranscript('');
+        setOriginalTranscript('');
+      }
+    } catch (error) {
+      console.error('Error selecting audio:', error);
+      setError('Failed to load audio');
+      toast.error('Failed to load audio');
+    } finally {
+      setIsLoadingSample(false);
+    }
+  };
 
   const handleUploadClick = () => {
     setUploadModalOpen(true);
   };
 
-  // const handleChatClick = () => {
-  //   if (transcript) setChatModalOpen(true);
-  // };
+  const handleFileSelect = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
 
-    const handleFileSelect = async (e) => {
-      const file = e.target.files[0];
-      if (!file) {
-      return;
+    try {
+      // Validate file
+      const fileError = helpers.fileSize(constants.fileSize.audio.inBytes, constants.fileSize.audio.inMB)(file);
+      if (fileError) {
+        toast.error(fileError);
+        return;
+      }
+
+      const typeError = helpers.checkAudioFileType(file);
+      if (typeError) {
+        toast.error(typeError);
+        return;
+      }
+
+      const corruptionError = await helpers.checkAudioCorruption(file);
+      if (corruptionError) {
+        toast.error(corruptionError);
+        return;
+      }
+
+      const isValid = await helpers.checkAudioDuration(file, constants.fileSize.audio.maxSize);
+      if (!isValid) {
+        toast.error(`File is too long. Max allowed is ${constants.fileSize.audio.maxSize} minutes.`);
+        return;
+      }
+
+      setSelectedFile(file);
+    } catch (error) {
+      console.error('File validation error:', error);
+      toast.error('Failed to validate file');
     }
-
-    const fileError = helpers.fileSize(constants.fileSize.audio.inBytes, constants.fileSize.audio.inMB)(file);
-
-    const typeError = helpers.checkAudioFileType(file);
-
-    const corruptionError = await helpers.checkAudioCorruption(file);
-
-    const isValid = await helpers.checkAudioDuration(file, constants.fileSize.audio.maxSize);
-
-    if (fileError) {
-      toast(fileError);
-      return;
-    }
-
-    if (typeError) {
-      toast(typeError);
-      return;
-    }
-
-    if (corruptionError) {
-      toast(corruptionError);
-      return;
-    }
-
-    if (!isValid) {
-      toast(`File is too long. Max allowed is ${constants.fileSize.audio.maxSize} minutes.`);
-      return;
-    }
-
-    setSelectedFile(file);
-    };
+  };
 
   const handleDragOver = (e) => {
     e.preventDefault();
@@ -268,13 +367,17 @@ export default function HealthScribePage() {
   const handleDrop = (e) => {
     e.preventDefault();
     const file = e.dataTransfer.files[0];
-    if (file) setSelectedFile(file);
+    if (file) {
+      setSelectedFile(file);
+    }
   };
 
-    const handleUpload = async () => {
-      if (!selectedFile) return;
-      setUploadStatus('uploading');
-      setUploadProgress(0);
+  const handleUpload = async () => {
+    if (!selectedFile) return;
+
+    setUploadStatus('uploading');
+    setUploadProgress(0);
+    setError(null);
 
     try {
       // 1. Upload audio to S3
@@ -282,84 +385,101 @@ export default function HealthScribePage() {
         selectedFile,
         token,
         setUploadProgress,
-        abortRef // 👈 pass ref to store abort fn
+        abortRef
       );
 
       const fileUrl = uploadData.fileUrl;
       setUploadStatus('processing');
 
-      // 2. Start transcription with S3 URL
+      // 2. Start transcription immediately
       const controller = new AbortController();
-      abortRef.current = () => controller.abort(); // replace cancel function
+      abortRef.current = () => controller.abort();
+
       const transcriptionResponse = await fetch(`${BACKEND_URL}/healthscribe/start-transcription`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': token },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token
+        },
         body: JSON.stringify({ audioUrl: fileUrl }),
         signal: controller.signal,
       });
 
-        if (!transcriptionResponse.ok) throw new Error('Transcription failed');
+      if (!transcriptionResponse.ok) {
+        throw new Error(`Transcription failed: ${transcriptionResponse.statusText}`);
+      }
 
-        const transcriptionData = await transcriptionResponse.json();
-        console.log('Transcription response data:', transcriptionData);
+      const transcriptionData = await transcriptionResponse.json();
 
-      // 3. Create local URL for audio playback from user file
+      // 3. Create local URL for audio playback
       const localAudioUrl = URL.createObjectURL(selectedFile);
 
-        // 4. Build new audio object with local playback URL + transcription summary
-        const newAudio = {
-          id: Date.now().toString(),
-          title: selectedFile.name,
-          duration: transcriptionData.duration || '00:00', // fallback if available
-          transcript: transcriptionData.summary || '',
-          url: localAudioUrl,
-          s3: fileUrl,
-        };
+      // 4. Create new audio object
+      const newAudio = {
+        id: Date.now().toString(),
+        title: selectedFile.name,
+        duration: transcriptionData.duration || '00:00',
+        transcript: transcriptionData.summary || '',
+        url: localAudioUrl,
+        s3: fileUrl,
+        isUploaded: true,
+      };
 
-        // 5. Update UI state
-        setActiveAudio(newAudio);
-        setTranscript(newAudio.transcript);
-        setUploadedAudios((prev) => [newAudio, ...prev]);
+      // 5. Update state
+      setActiveAudio(newAudio);
+      const newTranscript = transcriptionData.summary || '';
+      setOriginalTranscript(newTranscript); // Store as original
+      setTranscript(newTranscript); // Set current display
+      setRefinedTranscript(''); // Clear refinement
+      setUploadedAudios((prev) => [newAudio, ...prev]);
+      setShowOriginal(true); // Show original view
 
-        // Reset modal and states after short delay for UX
-        setTimeout(() => {
-          setUploadModalOpen(false);
-          setUploadProgress(0);
-          setUploadStatus('idle');
-          setSelectedFile(null);
-        }, 1000);
-      } catch (error) {
-        if (error.name === 'AbortError') {
-          toast(`Upload cancelled`);
-        } else {
-          console.error('Error:', error);
-          alert('Upload or transcription failed: ' + error.message);
-        }
-        setUploadStatus('idle');
+      toast.success('Audio uploaded and transcribed successfully!');
+
+      // 6. Reset and close modal
+      setTimeout(() => {
+        setUploadModalOpen(false);
         setUploadProgress(0);
-      } finally {
-        abortRef.current = null;
+        setUploadStatus('idle');
+        setSelectedFile(null);
+      }, 1000);
+
+    } catch (error) {
+      if (error.name === 'AbortError') {
+        toast.info('Upload cancelled');
+      } else {
+        console.error('Upload error:', error);
+        setError(error.message);
+        toast.error(`Upload failed: ${error.message}`);
       }
-    };
+      setUploadStatus('idle');
+      setUploadProgress(0);
+    } finally {
+      abortRef.current = null;
+    }
+  };
 
   const handleCancel = () => {
     if (abortRef.current) {
-      abortRef.current(); // cancel upload or transcription
+      abortRef.current();
     }
-
     setUploadModalOpen(false);
     setUploadProgress(0);
     setUploadStatus('idle');
     setSelectedFile(null);
+    setError(null);
   };
 
-
   const handleTranscribe = async () => {
-    if (!activeAudio) return;
+    if (!activeAudio) {
+      toast.error('Please select an audio file first');
+      return;
+    }
+
     setIsTranscribing(true);
     setTranscribeProgress(0);
+    setError(null);
 
-    // ✅ Setup AbortController for cancel support
     const controller = new AbortController();
     transcriptionAbortRef.current = () => controller.abort();
 
@@ -371,206 +491,357 @@ export default function HealthScribePage() {
           'Authorization': token,
         },
         body: JSON.stringify({ audioUrl: activeAudio.s3 }),
-        signal: controller.signal, // attach cancel support
+        signal: controller.signal,
       });
 
-        if (!response.ok) throw new Error('Transcription failed');
+      if (!response.ok) {
+        throw new Error(`Transcription failed: ${response.statusText}`);
+      }
 
-        const contentLength = response.headers.get('content-length');
-        const total = contentLength ? parseInt(contentLength, 10) : 0;
+      // Handle streaming response
+      const contentLength = response.headers.get('content-length');
+      const total = contentLength ? parseInt(contentLength, 10) : 0;
 
-        const reader = response?.body.getReader();
-        const decoder = new TextDecoder('utf-8');
-        let result = '';
-        let receivedLength = 0;
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder('utf-8');
+      let result = '';
+      let receivedLength = 0;
 
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
 
         result += decoder.decode(value, { stream: true });
         receivedLength += value.length;
 
-          if (total) {
-            const percentage = Math.round((receivedLength / total) * 100);
-            console.log(`Transcription progress: ${percentage}%`);
+        if (total) {
+          const percentage = Math.round((receivedLength / total) * 100);
           setTranscribeProgress(percentage);
-          }
         }
+      }
 
       result += decoder.decode();
       const json = JSON.parse(result);
 
-        setTranscript(json.summary || 'Transcription completed successfully.');
-        setTranscribeProgress(100);
-      } catch (error) {
-        if (error.name === 'AbortError') {
-        toast('Transcription cancelled');
+      if (json.error) {
+        throw new Error(json.error);
+      }
+
+      // Update transcripts
+      const newTranscript = json.summary || 'Transcription completed successfully.';
+      setOriginalTranscript(newTranscript); // Store as original
+      setTranscript(newTranscript); // Set current display
+      setRefinedTranscript(''); // Clear any previous refinement
+      setShowOriginal(true); // Show original view
+
+      // Update audio object with transcript
+      if (activeAudio.isUploaded) {
+        const updatedAudio = {
+          ...activeAudio,
+          transcript: newTranscript,
+        };
+        setActiveAudio(updatedAudio);
+
+        // Update in uploaded audios list
+        setUploadedAudios(prev =>
+          prev.map(audio =>
+            audio.id === updatedAudio.id ? updatedAudio : audio
+          )
+        );
+      }
+
+      toast.success('Transcription completed!');
+
+    } catch (error) {
+      if (error.name === 'AbortError') {
+        toast.info('Transcription cancelled');
       } else {
-        console.error('Transcription error:', error.message);
-          setTranscript('Error during transcription. Please try again.');
-        }
+        console.error('Transcription error:', error);
+        setError(error.message);
+        toast.error(`Transcription failed: ${error.message}`);
+      }
     } finally {
-        setIsTranscribing(false);
-        setTranscribeProgress(0);
-        transcriptionAbortRef.current = null;
+      setIsTranscribing(false);
+      setTranscribeProgress(0);
+      transcriptionAbortRef.current = null;
     }
   };
 
   const cancelTranscription = () => {
     if (transcriptionAbortRef.current) {
-      transcriptionAbortRef.current(); // cancel transcription
+      transcriptionAbortRef.current();
     }
-    };
+  };
 
-  const formatResponseText = (text) => text.split('\n').map((line, index) => <p key={index}>{line}</p>);
+  const formatResponseText = (text) =>
+    text.split('\n').map((line, index) => <p key={index}>{line}</p>);
 
-  // handleChatSubmit: process the user question, call API, update chat messages
   const handleChatSubmit = async (e) => {
     e.preventDefault();
-    if (!currentQuestion.trim()) return;
+    const currentTranscript = showOriginal ? originalTranscript : refinedTranscript || transcript;
+    
+    if (!currentQuestion.trim() || !currentTranscript) return;
 
-      setChatMessages((prev) => [
+    setChatMessages((prev) => [
       ...prev,
       { sender: 'user', text: currentQuestion },
     ]);
-      setCurrentQuestion('');
-      setIsLoadingAnswer(true);
+    setCurrentQuestion('');
+    setIsLoadingAnswer(true);
 
     try {
       const response = await fetch(`${BACKEND_URL}/healthscribe/question-ans`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': token },
-        body: JSON.stringify({ question: currentQuestion, transcript }),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token
+        },
+        body: JSON.stringify({
+          question: currentQuestion,
+          transcript: currentTranscript
+        }),
       });
 
-        if (!response.ok) throw new Error('Failed to get answer');
+      if (!response.ok) {
+        throw new Error('Failed to get answer');
+      }
 
       const data = await response.json();
 
-        setChatMessages((prev) => [...prev, { sender: 'ai', text: data.answer }]);
-      } catch (error) {
-        setChatMessages((prev) => [
+      setChatMessages((prev) => [
         ...prev,
-        { sender: 'ai', text: 'Sorry, something went wrong.' },
+        {
+          sender: 'ai',
+          text: data.answer || 'No answer provided.'
+        }
       ]);
-      } finally {
-        setIsLoadingAnswer(false);
-      }
-    };
 
-  // handleChatClick: open chat modal
-  const handleChatClick = () => {
-    setChatModalOpen(true);
+    } catch (error) {
+      console.error('Chat error:', error);
+      setChatMessages((prev) => [
+        ...prev,
+        {
+          sender: 'ai',
+          text: 'Sorry, I encountered an error. Please try again.'
+        },
+      ]);
+    } finally {
+      setIsLoadingAnswer(false);
+    }
   };
 
-    // === Animation Variants ===
-    const containerVariants = {
-      hidden: { opacity: 0 },
-      visible: {
-        opacity: 1,
-        transition: {
+  const handleChatClick = () => {
+    const currentTranscript = showOriginal ? originalTranscript : refinedTranscript || transcript;
+    
+    if (!currentTranscript || currentTranscript.includes('sample transcript')) {
+      toast.info('Please transcribe an audio file first');
+      return;
+    }
+    setChatModalOpen(true);
+  };
+  
+  const handleRefine = async (formatType = 'SOAP') => {
+    const transcriptToRefine = showOriginal ? originalTranscript : refinedTranscript || transcript;
+    
+    if (!transcriptToRefine) {
+      toast.error('No transcript to refine');
+      return;
+    }
+
+    setIsRefining(true);
+    
+    try {
+      const response = await fetch(`${BACKEND_URL}/healthscribe/refine-transcript`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token,
+        },
+        body: JSON.stringify({
+          transcript: transcriptToRefine,
+          format_type: formatType,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Refinement failed: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      
+      if (data.success) {
+        // Store in refinement history
+        setRefinementHistory(prev => [...prev, {
+          id: Date.now(),
+          original: transcriptToRefine,
+          refined: data.refined_transcript,
+          format: formatType,
+          timestamp: new Date().toISOString()
+        }]);
+        
+        // Update refined transcript
+        setRefinedTranscript(data.refined_transcript);
+        
+        // Switch to refined view
+        setShowOriginal(false);
+        
+        toast.success(`Transcript refined in ${formatType} format`);
+        
+      } else {
+        toast.error('Failed to refine transcript');
+      }
+    } catch (error) {
+      console.error('Error refining transcript:', error);
+      toast.error('Failed to refine transcript');
+    } finally {
+      setIsRefining(false);
+    }
+  };
+
+  // Toggle between original and refined view
+  const toggleTranscriptView = () => {
+    if (refinedTranscript) {
+      setShowOriginal(!showOriginal);
+    } else {
+      toast.info('No refined transcript available. Please refine first.');
+    }
+  };
+
+  // Revert to original
+  const revertToOriginal = () => {
+    setShowOriginal(true);
+    toast.info('Showing original transcript');
+  };
+
+  // Use refined transcript
+  const useRefined = () => {
+    if (refinedTranscript) {
+      setShowOriginal(false);
+      toast.success('Showing refined transcript');
+    }
+  };
+
+  // Clear refinement
+  const clearRefinement = () => {
+    setRefinedTranscript('');
+    setShowOriginal(true);
+    setRefinementHistory([]);
+    toast.info('Refinement cleared');
+  };
+
+  // === Animation Variants ===
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
         duration: 0.5,
         when: 'beforeChildren',
         staggerChildren: 0.2,
       },
-      },
-    };
+    },
+  };
 
   const itemVariants = {
     hidden: { y: 20, opacity: 0 },
     visible: { y: 0, opacity: 1, transition: { duration: 0.5 } },
   };
 
-    // === JSX ===
-    return (
-      <motion.div
-        className="container mx-auto py-8 px-4"
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        transition={{ duration: 0.8, staggerChildren: 0.2 }}
-      >
-        {/* Header - keep here */}
-        <motion.div className="mb-8 flex items-center" variants={itemVariants}>
-          <FeatureIcon
+  // === JSX ===
+  return (
+    <motion.div
+      className="container mx-auto py-8 px-4"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
+      {/* Header */}
+      <motion.div className="mb-8 flex items-center" variants={itemVariants}>
+        <FeatureIcon
           icon={Stethoscope}
           size="lg"
           gradient="blue"
           className="mr-4"
         />
-          <div>
-            <h1 className="text-3xl font-bold heading-font">Health Scribe</h1>
-            <p className="text-muted-foreground mt-1">
-              Transform medical audio into accurate transcriptions with AI-powered
-            insights
-            </p>
-          </div>
+        <div>
+          <h1 className="text-3xl font-bold heading-font">Health Scribe</h1>
+          <p className="text-muted-foreground mt-1">
+            Transform medical audio into accurate transcriptions with AI-powered insights
+          </p>
+        </div>
+      </motion.div>
+
+      {/* Error Display */}
+      {error && (
+        <motion.div
+          className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <AlertCircle className="h-5 w-5 text-red-500 mr-3" />
+          <p className="text-red-700">{error}</p>
         </motion.div>
+      )}
 
       {/* Main content */}
-      <div className="grid gap-8 lg:grid-cols-5 ">
+      <div className="grid gap-8 lg:grid-cols-5">
         {/* Left: Audio Samples */}
         <motion.div className="lg:col-span-2" variants={itemVariants}>
-          <AudioSamples
-            sampleAudios={sampleAudios}
-            playingAudioId={playingAudioId}
-            togglePlay={togglePlay}
-            audioProgress={audioProgress}
-            selectAudio={selectAudio}
-          />
-          {uploadedAudios.length > 0 && (
-            <>
-              <h2 className="text-xl font-semibold mt-8 mb-4">
-                Uploaded Audios
-              </h2>
-              <AudioSamples
-                sampleAudios={uploadedAudios}
-                playingAudioId={playingAudioId}
-                togglePlay={togglePlay}
-                audioProgress={audioProgress}
-                selectAudio={selectAudio}
-              />
-            </>
-          )}
+          <div className="sticky top-24">
+            <AudioSamples
+              sampleAudios={sampleAudios}
+              playingAudioId={playingAudioId}
+              togglePlay={togglePlay}
+              audioProgress={audioProgress}
+              selectAudio={selectAudio}
+              isLoading={isLoadingSample}
+            />
+
+            {uploadedAudios.length > 0 && (
+              <>
+                <h2 className="text-xl font-semibold mt-8 mb-4">
+                  Uploaded Audios
+                </h2>
+                <AudioSamples
+                  sampleAudios={uploadedAudios}
+                  playingAudioId={playingAudioId}
+                  togglePlay={togglePlay}
+                  audioProgress={audioProgress}
+                  selectAudio={selectAudio}
+                  />
+              </>
+            )}
+          </div>
         </motion.div>
 
         {/* Right: Transcript and controls */}
         <motion.div className="lg:col-span-3" variants={itemVariants}>
           <TranscriptDisplay
             activeAudio={activeAudio}
-            transcript={transcript}
+            transcript={showOriginal ? originalTranscript : refinedTranscript || transcript}
             isTranscribing={isTranscribing}
             transcribeProgress={transcribeProgress}
             formattedTranscript={formattedTranscript}
+            hasTranscriptionData={hasTranscriptionData}
             handleTranscribe={handleTranscribe}
+            handleRefine={handleRefine}
             handleChatClick={handleChatClick}
             handleUploadClick={handleUploadClick}
             handleCancel={cancelTranscription}
+            isLoadingSample={isLoadingSample}
+            // New props for transcript management
+            isRefining={isRefining}
+            showOriginal={showOriginal}
+            hasRefinedTranscript={!!refinedTranscript}
+            toggleTranscriptView={toggleTranscriptView}
+            revertToOriginal={revertToOriginal}
+            useRefined={useRefined}
+            clearRefinement={clearRefinement}
+            refinementHistory={refinementHistory}
           />
         </motion.div>
       </div>
 
-      {/* Floating Upload Button */}
-      <div className="fixed top-[calc(5rem)] right-10 flex flex-col items-end space-y-4">
-        <motion.button
-          onClick={handleUploadClick}
-    className="flex items-center space-x-1 rounded-lg bg-blue-600 text-white shadow-lg hover:bg-blue-700 transition-colors relative left-[-6px] sm:left-[-28px] p-[7px_17px] top-[-50px] sm:top-0"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          aria-label="Upload Audio"
-          // style={{
-          //   transform: "none",
-          //   position: "relative",
-          //   left: "-28px", // Move button 28px to the left
-          //   padding: "7px 17px", // Adjust padding
-          // }}
-        >
-          <Upload className="w-5 h-5" /> {/* Smaller icon */}
-          <span className="text-xs font-medium">Upload Audio</span>{" "}
-          {/* Smaller text */}
-        </motion.button>
-      </div>
 
       {/* Upload Modal */}
       <UploadModal
@@ -587,6 +858,7 @@ export default function HealthScribePage() {
         handleCancel={handleCancel}
         handleDragOver={handleDragOver}
         handleDrop={handleDrop}
+        error={error}
       />
 
       {/* Chat Modal */}
@@ -599,6 +871,7 @@ export default function HealthScribePage() {
         handleChatSubmit={handleChatSubmit}
         isLoadingAnswer={isLoadingAnswer}
         formatResponseText={formatResponseText}
+        chatContainerRef={chatContainerRef}
       />
     </motion.div>
   );
