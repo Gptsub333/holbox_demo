@@ -67,12 +67,6 @@ export default function Sidebar({ onViewChange, isMobileOpen, onMobileToggle, on
             {hoveredItem === 'dashboards' && <TooltipLabel text="Dashboards" show={true} />}
           </Link>
 
-          {/* <div 
-            className="relative"
-            onMouseEnter={() => setHoveredItem("Applications")}
-            onMouseLeave={() => setHoveredItem(null)}
-             onClick={onOpenSearch}
-          > */}
 
           <Link
             href="/applications"
@@ -137,7 +131,7 @@ export default function Sidebar({ onViewChange, isMobileOpen, onMobileToggle, on
             </Button>
             {hoveredItem === 'about' && <TooltipLabel text="About" show={true} />}
           </Link>
-          <div className="p-3 border-t border-gray-200 flex items-center justify-center">
+          {/* <div className="p-3 border-t border-gray-200 flex items-center justify-center">
             <div
               className="relative"
               onMouseEnter={() => setHoveredItem('theme')}
@@ -148,7 +142,7 @@ export default function Sidebar({ onViewChange, isMobileOpen, onMobileToggle, on
                 <TooltipLabel text="Theme" show={true} />
               )}
             </div>
-          </div>
+          </div> */}
 
 
         </nav>

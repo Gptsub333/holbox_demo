@@ -1,13 +1,9 @@
+// SampleDocuments.tsx / .jsx
 import React from 'react';
-import {
-  Heart,
-  Bone,
-  User,
-} from 'lucide-react';
+import { Heart, Bone, User } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-const SampleDocuments = ({handleSampleSelect }) => {
-  // Sample medical documents
+const SampleDocuments = ({ handleSampleSelect }) => {
   const sampleDocuments = [
     {
       id: 1,
@@ -22,7 +18,8 @@ const SampleDocuments = ({handleSampleSelect }) => {
       expectedCodes: ['ICD-10 diagnoses', 'Surgical CPT codes', 'Device HCPCS'],
       description:
         'This document provides details of a patient’s hospital stay under cardiology care, including admission diagnosis, treatment given, medications prescribed, test results, lifestyle recommendations, and follow-up instructions after discharge.',
-      sampleFile: 'cardiology-report.pdf',
+      // 👇 this path is relative to /public
+      sampleFile: '/medicalCodeExtractor/cardiology_discharge.pdf',
     },
     {
       id: 2,
@@ -37,7 +34,7 @@ const SampleDocuments = ({handleSampleSelect }) => {
       expectedCodes: ['Surgical CPT codes', 'Implant HCPCS', 'Anesthesia codes'],
       description:
         'This report records the surgical procedure performed by an orthopedic surgeon. It includes patient background, diagnosis, type of surgery, anesthesia used, surgical techniques, findings during the operation, implants or devices used, complications (if any), and post-operative care instructions.',
-      sampleFile: 'orthopedic-operative.pdf',
+      sampleFile: '/medicalCodeExtractor/orthopedic_op_report.pdf',
     },
     {
       id: 3,
@@ -52,7 +49,7 @@ const SampleDocuments = ({handleSampleSelect }) => {
       expectedCodes: ['E/M codes', 'Preventive CPT', 'Lab orders'],
       description:
         'This record summarizes a routine or follow-up visit to a primary care physician. It typically includes the reason for visit, patient history, physical examination findings, diagnostic tests ordered, assessment of conditions, treatment plan, prescribed medications, and recommendations for future care.',
-      sampleFile: 'primary-care-visit.pdf',
+      sampleFile: '/medicalCodeExtractor/primary_care_visit.pdf',
     },
   ];
 
@@ -69,7 +66,6 @@ const SampleDocuments = ({handleSampleSelect }) => {
     }
   };
 
-  
   return (
     <motion.div
       className="mb-8"
@@ -107,7 +103,6 @@ const SampleDocuments = ({handleSampleSelect }) => {
 
                 <div className="text-xs text-purple-600 font-medium mt-5">Click to try this sample</div>
 
-                {/* Hover tooltip */}
                 <div className="absolute inset-0 bg-black bg-opacity-75 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col justify-center p-4">
                   <div className="text-white text-xs font-medium mb-2">Expected Code Types:</div>
                   {sample.expectedCodes.map((code, idx) => (

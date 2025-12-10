@@ -61,87 +61,107 @@ export default function MedicalCodeExtractor() {
   };
 
   // Handle sample document selection
-  const handleSampleSelect = (sample) => {
-    setSelectedFile(sample);
-    setFilePreview(null);
+// Handle sample document selection
+const handleSampleSelect = async (sample) => {
+  try {
+    setError(null);
+    setIsProcessing(true);
+    
+    // Fetch the actual PDF file from the server
+    const response = await fetch(sample.sampleFile);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch sample: ${response.statusText}`);
+    }
+    
+    const blob = await response.blob();
+    
+    // Create a proper File object from the blob
+    const file = new File([blob], sample.sampleFile.split('/').pop(), { 
+      type: blob.type || 'application/pdf' 
+    });
+    
+    // Set the file and preview
+    setSelectedFile(file);
+    setFilePreview(null); // PDFs don't need image preview
     setExtractionResult('');
     setError(null);
-  };
+    
+  } catch (error) {
+    setError('Error loading sample document: ' + error.message);
+    console.error('Error loading sample:', error);
+  } finally {
+    setIsProcessing(false);
+  }
+};
 
   // Handle code extraction
-  const handleExtract = async () => {
-    if (!selectedFile) return;
+// Handle code extraction
+const handleExtract = async () => {
+  if (!selectedFile) return;
 
-    setIsProcessing(true);
-    setError(null);
+  setIsProcessing(true);
+  setError(null);
+  setTranscribeProgress(0);
 
-    try {
-      const formData = new FormData();
+  try {
+    const formData = new FormData();
+    formData.append('file', selectedFile); // Now selectedFile is always a File object
 
-      if (selectedFile instanceof File) {
-        formData.append('file', selectedFile);
-      } else {
-        // For sample files, create a mock file
-        const mockFile = new File([selectedFile.description], selectedFile.sampleFile, { type: 'text/plain' });
-        formData.append('file', mockFile);
-      }
+    const controller = new AbortController();
+    abortRef.current = () => controller.abort();
 
-      const controller = new AbortController();
-      abortRef.current = () => controller.abort(); // replace cancel function
+    const response = await fetch(`${BACKEND_URL}/extract-medical-coding`, {
+      method: 'POST',
+      body: formData,
+      signal: controller.signal,
+    });
 
-      const response = await fetch(`${BACKEND_URL}/extract-medical-coding`, {
-        method: 'POST',
-        body: formData,
-        signal: controller.signal,
-      });
-
-      if (!response.ok) {
-        throw new Error(`API error: ${response.statusText}`);
-      }
-      const contentLength = response.headers.get('content-length');
-      const total = contentLength ? parseInt(contentLength, 10) : 0;
-
-      const reader = response?.body.getReader();
-      const decoder = new TextDecoder('utf-8');
-      let result = '';
-      let receivedLength = 0;
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        result += decoder.decode(value, { stream: true });
-        receivedLength += value.length;
-
-        if (total) {
-          const percentage = Math.round((receivedLength / total) * 100);
-          console.log(`Transcription progress: ${percentage}%`);
-          setTranscribeProgress(percentage);
-        }
-      }
-
-      result += decoder.decode();
-      const data = JSON.parse(result);
-      if (data.detail) {
-        setError(data.detail);
-      } else {
-        setExtractionResult(data.result);
-        // For demo purposes, use mock data
-      }
-    } catch (error) {
-      if (error.name === 'AbortError') {
-        setError('You cancelled the process.');
-      } else {
-        setError('Error processing document: ' + error.message);
-        // Optional: keep your demo mock data for errors
-        setExtractionResult(
-          'Sample extraction completed. This is a demo showing how medical codes would be extracted from your document.'
-        );
-      }
-    } finally {
-      setIsProcessing(false);
+    if (!response.ok) {
+      throw new Error(`API error: ${response.statusText}`);
     }
-  };
+    
+    const contentLength = response.headers.get('content-length');
+    const total = contentLength ? parseInt(contentLength, 10) : 0;
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder('utf-8');
+    let result = '';
+    let receivedLength = 0;
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      result += decoder.decode(value, { stream: true });
+      receivedLength += value.length;
+
+      if (total) {
+        const percentage = Math.round((receivedLength / total) * 100);
+        console.log(`Transcription progress: ${percentage}%`);
+        setTranscribeProgress(percentage);
+      }
+    }
+
+    result += decoder.decode();
+    const data = JSON.parse(result);
+    
+    if (data.detail) {
+      setError(data.detail);
+    } else {
+      setExtractionResult(data.result || 'No data returned from server');
+    }
+  } catch (error) {
+    if (error.name === 'AbortError') {
+      setError('You cancelled the process.');
+    } else {
+      setError('Error processing document: ' + error.message);
+      // For demo purposes, you can add mock data here if needed
+      // setExtractionResult('Sample extraction completed...');
+    }
+  } finally {
+    setIsProcessing(false);
+  }
+};
 
   // Clear file
   const clearFile = () => {
