@@ -640,63 +640,56 @@ export default function HealthScribePage() {
     setChatModalOpen(true);
   };
   
-  const handleRefine = async (formatType = 'SOAP') => {
-    const transcriptToRefine = showOriginal ? originalTranscript : refinedTranscript || transcript;
-    
-    if (!transcriptToRefine) {
-      toast.error('No transcript to refine');
-      return;
+const handleRefine = async () => {
+  const transcriptToRefine = showOriginal ? originalTranscript : refinedTranscript || transcript;
+  
+  if (!transcriptToRefine) {
+    toast.error('No transcript to refine');
+    return;
+  }
+
+  setIsRefining(true);
+  
+  try {
+    const response = await fetch(`${BACKEND_URL}/healthscribe/refine-transcript`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token,
+      },
+      body: JSON.stringify({
+        transcript: transcriptToRefine,
+        format_type: 'SOAP', // Default format
+          // CLINICAL
+          // Structured
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Refinement failed: ${response.statusText}`);
     }
 
-    setIsRefining(true);
+    const data = await response.json();
     
-    try {
-      const response = await fetch(`${BACKEND_URL}/healthscribe/refine-transcript`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': token,
-        },
-        body: JSON.stringify({
-          transcript: transcriptToRefine,
-          format_type: formatType,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Refinement failed: ${response.statusText}`);
-      }
-
-      const data = await response.json();
+    if (data.success) {
+      // Update refined transcript
+      setRefinedTranscript(data.refined_transcript);
       
-      if (data.success) {
-        // Store in refinement history
-        setRefinementHistory(prev => [...prev, {
-          id: Date.now(),
-          original: transcriptToRefine,
-          refined: data.refined_transcript,
-          format: formatType,
-          timestamp: new Date().toISOString()
-        }]);
-        
-        // Update refined transcript
-        setRefinedTranscript(data.refined_transcript);
-        
-        // Switch to refined view
-        setShowOriginal(false);
-        
-        toast.success(`Transcript refined in ${formatType} format`);
-        
-      } else {
-        toast.error('Failed to refine transcript');
-      }
-    } catch (error) {
-      console.error('Error refining transcript:', error);
+      // Switch to refined view
+      setShowOriginal(false);
+      
+      toast.success('Transcript refined with AI');
+      
+    } else {
       toast.error('Failed to refine transcript');
-    } finally {
-      setIsRefining(false);
     }
-  };
+  } catch (error) {
+    console.error('Error refining transcript:', error);
+    toast.error('Failed to refine transcript');
+  } finally {
+    setIsRefining(false);
+  }
+};
 
   // Toggle between original and refined view
   const toggleTranscriptView = () => {
@@ -713,21 +706,6 @@ export default function HealthScribePage() {
     toast.info('Showing original transcript');
   };
 
-  // Use refined transcript
-  const useRefined = () => {
-    if (refinedTranscript) {
-      setShowOriginal(false);
-      toast.success('Showing refined transcript');
-    }
-  };
-
-  // Clear refinement
-  const clearRefinement = () => {
-    setRefinedTranscript('');
-    setShowOriginal(true);
-    setRefinementHistory([]);
-    toast.info('Refinement cleared');
-  };
 
   // === Animation Variants ===
   const containerVariants = {
@@ -834,10 +812,6 @@ export default function HealthScribePage() {
             showOriginal={showOriginal}
             hasRefinedTranscript={!!refinedTranscript}
             toggleTranscriptView={toggleTranscriptView}
-            revertToOriginal={revertToOriginal}
-            useRefined={useRefined}
-            clearRefinement={clearRefinement}
-            refinementHistory={refinementHistory}
           />
         </motion.div>
       </div>
