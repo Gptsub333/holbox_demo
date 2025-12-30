@@ -7,8 +7,10 @@ import VideoPlayer from "./_components/VideoPlayer";
 import AnalysisButton from "./_components/AnalysisButton";
 import ResultsTable from "./_components/ResultsTable";
 import ScrollHintArrow from "./_components/ScrollHintArrow";
-import { useAuthContext } from "../../context/AuthContext";  // Import the context
+import { useAuthContext } from "../../context/AuthContext";
 import UsersTable from "../../components/face-table";
+import { AddFaceForm } from "@/components/Add-faceform";
+
 export default function FaceRecognitionPage() {
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [currentTime, setCurrentTime] = useState(0);
@@ -17,13 +19,19 @@ export default function FaceRecognitionPage() {
   const [showResults, setShowResults] = useState(false);
   const [showScrollHint, setShowScrollHint] = useState(false);
   const [timestamps, setTimestamps] = useState([]);
+
   // Recognition timer state
   const [recognitionElapsed, setRecognitionElapsed] = useState(0);
   const recognitionTimerRef = useRef(null);
-  const { sessionToken, isLoaded, isSignedIn } = useAuthContext();
+  const { sessionToken } = useAuthContext();
   const resultsRef = useRef(null);
   const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
-  // const BACKEND_URL = "http://0.0.0.0:8000/api/demo_backend_v2";
+
+  // 🔁 Faces table refresh token
+  const [usersRefreshToken, setUsersRefreshToken] = useState(0);
+  const triggerUsersRefresh = () =>
+    setUsersRefreshToken((prev) => prev + 1);
+
   const handleVideoSelect = (video) => {
     setSelectedVideo(video);
     setResults(null);
@@ -32,31 +40,24 @@ export default function FaceRecognitionPage() {
     setShowScrollHint(false);
     setRecognitionElapsed(0);
     setTimestamps([]);
+
     if (recognitionTimerRef.current) {
       clearInterval(recognitionTimerRef.current);
       recognitionTimerRef.current = null;
     }
   };
+
   const handleTimeUpdate = (time) => {
     setCurrentTime(time);
   };
-  const groupByFaceName = (faces) => {
-    const grouped = {};
-    faces.forEach((face) => {
-      const { external_image_id, timestamp } = face;
-      if (!grouped[external_image_id]) {
-        grouped[external_image_id] = [];
-      }
-      grouped[external_image_id].push(timestamp);
-    });
-    return grouped;
-  };
+
   const handleAnalyze = async (timestamp) => {
     if (!selectedVideo) return;
     setIsLoading(true);
     setShowResults(false);
     setShowScrollHint(false);
     setRecognitionElapsed(0);
+
     // Start recognition timer
     if (recognitionTimerRef.current) {
       clearInterval(recognitionTimerRef.current);
@@ -65,9 +66,11 @@ export default function FaceRecognitionPage() {
     recognitionTimerRef.current = setInterval(() => {
       setRecognitionElapsed((prev) => prev + 1);
     }, 1000);
+
     try {
       // Fetch video from S3 URL as blob
       const videoBlob = await fetch(selectedVideo.url).then((res) => res.blob());
+
       // Create a File object to send
       const videoFile = new File(
         [videoBlob],
@@ -76,27 +79,34 @@ export default function FaceRecognitionPage() {
           type: "video/mp4",
         }
       );
+
       // Prepare form data for upload
       const formData = new FormData();
       formData.append("video", videoFile);
+
       // Send to your FastAPI backend
       const response = await fetch(`${BACKEND_URL}/detect_faces`, {
         method: "POST",
         body: formData,
         headers: {
-          Authorization: `Bearer ${sessionToken}`, // Add the Bearer token here
+          Authorization: `Bearer ${sessionToken}`,
         },
       });
+
       if (!response.ok) {
         throw new Error(`API error: ${response.statusText}`);
       }
+
       const data = await response.json();
-          // Set the timestamps from the API response
-    const faces = data.detected_faces || [];
-    const faceTimestamps = faces.map(face => face.timestamp);  // Extract timestamps
-    setTimestamps(faceTimestamps);  // Set the timestamps in state
-       setResults(data);
+
+      // Set the timestamps from the API response
+      const faces = data.detected_faces || [];
+      const faceTimestamps = faces.map((face) => face.timestamp);
+      setTimestamps(faceTimestamps);
+
+      setResults(data);
       setShowResults(true);
+
       // Scroll hint logic
       setTimeout(() => {
         if (resultsRef.current) {
@@ -118,9 +128,17 @@ export default function FaceRecognitionPage() {
       }
     }
   };
+
   const handleHintDismiss = () => {
     setShowScrollHint(false);
   };
+
+  // ✅ called when AddFaceForm succeeds
+  const handleFaceAddedSuccess = (data) => {
+    console.log("Face added successfully from recognition page:", data);
+    triggerUsersRefresh(); // 🔁 refresh the UsersTable
+  };
+
   return (
     <div className="min-h-screen bg-white py-4 sm:py-6">
       <motion.div
@@ -131,6 +149,17 @@ export default function FaceRecognitionPage() {
       >
         {/* Header */}
         <IntroSection />
+
+        {/* ℹ️ Info banner about how recognition works */}
+        <div className="mt-4 mb-6 rounded-lg border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-blue-800">
+          <p className="font-medium">Important:</p>
+          <p className="mt-1">
+            Video face identification only works for people whose faces are
+            already registered in the <span className="font-semibold">Known Faces</span> table below.
+            Please add/register faces first, then run video analysis.
+          </p>
+        </div>
+
         {/* Main Content */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
           {/* Video Selector */}
@@ -138,6 +167,7 @@ export default function FaceRecognitionPage() {
             selectedVideo={selectedVideo}
             onVideoSelect={handleVideoSelect}
           />
+
           {/* Video Player */}
           <VideoPlayer
             selectedVideo={selectedVideo}
@@ -145,6 +175,7 @@ export default function FaceRecognitionPage() {
             timestamps={timestamps}
           />
         </div>
+
         {/* Analysis Button with recognition timer */}
         <AnalysisButton
           selectedVideo={selectedVideo}
@@ -153,16 +184,43 @@ export default function FaceRecognitionPage() {
           isLoading={isLoading}
           recognitionElapsed={recognitionElapsed}
         />
+
         {/* Results Table */}
         <div ref={resultsRef}>
           <ResultsTable results={results} isVisible={showResults} />
         </div>
+
         {/* Scroll Hint Arrow */}
         <ScrollHintArrow
           showHint={showScrollHint}
           onHintDismiss={handleHintDismiss}
         />
-         <UsersTable />
+
+        {/* 👇 Manage Faces: Add + Table (reusing AddFaceForm) */}
+        <div className="mt-10 space-y-4">
+          <div className="flex flex-col gap-1">
+            <h2 className="text-xl font-semibold text-gray-800">
+              Manage Known Faces
+            </h2>
+            <p className="text-xs text-gray-500">
+              Faces added here are used for identification during video analysis.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+            {/* Add face form */}
+            <div className="bg-white rounded-xl shadow p-4">
+              <AddFaceForm
+                onSuccess={handleFaceAddedSuccess}
+                showResultInline={true}
+                compact={false}
+              />
+            </div>
+
+            {/* Faces table with refresh support */}
+            <UsersTable refreshToken={usersRefreshToken} />
+          </div>
+        </div>
       </motion.div>
     </div>
   );

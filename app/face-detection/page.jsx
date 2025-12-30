@@ -3,83 +3,52 @@
 import React, { useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { ScanFace } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { UploadArea } from "./_components/upload-area";
 import ShowResult from "./_components/ShowResult";
-import { useAuthContext } from "../../context/AuthContext";  // Import the context
+import { useAuthContext } from "../../context/AuthContext";
 import UsersTable from "../../components/face-table";
+import { AddFaceForm } from "@/components/Add-faceform";
 
-
-
-// You can swap this for process.env.NEXT_PUBLIC_BACKEND_URL in production
-// const BACKEND_URL = "http://localhost:8000/api/demo_backend_v2";
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
-
-
 export default function FaceDetectionPage() {
-  // UI and Form State
   const [section, setSection] = useState("add");
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
-  const [name, setName] = useState("");
-  const [age, setAge] = useState("");
-  const [gender, setGender] = useState("male");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-
-  // Result State
-  const [lastAddedFace, setLastAddedFace] = useState(null); // For add result
-  const [apiResponse, setApiResponse] = useState(null);     // For recognize result
+  const [apiResponse, setApiResponse] = useState(null);
   const [showResult, setShowResult] = useState(false);
-
-  // Drag-and-drop helpers
   const [isDragOver, setIsDragOver] = useState(false);
-  const { sessionToken } = useAuthContext();  // Get the session token from the context
+  const { sessionToken } = useAuthContext();
 
+  // 🔁 table refresh token for UsersTable
+  const [usersRefreshToken, setUsersRefreshToken] = useState(0);
+  const triggerUsersRefresh = () =>
+    setUsersRefreshToken((prev) => prev + 1);
 
+  // Recognize Face API call
+  async function recognizeFaceAPI(formData) {
+    const res = await fetch(`${BACKEND_URL}/recognize_face`, {
+      method: "POST",
+      body: formData,
+      headers: {
+        Authorization: `Bearer ${sessionToken}`,
+      },
+    });
 
-  async function addFaceAPI(formData) {;
-  // Get the token from your context or global state (assuming useAuth hook)
-  
-  
-  const res = await fetch(`${BACKEND_URL}/add_face`, {
-    method: "POST",
-    body: formData,
-    headers: {
-      "Authorization": `Bearer ${sessionToken}`,  // Add Authorization header with Bearer token
-    },
-  });
-  
-  if (!res.ok) {
-    throw new Error((await res.json()).detail || "Failed to add face");
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.detail || "Failed to recognize face");
+    }
+
+    const data = await res.json();
+    return { success: true, data };
   }
-  return { success: true };
-}
 
-async function recognizeFaceAPI(formData) {
-  // Get the token from your context or global state (assuming useAuth hook)
-
-  //delete_face_by_photo  recognize_face
-  const res = await fetch(`${BACKEND_URL}/recognize_face`, {
-    method: "POST",
-    body: formData,
-    headers: {
-      "Authorization": `Bearer ${sessionToken}`,  // Add Authorization header with Bearer token
-    },
-  });
-
-  if (!res.ok) {
-    throw new Error((await res.json()).detail || "Failed to recognize face");
-  }
-  
-  const data = await res.json();
-  return { success: true, data };
-}
-
-  // Handle file selection and preview
+  // Handle file processing for recognize section
   const processFile = (file) => {
     if (file && file.type.startsWith("image/")) {
       setImageFile(file);
@@ -93,67 +62,40 @@ async function recognizeFaceAPI(formData) {
     }
   };
 
-  // Drag and drop events
+  // Drag and drop handlers
   const handleDrop = useCallback((event) => {
     event.preventDefault();
     setIsDragOver(false);
     const file = event.dataTransfer.files?.[0];
     if (file) processFile(file);
   }, []);
+
   const handleDragOver = (event) => {
     event.preventDefault();
     setIsDragOver(true);
   };
+
   const handleDragLeave = () => setIsDragOver(false);
 
-  // Unified form submit handler
-  const handleSubmit = async (actionType) => {
+  // Handle recognize face submission
+  const handleRecognizeSubmit = async () => {
     setError(null);
 
     if (!imageFile) {
       setError("Please upload an image first.");
       return;
     }
-    if (actionType === "add") {
-      if (!name.trim()) return setError("Please enter a name to add the face.");
-      if (!age.trim()) return setError("Please enter age.");
-      if (!gender.trim()) return setError("Please select gender.");
-    }
 
     setIsLoading(true);
 
     const formData = new FormData();
     formData.append("image", imageFile);
-    if (actionType === "add") {
-      formData.append("name", name.trim().replace(/\s+/g, "_"));
-      formData.append("age", age.trim());
-      formData.append("gender", gender.trim());
-    }
 
     try {
-      if (actionType === "add") {
-        const response = await addFaceAPI(formData);
-        if (response.success) {
-          setLastAddedFace({
-            name: name.trim(),
-            age: age.trim(),
-            gender: gender.trim(),
-            imagePreview,
-          });
-          setShowResult(true);
-          // Clear input fields
-          setImageFile(null);
-          setImagePreview(null);
-          setName("");
-          setAge("");
-          setGender("male");
-        }
-      } else {
-        const response = await recognizeFaceAPI(formData);
-        if (response.success) {
-          setApiResponse(response.data);
-          setShowResult(true);
-        }
+      const response = await recognizeFaceAPI(formData);
+      if (response.success) {
+        setApiResponse(response.data);
+        setShowResult(true);
       }
     } catch (err) {
       setError(err.message || "Failed to connect to the API.");
@@ -162,13 +104,22 @@ async function recognizeFaceAPI(formData) {
     }
   };
 
-  // Section toggle resets result state
+  // Handle face added success → 🔁 refresh table
+  const handleFaceAddedSuccess = (data) => {
+    console.log("Face added successfully:", data);
+    // trigger table refresh
+    triggerUsersRefresh();
+    // optional: show toast here
+  };
+
+  // Section toggle
   const handleSectionChange = (newSection) => {
     setSection(newSection);
     setShowResult(false);
     setError(null);
     setApiResponse(null);
-    setLastAddedFace(null);
+    setImageFile(null);
+    setImagePreview(null);
   };
 
   // Animation variants
@@ -191,7 +142,9 @@ async function recognizeFaceAPI(formData) {
         <motion.div variants={itemVariants} className="mb-8">
           <div className="flex items-center space-x-3">
             <ScanFace className="h-10 w-10 text-blue-600" strokeWidth={1.5} />
-            <h1 className="text-3xl font-bold text-gray-800 heading-font">AI Face Detection</h1>
+            <h1 className="text-3xl font-bold text-gray-800 heading-font">
+              AI Face Detection
+            </h1>
           </div>
           <p className="mt-2 text-base text-gray-600 para-font">
             Upload an image to add or recognize faces with our advanced AI.
@@ -202,17 +155,7 @@ async function recognizeFaceAPI(formData) {
 
         <Card className="shadow-xl rounded-2xl">
           <CardContent className="p-6 space-y-5">
-            {/* Show result if available, only in respective section */}
-            {showResult && section === "add" && lastAddedFace && (
-              <ShowResult
-                section="add"
-                imagePreview={lastAddedFace.imagePreview}
-                name={lastAddedFace.name}
-                age={lastAddedFace.age}
-                gender={lastAddedFace.gender}
-                onClose={() => setShowResult(false)}
-              />
-            )}
+            {/* Show result for recognize section */}
             {showResult && section === "recognize" && apiResponse && (
               <ShowResult
                 section="recognize"
@@ -221,70 +164,62 @@ async function recognizeFaceAPI(formData) {
                 onClose={() => setShowResult(false)}
               />
             )}
-            {/* Form */}
+
+            {/* Form content */}
             {!showResult && (
-              <motion.div key={section} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-5">
-                <UploadArea
-                  imagePreview={imagePreview}
-                  isDragOver={isDragOver}
-                  onFileChange={processFile}
-                  onDrop={handleDrop}
-                  onDragOver={handleDragOver}
-                  onDragLeave={handleDragLeave}
-                  onClearImage={() => { setImagePreview(null); setImageFile(null); }}
-                />
+              <motion.div
+                key={section}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="space-y-5"
+              >
+                {section === "add" ? (
+                  <AddFaceForm
+                    onSuccess={handleFaceAddedSuccess}
+                    showResultInline={true}
+                    compact={false}
+                  />
+                ) : (
+                  <>
+                    <UploadArea
+                      imagePreview={imagePreview}
+                      isDragOver={isDragOver}
+                      onFileChange={processFile}
+                      onDrop={handleDrop}
+                      onDragOver={handleDragOver}
+                      onDragLeave={handleDragLeave}
+                      onClearImage={() => {
+                        setImagePreview(null);
+                        setImageFile(null);
+                      }}
+                    />
 
-                {section === "add" && (
-                  <div className="space-y-3">
-                    <Input
-                      type="text"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      placeholder="Name"
-                      aria-label="Name"
-                    />
-                    <Input
-                      type="number"
-                      value={age}
-                      onChange={(e) => setAge(e.target.value)}
-                      placeholder="Age"
-                      aria-label="Age"
-                      min="1"
-                      max="120"
-                    />
-                    <select
-                      value={gender}
-                      onChange={(e) => setGender(e.target.value)}
-                      className="w-full border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-400"
-                      aria-label="Gender"
+                    {error && (
+                      <div className="text-xs text-red-500">{error}</div>
+                    )}
+
+                    <button
+                      type="button"
+                      onClick={handleRecognizeSubmit}
+                      disabled={isLoading || !imageFile}
+                      className={cn(
+                        "w-full py-2 rounded-xl font-semibold text-sm transition",
+                        isLoading
+                          ? "bg-blue-200 text-blue-50 cursor-wait"
+                          : "bg-blue-600 text-white hover:bg-blue-700 shadow"
+                      )}
                     >
-                      <option value="male">Male</option>
-                      <option value="female">Female</option>
-                      <option value="other">Other</option>
-                    </select>
-                  </div>
+                      {isLoading ? "Recognizing..." : "Recognize Face"}
+                    </button>
+                  </>
                 )}
-
-                {error && <div className="text-xs text-red-500">{error}</div>}
-
-                <button
-                  type="button"
-                  onClick={() => handleSubmit(section)}
-                  disabled={isLoading || !imageFile || (section === "add" && (!name.trim() || !age.trim() || !gender.trim()))}
-                  className={cn(
-                    "w-full py-2 rounded-xl font-semibold text-sm transition",
-                    isLoading ? "bg-blue-200 text-blue-50 cursor-wait" : "bg-blue-600 text-white hover:bg-blue-700 shadow"
-                  )}
-                >
-                  {section === "add"
-                    ? isLoading ? "Adding..." : "Add Face"
-                    : isLoading ? "Recognizing..." : "Recognize Face"}
-                </button>
               </motion.div>
             )}
           </CardContent>
         </Card>
-         <UsersTable />
+
+        {/* 🔁 Pass refresh token into UsersTable */}
+        <UsersTable refreshToken={usersRefreshToken} />
       </motion.div>
     </div>
   );
@@ -299,7 +234,9 @@ function SectionToggle({ current, onChange }) {
           onClick={() => onChange(type)}
           className={cn(
             "w-1/2 py-2 text-center font-medium text-base transition",
-            current === type ? "bg-white text-blue-600 shadow-sm" : "bg-gray-100 text-gray-400 hover:text-blue-600"
+            current === type
+              ? "bg-white text-blue-600 shadow-sm"
+              : "bg-gray-100 text-gray-400 hover:text-blue-600"
           )}
           style={{
             borderBottom: current === type ? "2px solid #2564eb" : "none",
@@ -310,9 +247,6 @@ function SectionToggle({ current, onChange }) {
           {type === "add" ? "Add Face" : "Recognize Face"}
         </button>
       ))}
-     
     </div>
   );
 }
-
-

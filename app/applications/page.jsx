@@ -258,17 +258,6 @@ const features = [
     category: 'ai',
   },
   {
-    name: 'AI Image Editor',
-    href: '/ai-image-editor',
-    icon: Wand2,
-    description: 'Edit images with AI using text queries',
-    rating: 4.1,
-    reviews: 654,
-    tasks: '5.2K',
-    status: 'active',
-    category: 'editing',
-  },
-  {
     name: 'Medical Code Extractor',
     href: '/medical-code-extractor',
     icon: Stethoscope,

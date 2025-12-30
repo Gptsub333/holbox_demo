@@ -65,13 +65,13 @@ export function AppLayout({ children }) {
 
       {/* New fixed, icon-only Sidebar */}
       <Sidebar
-       onOpenSearch={() => setIsSearchOpen(true)}
+        onOpenSearch={() => setIsSearchOpen(true)}
         onViewChange={handleViewChange}
         isMobileOpen={isMobileSidebarOpen}
         onMobileToggle={setIsMobileSidebarOpen}
 
       />
-
+      
       {/* Main wrapper shifts right on md+ to make space for fixed w-16 sidebar */}
       <div className="md:pl-16">
         <main className="min-h-screen bg-white">
@@ -86,7 +86,7 @@ export function AppLayout({ children }) {
       <FloatingSearch isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
 
 
-      
+
     </div>
   )
 }

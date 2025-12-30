@@ -8,6 +8,7 @@ export default function FoodAnalysis({
   onAnalyzeFood,
   loading,
   imagePreview,
+  errorMessage,
 }) {
   if (!selectedFood) {
     return (
@@ -50,23 +51,28 @@ export default function FoodAnalysis({
         <div className="mt-6">
           <div className="bg-gradient-to-r from-blue-50 to-slate-50 rounded-lg p-6">
             <h4 className="font-semibold text-slate-900 mb-4 text-center">Nutritional Information</h4>
+            {errorMessage && (
+              <p className="text-red-500 font-medium text-center mb-4">
+                {errorMessage}
+              </p>
+            )}
 
 
-              <div className="text-center">
-                {/* Show the button when no analysis is available */}
-                <button
-                  onClick={onAnalyzeFood} // Ensure this triggers the API call
-                  className={`bg-blue-600 text-white px-6 py-3 rounded-lg mt-4 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
-                  disabled={loading} // Disable the button while loading
-                >
-                  {loading ? (
-                    <span>Loading...</span> // Show a loading message or spinner
-                  ) : (
-                    "Analyze Nutrition"
-                  )}
-                </button>
-              </div>
-            
+            <div className="text-center">
+              {/* Show the button when no analysis is available */}
+              <button
+                onClick={onAnalyzeFood} // Ensure this triggers the API call
+                className={`bg-blue-600 text-white px-6 py-3 rounded-lg mt-4 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                disabled={loading} // Disable the button while loading
+              >
+                {loading ? (
+                  <span>Loading...</span> // Show a loading message or spinner
+                ) : (
+                  "Analyze Nutrition"
+                )}
+              </button>
+            </div>
+
           </div>
         </div>
       </Card>

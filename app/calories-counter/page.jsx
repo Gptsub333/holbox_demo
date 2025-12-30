@@ -7,7 +7,7 @@ import SampleFoods from "./_components/SampleFoods";
 import FoodAnalysis from "./_components/FoodAnalysis";
 import FoodAnalysisResult from "./_components/FoodAnalysisResult"; // Import the result component
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000/api/demo_backend_v2/estimate-calories";
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000/api/demo_backend_v2";
 
 export default function CalorieCounter() {
   const [selectedFood, setSelectedFood] = useState(null);
@@ -15,6 +15,7 @@ export default function CalorieCounter() {
   const [loading, setLoading] = useState(false);
   const [imagePreview, setImagePreview] = useState(null); // To store the preview
   const [showResultModal, setShowResultModal] = useState(false); // State to control the modal visibility
+  const [errorMessage, setErrorMessage] = useState(null);
 
   const handleFoodSelect = (food) => {
     if (food.image.startsWith("/food/")) {
@@ -51,41 +52,50 @@ export default function CalorieCounter() {
 
     if (selectedFood) {
       if (typeof selectedFood.image === "string") {
-        // This means it's a static image path, so skip the API call
         console.log("Static image path selected:", selectedFood.image);
-        return; // No API call for static image paths
+        return;
       }
 
-      // If it's a valid File object
       if (selectedFood.image instanceof File) {
-        console.log("Valid file selected:", selectedFood.image); // Log the file to confirm it's a valid File
+        console.log("Valid file selected:", selectedFood.image);
 
         const formData = new FormData();
-        formData.append("image", selectedFood.image, selectedFood.image.name); // Append the file directly
-        //formData.append("portion_hint", selectedFood.name); // Optional portion hint
+        formData.append("image", selectedFood.image, selectedFood.image.name);
 
-        // Set loading to true when starting the API call
         setLoading(true);
 
         try {
-          const response = await fetch(`${BACKEND_URL}/estimate-calories`, {
+          // 👇 use BACKEND_URL directly (no extra /estimate-calories)
+          const response = await fetch(BACKEND_URL, {
             method: "POST",
-            body: formData, // Send the form data with the file
+            body: formData,
           });
 
           if (!response.ok) {
-            throw new Error("Failed to fetch data from the API");
+            let errorMessage = "Failed to analyze food image";
+
+            try {
+              const errorData = await response.json();
+              const detail = errorData?.detail;
+
+              if (typeof detail === "string") {
+                errorMessage = "No food items detected in the image. Please try another photo.";
+              }
+            } catch { }
+
+            setErrorMessage(errorMessage);   // 👈 store message
+            setFoodAnalysis(null);           // no valid result
+            return; // Stop here
           }
+
 
           const data = await response.json();
           console.log("Received data:", data);
-          setFoodAnalysis(data); // Set the food analysis data
-
-          setShowResultModal(true); // Show the result modal after analysis is complete
+          setFoodAnalysis(data);
+          setShowResultModal(true);
         } catch (error) {
           console.error("Error during API request:", error);
         } finally {
-          // Set loading to false after the API call finishes
           setLoading(false);
         }
       } else {
@@ -95,6 +105,7 @@ export default function CalorieCounter() {
       console.error("No food selected");
     }
   };
+
 
   const handleCloseResultModal = () => {
     setShowResultModal(false); // Close the modal when the user clicks "Close"
@@ -117,10 +128,12 @@ export default function CalorieCounter() {
           <FoodAnalysis
             selectedFood={selectedFood}
             foodAnalysis={foodAnalysis}
-            onAnalyzeFood={handleAnalyzeFood} // Pass down the handler here
-            loading={loading} // Pass down the loading state
-            imagePreview={imagePreview} // Pass the image preview to FoodAnalysis
+            onAnalyzeFood={handleAnalyzeFood}
+            loading={loading}
+            imagePreview={imagePreview}
+            errorMessage={errorMessage}   // 👈 pass it here
           />
+
         </div>
       </main>
 

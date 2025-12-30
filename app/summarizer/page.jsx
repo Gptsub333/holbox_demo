@@ -102,18 +102,22 @@ export default function PDFSummarizerPage() {
       const res = await fetch(`${BACKEND_URL}/summarizer/get_summary`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json", // Ensure content type is set to JSON
-          "Authorization": `Bearer ${sessionToken}`, // Pass the Bearer token from the context
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${sessionToken}`,
         },
-        body: JSON.stringify({ pdf_id: pdfId }), // Stringify the body
+        body: JSON.stringify({ pdf_id: pdfId }),
       });
 
-      // Check if the request was successful
-      if (!res.ok) throw new Error("Upload failed");
+      // If backend returned an error (4xx or 5xx)
+      if (!res.ok) {
+        const errorData = await res.json();   // Read FastAPI error
+        throw new Error(errorData.detail || "Unknown backend error");
+      }
 
       const data = await res.json();
       setSummary(data.summary || "No summary returned.");
-      setIsSummaryOpen(true); // Open the summary modal
+      setIsSummaryOpen(true);
+
     } catch (error) {
       console.error("Error during summarization:", error.message);
       alert(`Error: ${error.message}`);

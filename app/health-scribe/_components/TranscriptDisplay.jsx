@@ -1,212 +1,266 @@
-import React from "react";
-import { MessageSquare, FileAudio, Loader2, Clock } from "lucide-react";
-import { motion } from "framer-motion";
-import {  Upload } from "lucide-react";
+import React from 'react';
+import { 
+  Wand2, GitCompare, Eye, Sparkles, Stethoscope, Loader2 
+} from 'lucide-react';
 
-export default function TranscriptDisplay({
-  activeAudio,
-  transcript,
-  formattedTranscript,
-  isTranscribing,
+const TranscriptDisplay = ({ 
+  activeAudio, 
+  transcript, 
+  isTranscribing, 
   transcribeProgress,
-  handleChatClick,
+  formattedTranscript,
+  hasTranscriptionData,
   handleTranscribe,
+  handleRefine,
+  handleChatClick,
   handleUploadClick,
   handleCancel,
-}) {
-  return (
-    <div>
-      {activeAudio ? (
-        <>
-          {/* Transcript Section */}
-          <div className="rounded-xl border bg-white p-8 shadow-md mb-6">
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h2 className="text-xl font-semibold heading-font">Transcript</h2>
-                {activeAudio && (
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {activeAudio.title} • {activeAudio.duration}
-                  </p>
-                )}
-              </div>
+  isLoadingSample,
+  // Simplified props
+  isRefining,
+  showOriginal,
+  hasRefinedTranscript,
+  toggleTranscriptView,
+}) => {
+  if (!activeAudio) {
+    return (
+      <div className="bg-white rounded-xl border border-gray-200 shadow-md p-6">
+        <div className="flex flex-col items-center justify-center py-12">
+          <div className="w-24 h-24 rounded-full bg-blue-100 flex items-center justify-center mb-4">
+            <Stethoscope className="h-12 w-12 text-blue-500" />
+          </div>
+          <p className="text-base text-gray-500 mb-2">Select an audio file to begin</p>
+          <p className="text-sm text-gray-400 text-center">
+            Choose a sample audio or upload your own to start transcription
+          </p>
+        </div>
+      </div>
+    );
+  }
 
-              {/* Top Ask Questions Button */}
-              {transcript ? (
-                <button
-                  onClick={handleChatClick}
-                  className="text-sm flex items-center bg-blue-600 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  <MessageSquare className="w-4 h-4 mr-1.5" />
-                  Ask Questions
-                </button>
-              ) : (
-                <button
-                  onClick={handleTranscribe}
-                  disabled={isTranscribing}
-                  className={`text-sm flex items-center ${
-                    isTranscribing
-                      ? 'text-gray-400 cursor-not-allowed'
-                      : 'text-blue-600 hover:text-blue-800 transition-colors'
-                  }`}
-                >
-                  {isTranscribing ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-1 animate-spin" />
-                      Transcribing...
-                    </>
-                  ) : (
-                    <>
-                      <FileAudio className="w-4 h-4 mr-1" />
-                      Transcribe Audio
-                    </>
-                  )}
-                </button>
+  return (
+    <div className="space-y-6">
+      {/* Audio Info Card */}
+      <div className="bg-white rounded-xl border border-gray-200 shadow-md p-6">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900">{activeAudio.title}</h3>
+            <p className="text-sm text-gray-500">Duration: {activeAudio.duration}</p>
+          </div>
+          <div className="flex items-center space-x-2">
+            {activeAudio.isUploaded && (
+              <span className="px-3 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
+                Uploaded
+              </span>
+            )}
+            {hasRefinedTranscript && (
+              <span className={`px-3 py-1 text-xs font-medium rounded-full flex items-center ${
+                showOriginal 
+                  ? 'bg-gray-100 text-gray-800'
+                  : 'bg-purple-100 text-purple-800'
+              }`}>
+                {showOriginal ? (
+                  <>
+                    <Eye className="h-3 w-3 mr-1" />
+                    Original
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="h-3 w-3 mr-1" />
+                    AI Refined
+                  </>
+                )}
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Simple Toggle for Refined Transcript */}
+        {hasRefinedTranscript && (
+          <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+            <div className="flex items-center justify-center">
+              <button
+                onClick={toggleTranscriptView}
+                className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                <GitCompare className="h-4 w-4 mr-2" />
+                {showOriginal ? 'View AI Refined Version' : 'View Original Version'}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Action Buttons */}
+        <div className="flex flex-wrap gap-3 mb-6">
+          {/* Transcribe Button */}
+          <button
+            onClick={handleTranscribe}
+            disabled={isTranscribing}
+            className={`px-4 py-2 rounded-lg font-medium ${
+              isTranscribing
+                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                : 'bg-blue-600 text-white hover:bg-blue-700'
+            }`}
+          >
+            {isTranscribing ? (
+              <span className="flex items-center">
+                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                Transcribing... {transcribeProgress}%
+              </span>
+            ) : (
+              'Transcribe Audio'
+            )}
+          </button>
+          
+          {isTranscribing && (
+            <button
+              onClick={handleCancel}
+              className="px-4 py-2 rounded-lg font-medium bg-red-100 text-red-700 hover:bg-red-200"
+            >
+              Cancel
+            </button>
+          )}
+
+          {/* Refine with AI Button */}
+          <button
+            onClick={handleRefine}
+            disabled={!transcript || isRefining}
+            className={`flex items-center px-4 py-2 rounded-lg font-medium ${
+              !transcript || isRefining
+                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                : 'bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:from-purple-700 hover:to-pink-700'
+            }`}
+          >
+            {isRefining ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                AI is refining...
+              </>
+            ) : (
+              <>
+                <Sparkles className="h-4 w-4 mr-2" />
+                Refine with AI
+              </>
+            )}
+          </button>
+
+          {/* Ask Questions Button */}
+          <button
+            onClick={handleChatClick}
+            disabled={!hasTranscriptionData}
+            className={`px-4 py-2 rounded-lg font-medium ${
+              hasTranscriptionData
+                ? 'bg-green-600 text-white hover:bg-green-700'
+                : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+            }`}
+          >
+            Ask Questions
+          </button>
+        </div>
+
+        {/* Progress Bar */}
+        {isTranscribing && (
+          <div className="mb-6">
+            <div className="flex justify-between text-sm text-gray-600 mb-1">
+              <span>Transcription Progress</span>
+              <span>{transcribeProgress}%</span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-2">
+              <div 
+                className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                style={{ width: `${transcribeProgress}%` }}
+              ></div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Transcript Display */}
+      {hasTranscriptionData && formattedTranscript ? (
+        <div className="bg-white rounded-xl border border-gray-200 shadow-md p-6">
+          <div className="flex justify-between items-center mb-6">
+            <div className="flex items-center space-x-3">
+              <h3 className="text-xl font-semibold">Medical Transcript</h3>
+              {hasRefinedTranscript && (
+                <span className={`px-3 py-1 text-sm font-medium rounded-full ${
+                  showOriginal 
+                    ? 'bg-gray-100 text-gray-800'
+                    : 'bg-gradient-to-r from-purple-100 to-pink-100 text-purple-800 border border-purple-200'
+                }`}>
+                  {showOriginal ? 'Original Transcript' : 'AI Refined'}
+                </span>
               )}
             </div>
-
-            {/* Transcription Process or Content */}
-            {isTranscribing ? (
-              <>
-                <div className="bg-gray-50 rounded-lg p-6 flex flex-col items-center justify-center">
-                  <div className="w-12 h-12 rounded-full border-4 border-blue-100 border-t-blue-600 animate-spin mb-4"></div>
-                  <p className="text-sm font-medium mb-2">Transcribing audio...</p>
-                  <div className="w-full max-w-md bg-gray-200 rounded-full h-1.5 mb-1">
-                    <div className="bg-blue-600 h-1.5 rounded-full" style={{ width: `${transcribeProgress}%` }}></div>
+          </div>
+          
+          <div className="space-y-6">
+            {Object.entries(formattedTranscript).map(([key, section]) => {
+              if (!section || !section.content || section.content === 'No information provided') {
+                return null;
+              }
+              
+              return (
+                <div key={key} className="border-b border-gray-100 pb-6 last:border-0 last:pb-0">
+                  <h4 className="text-lg font-medium text-gray-900 mb-3 flex items-center">
+                    <div className={`w-2 h-6 rounded mr-3 ${
+                      showOriginal ? 'bg-blue-500' : 'bg-gradient-to-b from-purple-500 to-pink-500'
+                    }`}></div>
+                    {section.title}
+                  </h4>
+                  <div className="pl-5">
+                    {section.content.split('\n').map((line, index) => {
+                      const trimmedLine = line.trim();
+                      if (!trimmedLine) return null;
+                      
+                      if (trimmedLine.startsWith('-')) {
+                        return (
+                          <div key={index} className="flex mb-2 last:mb-0">
+                            <span className={`mr-2 ${showOriginal ? 'text-gray-500' : 'text-purple-500'}`}>•</span>
+                            <p className="text-gray-700 flex-1">{trimmedLine.substring(1).trim()}</p>
+                          </div>
+                        );
+                      }
+                      if (trimmedLine.startsWith('- -')) {
+                        return (
+                          <div key={index} className="flex mb-2 last:mb-0 ml-4">
+                            <span className="text-gray-400 mr-2">-</span>
+                            <p className="text-gray-600 flex-1">{trimmedLine.substring(2).trim()}</p>
+                          </div>
+                        );
+                      }
+                      return (
+                        <p key={index} className="text-gray-700 mb-2 last:mb-0">
+                          {trimmedLine}
+                        </p>
+                      );
+                    })}
                   </div>
-                  <p className="text-xs text-muted-foreground">{transcribeProgress}% complete</p>
                 </div>
-                <button
-                  onClick={handleCancel}
-                  className="w-full rounded-lg px-4 py-3 text-white font-medium bg-gray-300  hover:bg-gray-400 transition-colors"
-                >
-                  Cancel
-                </button>
-              </>
-            ) : transcript ? (
-              <>
-                <div className="bg-gray-50 rounded-lg p-6 max-h-[400px] overflow-y-auto mb-4">
-                  {/* Render sections dynamically */}
-                  {formattedTranscript?.chiefComplaint && (
-                    <TranscriptSection
-                      title={formattedTranscript.chiefComplaint.title}
-                      content={formattedTranscript.chiefComplaint.content[1]}
-                    />
-                  )}
-                  {formattedTranscript?.historyOfPresentIllness && (
-                    <TranscriptSection
-                      title={formattedTranscript.historyOfPresentIllness.title}
-                      content={formattedTranscript.historyOfPresentIllness.content[1]}
-                    />
-                  )}
-                  {formattedTranscript?.reviewOfSystems && (
-                    <TranscriptSection
-                      title={formattedTranscript.reviewOfSystems.title}
-                      content={formattedTranscript.reviewOfSystems.content[1]}
-                    />
-                  )}
-                  {formattedTranscript?.pastMedicalHistory && (
-                    <TranscriptSection
-                      title={formattedTranscript.pastMedicalHistory.title}
-                      content={formattedTranscript.pastMedicalHistory.content[1]}
-                    />
-                  )}
-                </div>
-
-                {/* Bottom Ask Questions Button */}
-                <div className="mt-4 flex justify-center">
-                  <button
-                    onClick={handleChatClick}
-                    className="rounded-lg bg-blue-600 px-4 py-2 text-white text-sm hover:bg-blue-700 transition-colors flex items-center"
-                  >
-                    <MessageSquare className="w-4 h-4 mr-2" />
-                    Ask Questions About This Transcript
-                  </button>
-                </div>
-              </>
-            ) : (
-              <NoTranscriptMessage handleTranscribe={handleTranscribe} />
+              );
+            })}
+          </div>
+        </div>
+      ) : transcript ? (
+        <div className="bg-white rounded-xl border border-gray-200 shadow-md p-6">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-xl font-semibold">Transcript</h3>
+            {hasRefinedTranscript && (
+              <span className={`px-3 py-1 text-sm font-medium rounded-full ${
+                showOriginal 
+                  ? 'bg-gray-100 text-gray-800'
+                  : 'bg-gradient-to-r from-purple-100 to-pink-100 text-purple-800 border border-purple-200'
+              }`}>
+                {showOriginal ? 'Original' : 'AI Refined'}
+              </span>
             )}
           </div>
-        </>
-      ) : (
-        <NoRecordingSelected handleUploadClick={handleUploadClick} />
-      )}
-    </div>
-  );
-}
-
-// Sub-component for each transcript section
-function TranscriptSection({ title, content }) {
-  if (!content) return null;
-  const lines = content.split("\n");
-
-  return (
-    <div className="transcript-section">
-      <h3 className="font-bold">{title}</h3>
-      <div className="pl-5">
-        {lines.map((line, index) => (
-          <div key={index}>
-            {line.startsWith("-") ? (
-              <ul>
-                <li className="text-base para-font leading-relaxed">{line.slice(1).trim()}</li>
-              </ul>
-            ) : (
-              <p className="text-base para-font leading-relaxed">{line}</p>
-            )}
+          <div className="whitespace-pre-line text-gray-700 p-4 bg-gray-50 rounded-lg max-h-96 overflow-y-auto">
+            {transcript}
           </div>
-        ))}
-      </div>
+        </div>
+      ) : null}
     </div>
   );
-}
+};
 
-// Component shown when no transcript is available
-function NoTranscriptMessage({ handleTranscribe }) {
-  return (
-    <div className="bg-gray-50 rounded-lg p-6 flex flex-col items-center justify-center text-center">
-      <FileAudio className="w-10 h-10 text-blue-500 mb-3 opacity-70" />
-      <p className="text-sm font-medium mb-1">No transcript available</p>
-      <p className="text-xs text-muted-foreground mb-4">
-        Click the button below to extract a transcript from this recording
-      </p>
-      <button
-        onClick={handleTranscribe}
-        className="rounded-lg bg-blue-600 px-4 py-2 text-white text-sm hover:bg-blue-700 transition-colors"
-      >
-        Extract Transcript
-      </button>
-    </div>
-  );
-}
-
-// Component shown when no recording is selected
-function NoRecordingSelected({ handleUploadClick }) {
-  return (
-    <div className="rounded-xl border bg-white p-8 shadow-md flex flex-col items-center justify-center text-center h-80 space-y-6">
-      {/* Icon and Title Section */}
-      <Clock className="w-12 h-12 text-blue-500 mb-4 opacity-70" />
-      <h2 className="text-xl font-semibold heading-font mb-2">No Recording Selected</h2>
-
-      {/* Upload Button */}
-      <motion.button
-        onClick={handleUploadClick}
-        className="flex items-center space-x-2 rounded-lg bg-blue-600 text-white shadow-lg hover:bg-blue-700 transition-colors mx-auto"
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        aria-label="Upload Audio"
-        style={{
-          padding: "10px 20px", // Adjust padding
-        }}
-      >
-        <Upload className="w-5 h-5" /> {/* Smaller icon */}
-        <span className="text-xs font-medium">Upload Audio</span>
-      </motion.button>
-
-      {/* Description Section */}
-      <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-        Select a recording from the list or upload your own audio file to see the transcript and interact with it.
-      </p>
-    </div>
-  );
-}
-
+export default TranscriptDisplay;
