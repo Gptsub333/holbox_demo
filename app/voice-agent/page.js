@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useCallback, useState } from "react";
-import { WavRecorder, WavStreamPlayer } from "/lib/wavtools/index.js";
+import { WavRecorder, WavStreamPlayer } from "../../lib/wavtools/index";
 import React from "react";
 import EnvironmentNotification from "./_components/EnvironmentNotification";
 import Header from "./_components/Header";
@@ -59,7 +59,7 @@ export default function VoiceAgent() {
   const [userScrolled, setUserScrolled] = useState(false);
 
   const { sessionToken, isLoaded, isSignedIn } = useAuthContext(); // Get the session token from the context
-   const token = "Bearer " + sessionToken;
+  const token = "Bearer " + sessionToken;
 
 
 
@@ -123,8 +123,8 @@ export default function VoiceAgent() {
           .then((stream) => {
             stream.getTracks().forEach((track) => track.stop());
           })
-          .catch((e) => {});
-      } catch (e) {}
+          .catch((e) => { });
+      } catch (e) { }
     };
   }, []);
   useEffect(() => {
@@ -182,12 +182,12 @@ export default function VoiceAgent() {
           recorder.pause();
           recorder.end();
         }
-      } catch (e) {}
+      } catch (e) { }
 
       // Stop playback if active
       try {
         player.interrupt();
-      } catch (e) {}
+      } catch (e) { }
 
       // Clean up WebSocket
       if (wsRef.current) {
@@ -287,7 +287,7 @@ export default function VoiceAgent() {
       // Ensure recorder is cleaned up even on error
       try {
         await wavRecorderRef.current.end();
-      } catch (e) {}
+      } catch (e) { }
     }
   }, [currentAudio]);
 
@@ -323,7 +323,7 @@ export default function VoiceAgent() {
 
       try {
         await recorder.end();
-      } catch (e) {}
+      } catch (e) { }
 
       // Initialize new recording session
       await recorder.begin();
@@ -483,7 +483,7 @@ export default function VoiceAgent() {
 
   //     ws.binaryType = "arraybuffer";
 
-     
+
   //       if (!token) {
   //         console.error("Token is missing or invalid");
   //         return;
@@ -692,163 +692,163 @@ export default function VoiceAgent() {
   // ]);
 
   const connectConversation = useCallback(async () => {
-  try {
-    // Step 1: Ensure any existing recorder session is cleaned up
-    const recorder = wavRecorderRef.current;
-    const currentStatus = recorder.getStatus();
-
-    if (currentStatus === "recording") {
-      await recorder.pause();
-    }
-
     try {
-      await recorder.end();
-    } catch (e) {
-      console.log("No active session to end");
-    }
+      // Step 1: Ensure any existing recorder session is cleaned up
+      const recorder = wavRecorderRef.current;
+      const currentStatus = recorder.getStatus();
 
-    // Step 2: Close existing WebSocket if there's an active connection
-    if (wsRef.current) {
-      wsRef.current.close();
-      wsRef.current = null;
-    }
-
-    isInitialLoad.current = true;
-    setUserScrolled(false);
-
-    // Step 3: Ensure token is available and valid
-    // const token = getToken(); // Replace with your method of obtaining the token
-
-    if (!token) {
-      console.error("Token is missing or invalid");
-      return;
-    }
-
-    // Step 4: Create new WebSocket connection
-    const ws = new WebSocket(`wss://demo.holbox.ai/api/demo_backend_v2/voice_agent/voice?token=${token}`);
-
-    ws.binaryType = "arraybuffer";
-
-    ws.onopen = async () => {
-      setIsConnected(true);
-      try {
-        // Step 5: Send the authentication message after WebSocket is opened
-        const authMessage = {
-          type: "authenticate",
-          token: token, // Send token in the first message to authenticate
-        };
-        ws.send(JSON.stringify(authMessage));
-
-        // Step 6: Start a new recording session
-        await recorder.begin();
-        await wavStreamPlayerRef.current.connect();
-
-        // Send initial message for conversation start
-        const initialMessage = {
-          event: "initial_message",
-          text: "Hello",
-          mode: conversationMode,
-        };
-        ws.send(JSON.stringify(initialMessage));
-
-        if (conversationMode === "real-time") {
-          await startRealtimeRecording();
-        }
-      } catch (error) {
-        console.error("Error during connection setup:", error);
-        // Cleanup on error
-        try {
-          await recorder.end();
-        } catch (e) {}
+      if (currentStatus === "recording") {
+        await recorder.pause();
       }
-    };
 
-    ws.onmessage = async (event) => {
       try {
-        // Handle received messages from WebSocket
-        if (typeof event.data === "string") {
-          const msg = JSON.parse(event.data);
-          if (msg.type === "ping") {
-            ws.send(JSON.stringify({ type: "pong" }));
-            return;
-          }
-
-          // Handle various event types like start_speaking, chat_response, etc.
-          handleWebSocketMessages(msg, ws);
-        } else if (event.data instanceof ArrayBuffer) {
-          // Handle audio data
-          await playAssistantAudio(event.data);
-        }
-      } catch (error) {
-        console.error("Error handling WebSocket message:", error);
+        await recorder.end();
+      } catch (e) {
+        console.log("No active session to end");
       }
-    };
 
-    ws.onclose = () => {
-      setIsConnected(false);
-      setConversationState("disconnected");
-    };
-
-    ws.onerror = (event) => {
-      console.error("WebSocket error:", event);
-      setIsConnected(false);
-      setConversationState("disconnected");
-
-      // Clean up resources on error
+      // Step 2: Close existing WebSocket if there's an active connection
       if (wsRef.current) {
         wsRef.current.close();
         wsRef.current = null;
       }
-    };
 
-    wsRef.current = ws; // Store the WebSocket connection reference
+      isInitialLoad.current = true;
+      setUserScrolled(false);
 
-  } catch (error) {
-    console.error("Connection error:", error);
-    try {
-      await wavRecorderRef.current.end();
-    } catch (e) {
-      console.error("Error during cleanup:", e);
+      // Step 3: Ensure token is available and valid
+      // const token = getToken(); // Replace with your method of obtaining the token
+
+      if (!token) {
+        console.error("Token is missing or invalid");
+        return;
+      }
+
+      // Step 4: Create new WebSocket connection
+      const ws = new WebSocket(`wss://demo.holbox.ai/api/demo_backend_v2/voice_agent/voice?token=${token}`);
+
+      ws.binaryType = "arraybuffer";
+
+      ws.onopen = async () => {
+        setIsConnected(true);
+        try {
+          // Step 5: Send the authentication message after WebSocket is opened
+          const authMessage = {
+            type: "authenticate",
+            token: token, // Send token in the first message to authenticate
+          };
+          ws.send(JSON.stringify(authMessage));
+
+          // Step 6: Start a new recording session
+          await recorder.begin();
+          await wavStreamPlayerRef.current.connect();
+
+          // Send initial message for conversation start
+          const initialMessage = {
+            event: "initial_message",
+            text: "Hello",
+            mode: conversationMode,
+          };
+          ws.send(JSON.stringify(initialMessage));
+
+          if (conversationMode === "real-time") {
+            await startRealtimeRecording();
+          }
+        } catch (error) {
+          console.error("Error during connection setup:", error);
+          // Cleanup on error
+          try {
+            await recorder.end();
+          } catch (e) { }
+        }
+      };
+
+      ws.onmessage = async (event) => {
+        try {
+          // Handle received messages from WebSocket
+          if (typeof event.data === "string") {
+            const msg = JSON.parse(event.data);
+            if (msg.type === "ping") {
+              ws.send(JSON.stringify({ type: "pong" }));
+              return;
+            }
+
+            // Handle various event types like start_speaking, chat_response, etc.
+            handleWebSocketMessages(msg, ws);
+          } else if (event.data instanceof ArrayBuffer) {
+            // Handle audio data
+            await playAssistantAudio(event.data);
+          }
+        } catch (error) {
+          console.error("Error handling WebSocket message:", error);
+        }
+      };
+
+      ws.onclose = () => {
+        setIsConnected(false);
+        setConversationState("disconnected");
+      };
+
+      ws.onerror = (event) => {
+        console.error("WebSocket error:", event);
+        setIsConnected(false);
+        setConversationState("disconnected");
+
+        // Clean up resources on error
+        if (wsRef.current) {
+          wsRef.current.close();
+          wsRef.current = null;
+        }
+      };
+
+      wsRef.current = ws; // Store the WebSocket connection reference
+
+    } catch (error) {
+      console.error("Connection error:", error);
+      try {
+        await wavRecorderRef.current.end();
+      } catch (e) {
+        console.error("Error during cleanup:", e);
+      }
     }
-  }
-}, [conversationMode, isRecording, playAssistantAudio, startRealtimeRecording, stopRealtimeRecording]);
+  }, [conversationMode, isRecording, playAssistantAudio, startRealtimeRecording, stopRealtimeRecording]);
 
-// Handle WebSocket messages
-const handleWebSocketMessages = (msg, ws) => {
-  switch (msg.type) {
-    case "chat_noise":
-      setConversationMode("push-to-talk");
-      if (ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify({ event: "set_mode", mode: "push-to-talk" }));
-      }
-      if (isRecording) {
-        stopRealtimeRecording();
-      }
-      setItems((prev) => [...prev, { id: Date.now(), role: "assistant", formatted: { text: msg.content } }]);
-      break;
-
-    case "chat_response":
-      if (msg.transcript) {
-        setItems((prev) => [...prev, { id: Date.now() - 1, role: "user", formatted: { text: msg.transcript } }]);
-      }
-      if (msg.content) {
+  // Handle WebSocket messages
+  const handleWebSocketMessages = (msg, ws) => {
+    switch (msg.type) {
+      case "chat_noise":
+        setConversationMode("push-to-talk");
+        if (ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify({ event: "set_mode", mode: "push-to-talk" }));
+        }
+        if (isRecording) {
+          stopRealtimeRecording();
+        }
         setItems((prev) => [...prev, { id: Date.now(), role: "assistant", formatted: { text: msg.content } }]);
-      }
-      break;
+        break;
 
-    case "tool_call":
-      // Handle tool call results like "set_memory" or "submit_booking"
-      break;
+      case "chat_response":
+        if (msg.transcript) {
+          setItems((prev) => [...prev, { id: Date.now() - 1, role: "user", formatted: { text: msg.transcript } }]);
+        }
+        if (msg.content) {
+          setItems((prev) => [...prev, { id: Date.now(), role: "assistant", formatted: { text: msg.content } }]);
+        }
+        break;
 
-    case "error":
-      console.error("Server error:", msg.content);
-      break;
+      case "tool_call":
+        // Handle tool call results like "set_memory" or "submit_booking"
+        break;
 
-    default:
-      console.log("Unknown message type:", msg.type);
-  }
-};
-  
+      case "error":
+        console.error("Server error:", msg.content);
+        break;
+
+      default:
+        console.log("Unknown message type:", msg.type);
+    }
+  };
+
 
   /**
    * In push-to-talk mode, start recording
@@ -887,7 +887,7 @@ const handleWebSocketMessages = (msg, ws) => {
           await recorder.pause();
         }
         await recorder.end();
-      } catch (e) {}
+      } catch (e) { }
 
       // Initialize new recording session
       await recorder.begin();
