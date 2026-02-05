@@ -114,7 +114,7 @@
 
 //   // const { user,isLoaded } = useUser();
 
-//   const [orgName, setOrgName] = useState("Holbox AI Demo"); // fallback for dev/local/test
+//   const [orgName, setOrgName] = useState("Mach11"); // fallback for dev/local/test
 //   const [loading, setLoading] = useState(true);
 
 //   // useEffect(() => {
@@ -178,7 +178,7 @@
 
 //     } else {
 //       // If nothing is saved, set default value
-//       setOrgName("Holbox AI Demo");
+//       setOrgName("Mach11");
 //       setLoading(false);
 //     }
 //   }, []);

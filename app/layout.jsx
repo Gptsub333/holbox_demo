@@ -9,8 +9,8 @@ const neuton = Neuton({ subsets: ['latin'], weight: ['200', '300', '400', '700',
 export const metadata = {
   title: "Agentic AI Demo Interface",
   description: "Premium AI features showcase with modern design",
-  generator: "Holbox.ai.dev",
-  icons: "/holboxai.svg"
+  generator: "Mach11",
+  icons: "/mach11.svg"
 };
 
 export default async function RootLayout({ children }) {

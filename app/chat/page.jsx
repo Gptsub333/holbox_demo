@@ -143,8 +143,8 @@ const Chat = () => {
           <div className="flex flex-col items-center justify-center min-h-[80vh]">
             <div className="mb-8">
               <img
-                src="./holboxai.svg"
-                alt="ChatAI Logo"
+                src="./mach11.svg"
+                alt="Mach11 Logo"
                 className="w-24 h-24 mx-auto"
               />
             </div>
