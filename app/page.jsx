@@ -206,8 +206,8 @@ export default function OmniAgent() {
     setInputValue(message);
     handleSendMessage();
   };
- 
-  
+
+
 
 
   return (
@@ -227,8 +227,8 @@ export default function OmniAgent() {
                     Your AI Agent Awaits.
 
                   </h1>
-                  <p className="text-gray-600 text-base md:text-base text-balance">
-                    Discover smarter conversations, automated insights, and limitless creativity — all in one dashboard.
+                  <p className="text-gray-600 text-base md:text-base text-balance font-sans">
+                    Discover smarter conversations, automated insights, and limitless creativity <br />— all in one dashboard.
                     Let's set you up in just a few steps.
                   </p>
                 </div>
@@ -270,7 +270,7 @@ export default function OmniAgent() {
                           disabled={isLoading}
                         >
                           <Paperclip className="w-4 h-4 md:mr-0" />
-                          <span className="hidden md:inline">Attach</span>
+                          <span className="hidden md:inline font-sans">Attach</span>
                         </Button>
 
                         <Button
@@ -282,7 +282,7 @@ export default function OmniAgent() {
                           disabled={isLoading}
                         >
                           <Globe className="w-4 h-4 md:mr-0" />
-                          <span className="hidden lg:inline">Search</span>
+                          <span className="hidden lg:inline font-sans">Search</span>
                         </Button>
 
                         {/* Right-aligning the Send button */}
